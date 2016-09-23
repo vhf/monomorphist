@@ -1,0 +1,39 @@
+# enable ES6
+parser: babel-eslint
+parserOptions:
+  allowImportExportEverywhere: true
+
+# register plugins
+plugins:
+  - meteor
+
+# use the rules of eslint-airbnb
+# and the recommended rules of eslint-plugin-meteor
+extends:
+  - airbnb-base
+  - plugin:meteor/recommended
+
+# registerenvironments
+env:
+  meteor: true
+  browser: true
+  node: true
+
+rules:
+  max-len: [2, 150, 2, { ignoreUrls: true, ignoreComments: false }]
+
+  no-unexpected-multiline: 2
+  no-throw-literal: 0
+  no-underscore-dangle: 0
+  arrow-parens: 0
+  import/no-unresolved: 0
+  import/no-extraneous-dependencies: off
+  no-console: 0
+  object-shorthand: 0
+
+  # eslint-plugin-meteor
+  meteor/no-session: [0] # allow Session
+  meteor/prefer-session-equals: [2] # prefer Session.equals instead
+
+# true: defined, false: defined but readonly object
+# globals:

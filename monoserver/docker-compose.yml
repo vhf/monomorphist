@@ -1,0 +1,43 @@
+version: '2'
+services:
+  monomorphist:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "127.0.0.1:4013:80"
+    expose:
+      - "1337"
+    environment:
+      - ROOT_URL=https://mono.morph.ist
+      - METEOR_SETTINGS={"public":{}}
+      - PORT=80
+      - CLUSTER_ENDPOINT_URL=http://localhost:80
+      - MONGO_URL=mongodb://mongodb:27017/monomorphist
+    volumes:
+      - /opt/monomorphist/monoserver:/bundle
+      - /opt/monomorphist/mononodes/:/mononodes/
+      - /var/run/docker.sock:/var/run/docker.sock
+    restart: always
+    labels:
+      - "traefik.backend=monomorphist"
+      - "traefik.port=80"
+      - "traefik.frontend.rule=Host:mono.morph.ist"
+      - "traefik.docker.network=monomorphist_default"
+    links:
+      - "mongodb:mongodb"
+
+  mongodb:
+    image: mongo:3.2
+    expose:
+      - "27017"
+    volumes:
+      - /opt/monomorphist/mongodata:/data/db
+    restart: always
+    labels:
+      - "traefik.docker.network=monomorphist_default"
+
+networks:
+  default:
+    external:
+      name: traefik_traefik_enabled
