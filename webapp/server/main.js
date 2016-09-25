@@ -8,5 +8,3 @@ import '/imports/api/nodes/server/publication';
 
 import '/imports/api/logs/methods';
 import '/imports/api/logs/server/publication';
-
-import '/imports/started/server/syslogserver';

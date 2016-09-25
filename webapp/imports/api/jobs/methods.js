@@ -1,11 +1,12 @@
 import { Meteor } from 'meteor/meteor';
-import dedent from 'dedent-js';
 import { _ } from 'meteor/underscore';
+import dedent from 'dedent-js';
 import Jobs from '/imports/api/jobs/collection';
 import Logs from '/imports/api/logs/collection';
 import Nodes from '/imports/api/nodes/collection';
 
 const childProcess = require('child_process');
+const fs = require('fs');
 
 Meteor.methods({
   'job:new'(_job) {
@@ -52,33 +53,44 @@ Meteor.methods({
   'job:run'(_jobId) {
     const job = Jobs.findOne({ _id: _jobId });
     if (!job) return;
+
+    const instrumented = Meteor.call('job:instrument', job.fn);
+    fs.mkdirSync(`/src/${_jobId}`);
+    fs.writeFileSync(`/src/${_jobId}/${_jobId}.js`, instrumented);
+
     const containers = job.nodes.map(_id => {
       const node = Nodes.findOne({ _id, disabled: false });
-      return `node-${node.packageVersion}`;
-    }).join(' ');
-    Logs.insert({ _jobId, time: new Date(), message: `executing ${_jobId} on containers ${containers}...` });
-    childProcess.exec(
-      `bash spawn.sh ${_jobId} ${containers}`, {
-        cwd: '/mononodes',
-      },
-      Meteor.bindEnvironment((err, stdout, stderr) => {
-        let logged = false;
-        if (err) {
-          Logs.insert({ _jobId, time: new Date(), message: `err: ${err}` });
-          logged = true;
-        }
-        if (stdout) {
-          Logs.insert({ _jobId, time: new Date(), message: `stdout: ${stdout}` });
-          logged = true;
-        }
-        if (stderr) {
-          Logs.insert({ _jobId, time: new Date(), message: `stderr: ${stderr}` });
-          logged = true;
-        }
-        if (!logged) {
-          Logs.insert({ _jobId, time: new Date(), message: `command ${_jobId} exited; no err/stdout/stderr.` });
-        }
-      })
-    );
+      return {
+        _nodeId: _id,
+        container: `node-${node.packageVersion}`,
+      };
+    });
+    Logs.insert({ _jobId, time: new Date(), message: `job ${_jobId} started running...` });
+    Jobs.update({ _id: _jobId, status: 'editing' }, { $set: { status: 'running' } });
+    const runningJobs = containers.map(({ _nodeId, container }) => {
+      return new Promise((resolve, reject) => {
+        childProcess.exec(
+          `docker-compose run -e JOB_ID=${_jobId} ${container}`, {
+            cwd: '/mononodes',
+          },
+          Meteor.bindEnvironment((err, stdout, stderr) => {
+            if (err) {
+              Logs.insert({ _jobId, _nodeId, time: new Date(), message: `error: ${err}` });
+            }
+            if (stdout) {
+              Logs.insert({ _jobId, _nodeId, time: new Date(), message: stdout });
+            }
+            if (stderr) {
+              Logs.insert({ _jobId, _nodeId, time: new Date(), message: `stderr: ${stderr}` });
+            }
+            resolve(_nodeId);
+          })
+        );
+      });
+    });
+    Promise.all(runningJobs).then(returns => { // here returns is [_nodeIdDone1, _nodeIdDone2, ...]
+      Jobs.update({ _id: _jobId, status: 'running' }, { $set: { status: 'done' } });
+      Logs.insert({ _jobId, time: new Date(), message: `job ${_jobId} done.\n${returns} are done running.` });
+    });
   },
 });

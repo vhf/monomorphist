@@ -62,7 +62,7 @@ Template.formJob.helpers({
   },
   execLogs() {
     const _jobId = Template.instance().getJobId();
-    return Logs.find({ _jobId, host: { $exists: false } }).fetch();
+    return Logs.find({ _jobId, _nodeId: { $exists: false } }).fetch();
   },
 });
 

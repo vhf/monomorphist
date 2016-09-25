@@ -9,6 +9,13 @@ declare -a NODE_VERSIONS=("0.10.46" "0.12.15" "4.5.0" "5.12.0" "6.6.0")
 
 for NODE_VERSION in "${NODE_VERSIONS[@]}"
 do
+
+# if this version can't be downloaded, continue
+if ! curl --output /dev/null --silent --head --fail "https://nodejs.org/dist/v$NODE_VERSION/SHASUMS256.txt.asc"; then
+  continue
+fi
+
+# create a docker file for this image
 cat > mononodes/Dockerfile.$NODE_VERSION <<- EOM
 FROM buildpack-deps:jessie-curl
 
@@ -47,21 +54,18 @@ RUN buildDeps='xz-utils' \
 ENTRYPOINT bash /start.sh
 EOM
 
+# append this as a service to docker-compose
 cat >> docker-compose.yml <<- EOM
   node-$NODE_VERSION:
     build:
       context: ./mononodes
       dockerfile: Dockerfile.$NODE_VERSION
-    environment:
-      - NODE_VERSION=$NODE_VERSION
-      - JOB_ID=\${COMPOSE_PROJECT_NAME}-$NODE_VERSION
+    network_mode: none
     volumes:
       - /opt/monomorphist/volume/start.sh:/start.sh
       - /opt/monomorphist/volume/src:/src
     labels:
       - "node_container=1"
-    external_links:
-      - "monomorphist:syslogserver"
 
 EOM
 done

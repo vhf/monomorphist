@@ -35,4 +35,4 @@ Split pane with explanation and tips about a bailout or deopt.
 
 ### TODO
 
-- [ ] Security? Node containers shouldn't be able to network out except for syslogging...
+- [x] Security? Node containers shouldn't be able to network at all

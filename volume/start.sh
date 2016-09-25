@@ -1,32 +1,9 @@
 #!/bin/bash
 
-if [[ -z $JOB_ID ]]; then
-  JOB_ID="pourrav"
-fi
+_timeout() { ( set +b; sleep "$1" & "${@:2}" & wait -n; r=$?; kill -9 `jobs -p`; exit $r; ) }
 
-function log
-{
-  logger --udp --server syslogserver --port 1337 -t $JOB_ID
-}
-
-echo "monomorph running {$JOB_ID}{$NODE_VERSION}" | log
-
-# bailout deopt
-node \
+_timeout 10 node \
   --trace_opt \
   --trace_deopt \
   --allow-natives-syntax \
-  /src/main.js | log
-
-echo "monomorph done {$JOB_ID}{$NODE_VERSION}" | log
-
-# IRHydra
-# node \
-#   --trace-hydrogen \
-#   --trace-phase=Z \
-#   --trace-deopt \
-#   --code-comments \
-#   --hydrogen-track-positions \
-#   --redirect-code-traces \
-#   --redirect-code-traces-to=code.asm \
-#   /src/not-instrumented.js | log
+  /src/$JOB_ID/$JOB_ID.js

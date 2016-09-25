@@ -33,6 +33,7 @@ services:
       - "27017"
     volumes:
       - /opt/monomorphist/mongodata:/data/db
+      - /opt/monomorphist/volume/src:/src
     restart: always
     labels:
       - "traefik.docker.network=monomorphist_default"

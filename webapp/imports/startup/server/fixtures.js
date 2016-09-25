@@ -16,7 +16,7 @@ const existingNodes = _.pluck(Nodes.find({}, { fields: { _id: 0, packageVersion:
 
 nodesFixture.forEach(node => {
   if (existingNodes.indexOf(node.packageVersion) === -1) {
-    const _id = Nodes.insert(node);
+    Nodes.insert(node);
   }
 });
 
@@ -29,26 +29,24 @@ const demoJobs = [
       name: 'sum',
     },
     nodes: _.pluck(Nodes.find({ disabled: false, enabledByDefault: true }).fetch(), '_id'),
-    logs: []
+    logs: [],
   },
 ];
 
 // TODO
 // demoJobs.forEach(job => Meteor.call('job:run', job._id));
 
-if (true) { // fake
-  const allNodes = Nodes.find({ disabled: false, enabledByDefault: true }).fetch();
-  const allJobs = Jobs.find({}).fetch();
-
-  allJobs.forEach(job => {
-    const _jobId = job._id;
-    allNodes.forEach(node => {
-      const _nodeId = node._id;
-      if (Logs.find({ _jobId, _nodeId }).count() < 25) {
-        for (let i = 0; i < 25; i++) {
-          Logs.insert({ _jobId, _nodeId, time: new Date(), host: 'some-host', message: Random.id() });
-        }
-      }
-    });
-  });
-}
+// const allNodes = Nodes.find({ disabled: false, enabledByDefault: true }).fetch();
+// const allJobs = Jobs.find({}).fetch();
+//
+// allJobs.forEach(job => {
+//   const _jobId = job._id;
+//   allNodes.forEach(node => {
+//     const _nodeId = node._id;
+//     if (Logs.find({ _jobId, _nodeId }).count() < 25) {
+//       for (let i = 0; i < 25; i++) {
+//         Logs.insert({ _jobId, _nodeId, time: new Date(), host: 'some-host', message: Random.id() });
+//       }
+//     }
+//   });
+// });
