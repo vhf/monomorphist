@@ -7,6 +7,8 @@ Meteor.publish('job', _id => {
   return Jobs.find(_id);
 });
 
+Meteor.publish('jobs', () => Jobs.find({ status: 'done', unlisted: false }));
+
 Jobs.allow({
-  update: () => true,
+  update: (userId, doc) => doc.status === 'editing',
 });

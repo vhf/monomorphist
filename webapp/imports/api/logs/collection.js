@@ -16,6 +16,10 @@ const LogsSchema = new SimpleSchema({
   time: {
     type: Date,
   },
+  raw: {
+    type: String,
+    optional: true,
+  },
   message: {
     type: String,
   },

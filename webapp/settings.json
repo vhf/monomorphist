@@ -1,0 +1,7 @@
+{
+  "public": {
+    "concurrency": 10,
+    "pollInterval": 2000,
+    "timeout": 10000
+  }
+}

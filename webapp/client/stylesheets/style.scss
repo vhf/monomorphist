@@ -1,0 +1,81 @@
+@import "{poetic:materialize-scss}/sass/materialize.scss";
+
+.CodeMirror {
+  height: initial !important;
+  min-height: 24px;
+  margin-top: 12px;
+}
+
+.log-lines {
+  margin-top: 0;
+  margin-bottom: 0;
+  padding: 5px 15px 5px 15px;
+
+  .hex {
+    @extend .orange-text, .text-lighten-2;
+
+  }
+  .internal-info-1 {
+    color: green;
+  }
+  .internal-info-2 {
+    color: blue;
+  }
+  .reason-label {
+    @extend .grey-text, .text-lighten-1;
+  }
+  /*.enabled {
+    background-color: #66BB6A !important;
+  }
+  .disabled {
+    background-color: #ffb74d !important;
+  }*/
+  .reason, .disabled {
+    background-color: #666 !important;
+    @extend .lime-text, .text-lighten-5;
+    padding: 0 2px;
+  }
+  .verdict {
+    color: white;
+    @extend .blue-grey;
+    padding: 0 3px;
+  }
+  .verdict.bad {
+    @extend .orange, .lighten-2;
+  }
+  .verdict.maybe {
+    font-style: italic;
+  }
+  .collapse-column {
+    display: inline-block;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    height: 14px;
+    cursor: pointer;
+  }
+  .collapse-column.uncollapsed {
+    display: inline;
+  }
+  .collapse-column.collapsed {
+    width: 18px;
+    margin-left: 14px;
+  }
+}
+
+.collection .queue-item {
+  font-size: 12px;
+  padding: 5px;
+  &.queue-item-running {
+    @extend .light-green, .lighten-2;
+  }
+  i {
+    font-size: 18px;
+  }
+  .btn {
+    @extend .light-green, .lighten-5;
+    padding: 0 4px;
+    height: 18px;
+    line-height: 18px;
+  }
+}

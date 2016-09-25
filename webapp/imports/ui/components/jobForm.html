@@ -1,0 +1,53 @@
+<template name="jobForm">
+  <div class="row">
+    <div class="col s12">
+      <h5>Choose node versions:</h5>
+    </div>
+  </div>
+  <div class="row">
+    {{#each nodes}}
+      <div class="col s1 switch center">
+        <label for="{{ _id }}">
+          {{ packageVersion }}
+          <br>
+          {{#if (nodeEnabled job _id)}}
+            <input class="node-checkbox" type="checkbox" checked="checked" id="{{ _id }}" />
+          {{ else }}
+            <input class="node-checkbox" type="checkbox" id="{{ _id }}" />
+          {{/if}}
+          <span class="lever"></span>
+        </label>
+      </div>
+    {{else}}
+      <p>loading nodes</p>
+    {{/each}}
+  </div>
+  <div class="row">
+    <div class="col s12">
+      <h5>Enter your code</h5>
+      <p>First the function definition, then how to call the function, finally the function name.</p>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col m6 s12">
+      {{#autoForm collection=Jobs autosave=true doc=job id="jobForm" type='update'}}
+        {{> afQuickField name="fn.definition" label-style="margin-left: 34px;"}}
+        {{> afQuickField name="fn.call" label-style="margin-left: 34px;"}}
+        {{> afQuickField name="fn.name"}}
+        {{> afQuickField name="unlisted"}}
+      {{/autoForm}}
+    </div>
+    <div class="col m6 hide-on-small-only">
+      <div class="card-panel blue-grey lighten-4" style="display: none">
+        <pre id="instrumented"></pre>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col s12 center">
+      <button id="run" class="btn waves-effect waves-light" type="submit" name="action" disabled="{{formInvalid job}}">
+        Run
+      </button>
+    </div>
+  </div>
+</template>

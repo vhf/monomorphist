@@ -51,6 +51,8 @@ RUN buildDeps='xz-utils' \
     && apt-get purge -y --auto-remove \$buildDeps \
     && ln -s /usr/local/bin/node /usr/local/bin/nodejs
 
+RUN npm install -g lodash bluebird moment underscore q jquery
+
 ENTRYPOINT bash /start.sh
 EOM
 

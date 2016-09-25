@@ -2,21 +2,6 @@ import { Meteor } from 'meteor/meteor';
 import { SimpleSchema } from 'meteor/aldeed:simple-schema';
 
 const JobsSchema = new SimpleSchema({
-  _userId: {
-    type: String,
-    label: 'The user who ran this job.',
-    autoValue: function autoValue(): string {
-      return this.userId;
-    },
-    // autoform: {
-    //   type: 'select',
-    //   options(): [selectItem] {
-    //     const things = Meteor.users.find({});
-    //     return things.map((thing: Object): selectItem => ({ label: thing.name, value: thing._id }));
-    //   },
-    // },
-    optional: true,
-  },
   createdAt: {
     type: Date,
     autoValue: function autoValue() {
@@ -45,27 +30,25 @@ const JobsSchema = new SimpleSchema({
     optional: true,
   },
   'fn.definition': {
-    label: 'Code to instrument.',
+    label: 'Your function.',
     type: String,
     autoform: {
       rows: 1,
-      placeholder: 'var sum = function(xs) {\n  return xs.reduce(function(acc, cur) {\n    return eval(\'acc + cur\');\n  }, 0);\n};\nvar numbers;',
     },
+    optional: true,
   },
   'fn.call': {
-    label: 'How to call the fn.',
+    label: 'How to call the function.',
     type: String,
     autoform: {
       rows: 1,
-      placeholder: 'numbers = _.chain(_.range(0, 50)).map(function(n) {\n  return _.random(10000)\n}).value();\nsum(numbers);\n',
     },
+    optional: true,
   },
   'fn.name': {
-    label: 'Which function to call.',
+    label: 'The name of the function to optimize.',
     type: String,
-    autoform: {
-      placeholder: 'sum',
-    },
+    optional: true,
   },
   nodes: {
     type: [String],
@@ -74,15 +57,47 @@ const JobsSchema = new SimpleSchema({
   'nodes.$': {
     type: String,
   },
+  nodesStatus: {
+    type: [Object],
+    optional: true,
+  },
+  'nodesStatus.$': {
+    type: Object,
+  },
+  'nodesStatus.$._id': {
+    type: String,
+  },
+  'nodesStatus.$.verdict': {
+    type: Number,
+  },
+  'nodesStatus.$.status': {
+    type: String,
+  },
+  result: {
+    type: [String],
+    optional: true,
+  },
+  'result.$': {
+    type: String,
+  },
   status: {
     type: String,
     defaultValue: 'editing',
     autoform: {
       options: (): Object[] => {
-        const statuses = ['editing', 'running', 'done'];
+        const statuses = ['editing', 'queued', 'running', 'done'];
         return statuses.map(status => ({ label: status, value: status }));
       },
     },
+  },
+  killed: {
+    type: Boolean,
+    defaultValue: false,
+  },
+  unlisted: {
+    label: 'Unlisted',
+    type: Boolean,
+    defaultValue: false,
   },
 });
 

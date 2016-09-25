@@ -25,6 +25,7 @@ kadira:blaze-layout
 kadira:flow-router
 momentjs:moment
 fourseven:scss
-materialize:materialize
 gildaspk:autoform-materialize
+vsivsi:job-collection
 perak:codemirror
+poetic:materialize-scss

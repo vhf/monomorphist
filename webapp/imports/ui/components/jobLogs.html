@@ -1,0 +1,53 @@
+<template name="jobLogs">
+  <div class="row">
+    <div class="col s12">
+      <h5>Logs</h5>
+      <ul class="collapsible" data-collapsible="expandable">
+        <li>
+          <div class="collapsible-header">
+            <div class="chip">server</div>
+            {{#if (compareStatus job 'running')}}
+              <div class="progress">
+                <div class="indeterminate"></div>
+              </div>
+            {{/if}}
+          </div>
+          <div class="collapsible-body">
+            <div class="blue-grey lighten-4">
+              <pre class="log-lines">{{#each execLogs}}{{ isoTime time }} {{{ message }}}<br>{{/each}}</pre>
+            </div>
+          </div>
+        </li>
+        {{#each _id in job.nodes}}
+          {{#let nodeStatus=(status _id)}}
+            <li>
+              <div class="collapsible-header {{optimizationClass nodeStatus}}">
+                <div class="chip">{{nodeVersion(_id)}}</div>
+                {{#if nodeStatus}}
+                  <div class="right">
+                    {{nodeStatus.status}}
+                  </div>
+                {{ else }}
+                  {{#if (compareStatus job 'running')}}
+                    <div class="progress">
+                      <div class="indeterminate"></div>
+                    </div>
+                  {{/if}}
+                {{/if}}
+              </div>
+              <div class="collapsible-body" id="node-log-{{_id}}">
+                {{#let logs=(logsFrom _id)}}
+                  <div class="blue-grey lighten-4">
+                    <pre class="log-lines">{{#each logs}}{{{ message }}}<br>{{/each}}</pre>
+                  </div>
+                {{/let}}
+              </div>
+            </li>
+          {{/let}}
+        {{else}}
+          Please select at least one node version.
+        {{/each}}
+      </ul>
+    </div>
+  </div>
+</template>

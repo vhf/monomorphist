@@ -1,38 +1,21 @@
 # monomorphist
-## a JavaScript performance companion
-
-rough overview:
-
-Two textboxes:
-
-1. Paste a JS function.
-2. Paste a call to this JS function.
-
-Workflow:
-
-1. Fill in the two textboxes
-2. Hit run (choose which node versions to target?)
-3. It gets instrumented on the server
-4. The server spawns containers to run the code
-5. The result is streamed to the client
-
-## architecture
-```
-containers: [http] ← ws → [server]
-
-                            ↑
-                          syslog
-                            ↓
-
-containers: [node 0.10] [node 0.12] [node 4] [node 5] [node 6] …
-```
-
-### bailout and deopt
-
-Split pane with explanation and tips about a bailout or deopt.
-
-[IRHydra](https://github.com/mraleph/irhydra) ?
+## a JavaScript (V8) performance companion
 
 ### TODO
 
-- [x] Security? Node containers shouldn't be able to network at all
+- [x] Security: Node containers shouldn't be able to network at all
+- [x] Live preview of the instrumented code when filling the form
+- [x] Dynamically add panes when adding an engine.
+- [ ] [IRHydra](https://github.com/mraleph/irhydra)?
+- [ ] Visual queues of the job status and optimization status
+- [ ] Validate function call and function name
+- [ ] Highlight relevant parts from the logs. Give an aggregated overview, store this aggregated overview together with the job for stats purposes.
+- [ ] Fake a job for demo purposes. Make it interesting.
+- [ ] Implement queue
+- [ ] Display queue status. Is it running at full capacity?
+- [ ] Stats : how long does a job usually last, how long until my job runs, what are the common mistakes
+- [x] Kill jobs after 30s
+- [ ] In the job logs per node, highlight every occurrence of the function name
+- [ ] Sort the node packageVersions by version comparison
+- [ ] Compare several exampleFunctions and see what could be removed if printStatus() wasn't defined in the file being profiled
+- [ ] Install a few popular packages inside the node containers (lodash, bluebird, …?)
