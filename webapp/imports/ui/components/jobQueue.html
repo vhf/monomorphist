@@ -1,40 +1,44 @@
 <template name="jobQueue">
   <ul class="collection">
-    <li class="collection-header center">
-      running
+    <li class="collection-item center">
+      {{ runningStatus }}
     </li>
     {{#each jobsRunning}}
       <li class="collection-item queue-item queue-item-running {{#if currentJob data._jobId}}active{{/if}}">
         {{#each data.nodes}}<span class="btn disabled">{{nodeVersion(this)}}</span> {{/each}}
-        {{#unless data.unlisted}}
-          <a href="/job/{{data._jobId}}" class="btn disabled" target="_blank"><i class="material-icons">tab_unselected</i></a>
-        {{/unless}}
-      </li>
-    {{else}}
-      <li class="collection-item center">
-        empty
+        {{#if data.unlisted}}
+          <a href="#!" class="btn disabled"><i class="material-icons">visibility_off</i></a>
+        {{else}}
+          <a href="/job/{{data._jobId}}" class="btn disabled" target="_blank"><i class="material-icons">visibility</i></a>
+        {{/if}}
       </li>
     {{/each}}
     {{# if jobsReady}}
-      <li class="collection-header center">
+      <li class="collection-item center">
         up next
       </li>
       {{#each jobsReady}}
         <li class="collection-item queue-item queue-item-ready {{#if currentJob data._jobId}}active{{/if}}">
           {{#each data.nodes}}<span class="btn disabled">{{nodeVersion(this)}}</span> {{/each}}
-          {{#unless data.unlisted}}
-            <a href="/job/{{data._jobId}}" class="btn disabled" target="_blank"><i class="material-icons">tab_unselected</i></a>
-          {{/unless}}
+          {{#if data.unlisted}}
+            <a href="#!" class="btn disabled"><i class="material-icons">visibility_off</i></a>
+          {{else}}
+            <a href="/job/{{data._jobId}}" class="btn disabled" target="_blank"><i class="material-icons">visibility</i></a>
+          {{/if}}
         </li>
       {{/each}}
     {{/if}}
-    <li class="collection-header center">
+    <li class="collection-item center">
       history
     </li>
     {{#each jobsDone}}
       <li class="collection-item queue-item queue-item-ready">
         {{#each nodes}}<span class="btn disabled">{{nodeVersion(this)}}</span> {{/each}}
-        <a href="/job/{{_id}}" class="btn disabled" target="_blank"><i class="material-icons">tab_unselected</i></a>
+        {{#if unlisted}}
+          <a href="#!" class="btn disabled"><i class="material-icons">visibility_off</i></a>
+        {{else}}
+          <a href="/job/{{_id}}" class="btn disabled" target="_blank"><i class="material-icons">visibility</i></a>
+        {{/if}}
       </li>
     {{/each}}
   </ul>

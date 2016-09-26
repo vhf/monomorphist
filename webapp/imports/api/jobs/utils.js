@@ -65,10 +65,8 @@ const parseRawOutput = (_line) => {
   const reasonMatched = line.match(/^\[(disabled optimization)(.*)(, reason): (.*)\]$/);
   if (reasonMatched) {
     const [,,,, reason] = reasonMatched;
-    console.log(`>${reason}<`);
     if (reason in reasons) {
       const link = reasons[reason];
-      console.log(link);
       line = line.replace(/^\[(disabled optimization)(.*)(, reason): (.*)\]$/,
                           `[$1<span class="collapse-column collapsed">$2$3</span>: <a href="${link}">$4</a>]`);
     } else {

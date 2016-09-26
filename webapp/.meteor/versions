@@ -73,6 +73,7 @@ reload@1.1.10
 retry@1.0.8
 routepolicy@1.0.11
 shell-server@0.2.1
+simple:reactive-method@1.0.2
 spacebars@1.0.13
 spacebars-compiler@1.0.13
 standard-minifier-css@1.2.0

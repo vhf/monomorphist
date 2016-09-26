@@ -15,6 +15,5 @@ Template.jobShow.helpers({});
 Template.jobShow.onRendered(() => {
   Meteor.call('job:instrument', Template.instance().getJobId(), (err, code) => {
     $('#instrumented').html(code);
-    console.log(code);
   });
 });

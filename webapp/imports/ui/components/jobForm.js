@@ -2,17 +2,22 @@ import { Template } from 'meteor/templating';
 import { FlowRouter } from 'meteor/kadira:flow-router';
 import { CodeMirror } from 'meteor/perak:codemirror';
 import { AutoForm } from 'meteor/aldeed:autoform';
+import { Utility } from 'meteor/gildaspk:autoform-materialize';
 import { $ } from 'meteor/jquery';
 
 import Jobs from '/imports/api/jobs/collection';
 import Nodes from '/imports/api/nodes/collection';
+import Queue from '/imports/api/queue/collection';
+
+const { concurrency, timeout } = Meteor.settings.public;
 
 const renderLivePreview = () => {
   const definition = $('textarea[name="fn.definition"]').val();
   const call = $('textarea[name="fn.call"]').val();
   const name = $('input[name="fn.name"]').val();
+  const strict = $('input[name="fn.strict"]').is(':checked');
 
-  Meteor.call('job:instrument', { definition, call, name }, (err, code) => {
+  Meteor.call('job:instrument', { definition, call, name, strict }, (err, code) => {
     $('#instrumented').parent('div').show();
     $('#instrumented').html(code);
   });
@@ -92,6 +97,12 @@ Template.jobForm.helpers({
   Jobs() {
     return Jobs;
   },
+  estimate() {
+    const jobs = Queue.find({ status: { $not: 'done' } }).count();
+    const time = ((jobs / concurrency) * timeout) / 1000;
+    const rounded = Math.round(time / 100) * 100;
+    return rounded;
+  },
 });
 
 Template.jobForm.events({
@@ -101,6 +112,7 @@ Template.jobForm.events({
     Meteor.call(checked ? 'job:addNode' : 'job:removeNode', Template.instance().getJobId(), id);
   },
   'keyup input[name="fn.name"]': renderLivePreview,
+  'change input[name="fn.strict"]': renderLivePreview,
   'click #run': event => {
     $(event.target).prop('disabled', true);
     Meteor.call('job:submit', Template.instance().getJobId());
@@ -109,4 +121,18 @@ Template.jobForm.events({
 
 Template.jobForm.onRendered(() => {
   codeMirror();
+  renderLivePreview();
+});
+
+Template.afQuickField_unlistedCheckbox.helpers({ // eslint-disable-line meteor/template-names
+  // atts: () => {
+  //   let atts = _.clone(this.atts);
+  //   const context = AutoForm.getFormSchema().namedContext(AutoForm.getFormId());
+  //
+  //   if (context.keyIsInvalid(atts.name)) {
+  //     atts = AutoForm.Utility.addClass(atts, 'invalid');
+  //   }
+  //
+  //   return atts;
+  // },
 });

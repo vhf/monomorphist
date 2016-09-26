@@ -1,0 +1,53 @@
+<template name="footer">
+  <footer class="page-footer">
+    <div class="container">
+      <div class="row">
+        <div class="col l3 s12">
+          <table class="highlight responsive-table status-table">
+            <thead>
+              <tr><h5 class="white-text">Status</h5></tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Job waiting time (s)</td>
+                <td class="right-align">{{ estimate }}</td>
+              </tr>
+              <tr>
+                <td>Outstanding jobs</td>
+                <td class="right-align">{{ queueLength }}</td>
+              </tr>
+              <tr>
+                <td>Jobs done</td>
+                <td class="right-align">{{ doneJobsCount }}</td>
+              </tr>
+              <tr>
+                <td>Jobs created</td>
+                <td class="right-align">{{ totalJobsCount }}</td>
+              </tr>
+              <tr>
+                <td>Jobs killed/timeout</td>
+                <td class="right-align">{{ queueLength }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="col l4 offset-l2 s12">
+          <h5 class="white-text">This is OSS</h5>
+          <ul>
+            <li>
+              <a class="grey-text text-lighten-3" href="https://github.com/vhf/monomorphist">Fork on github</a>
+            </li>
+            <li>
+              <a class="grey-text text-lighten-3" href="https://github.com/vhf/monomorphist/issues/new">Suggest a feature</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="footer-copyright">
+      <div class="container">
+      <a class="grey-text text-lighten-4" href="https://vhf.github.io">© 2016 victor felder</a>
+      </div>
+    </div>
+  </footer>
+</template>

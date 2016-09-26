@@ -5,6 +5,8 @@ import Jobs from '/imports/api/jobs/collection';
 import Nodes from '/imports/api/nodes/collection';
 import Queue from '/imports/api/queue/collection';
 
+const { concurrency } = Meteor.settings.public;
+
 Template.jobQueue.onCreated(function onCreated() {
   this.getJobId = () => FlowRouter.getParam('_id');
   this.autorun(() => {
@@ -15,8 +17,15 @@ Template.jobQueue.onCreated(function onCreated() {
 });
 
 Template.jobQueue.helpers({
+  runningStatus() {
+    const running = Queue.find({ status: 'running' }).count();
+    if (!running) {
+      return 'No work, go ahead.';
+    }
+    return `${running}/${concurrency} running`;
+  },
   jobsDone() {
-    return Jobs.find({ status: 'done', unlisted: false }, { sort: { createdAt: -1 } }).fetch();
+    return Jobs.find({ status: 'done', unlisted: false }, { limit: 50, sort: { createdAt: -1 } }).fetch();
   },
   jobsReady() {
     return Queue.find({ status: 'ready' }, { sort: { created: -1 } }).fetch();

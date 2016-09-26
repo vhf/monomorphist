@@ -79,3 +79,25 @@
     line-height: 18px;
   }
 }
+
+footer {
+  @extend .blue-grey, .darken-1;
+}
+
+table.highlight.status-table > tbody > tr:hover {
+  @extend .blue-grey, .lighten-2;
+}
+
+.status-table {
+  color: white;
+  td {
+    padding: 0;
+  }
+}
+
+.instrumented {
+  padding: 10px;
+  pre {
+    margin: 0;
+  }
+}

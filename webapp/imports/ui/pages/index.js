@@ -7,6 +7,9 @@ import '../components/jobForm.js';
 import '../components/jobShow.js';
 import '../components/jobLogs.js';
 import '../components/jobQueue.js';
+import '../components/footer.js';
+
+const { concurrency, timeout } = Meteor.settings.public;
 
 Template.index.onCreated(function onCreated() {
   this.getJobId = () => FlowRouter.getParam('_id');
@@ -29,6 +32,12 @@ Template.index.helpers({
     return Jobs.find().fetch();
   },
   queueLength() {
-    return Queue.find().count();
+    return Queue.find({ status: { $not: 'done' } }).count();
+  },
+  estimate() {
+    const jobs = Queue.find({ status: { $not: 'done' } }).count();
+    const time = ((jobs / concurrency) * timeout) / 1000;
+    const rounded = Math.round(time / 100) * 100;
+    return rounded;
   },
 });

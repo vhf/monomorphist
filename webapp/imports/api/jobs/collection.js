@@ -30,7 +30,7 @@ const JobsSchema = new SimpleSchema({
     optional: true,
   },
   'fn.definition': {
-    label: 'Your function.',
+    label: 'Your function',
     type: String,
     autoform: {
       rows: 1,
@@ -38,7 +38,7 @@ const JobsSchema = new SimpleSchema({
     optional: true,
   },
   'fn.call': {
-    label: 'How to call the function.',
+    label: 'How to call the function',
     type: String,
     autoform: {
       rows: 1,
@@ -46,8 +46,13 @@ const JobsSchema = new SimpleSchema({
     optional: true,
   },
   'fn.name': {
-    label: 'The name of the function to optimize.',
+    label: 'The name of the function to optimize',
     type: String,
+    optional: true,
+  },
+  'fn.strict': {
+    label: 'Use strict',
+    type: Boolean,
     optional: true,
   },
   nodes: {
@@ -95,7 +100,7 @@ const JobsSchema = new SimpleSchema({
     defaultValue: false,
   },
   unlisted: {
-    label: 'Unlisted',
+    label: "Unlisted (job url won't be listed)",
     type: Boolean,
     defaultValue: false,
   },

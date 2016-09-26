@@ -12,6 +12,21 @@ const childProcess = require('child_process');
 const { concurrency, pollInterval, timeout } = Meteor.settings.public;
 const workTimeout = timeout;
 
+const createReaper = (jc, type, timeOut) => {
+  const autofail = () => {
+    const stale = new Date(new Date() - timeOut);
+    jc.find({ status: 'running', type: type, updated: { $lt: stale } })
+      .forEach(job => {
+        Jobs.update({ _id: job.data._jobId }, { $set: { killed: true, status: 'done' } });
+        Logs.insert({ _jobId: job.data._jobId, time: new Date(), message: 'job killed server side after timeout' });
+        new Job(jc, job).fail('Timed out by autofail');
+      });
+  };
+  return Meteor.setInterval(autofail, timeOut);
+};
+
+createReaper(Queue, 'run', timeout);
+
 const exec = (resolve, reject, _jobId, _nodeId, container) => {
   childProcess.exec(
     `docker-compose run -e JOB_ID=${_jobId} ${container}`, {
@@ -44,7 +59,7 @@ const exec = (resolve, reject, _jobId, _nodeId, container) => {
         Logs.insert({ _jobId, _nodeId, time: new Date(), raw, message: `stderr: ${stderr}` });
       }
       const status = verdict in optimizationStatus ? optimizationStatus[verdict] : '';
-      Jobs.update({ _id: _jobId }, { killed, $push: { nodesStatus: { _id: _nodeId, verdict, status } } });
+      Jobs.update({ _id: _jobId }, { $set: { killed }, $push: { nodesStatus: { _id: _nodeId, verdict, status } } });
       resolve(_nodeId);
     })
   );
