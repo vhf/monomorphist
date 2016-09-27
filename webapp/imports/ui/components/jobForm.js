@@ -2,7 +2,6 @@ import { Template } from 'meteor/templating';
 import { FlowRouter } from 'meteor/kadira:flow-router';
 import { CodeMirror } from 'meteor/perak:codemirror';
 import { AutoForm } from 'meteor/aldeed:autoform';
-import { Utility } from 'meteor/gildaspk:autoform-materialize';
 import { $ } from 'meteor/jquery';
 
 import Jobs from '/imports/api/jobs/collection';
@@ -63,19 +62,19 @@ const codeMirror = () => {
 };
 
 Template.jobForm.onCreated(function onCreated() {
-  this.getJobId = () => FlowRouter.getParam('_id');
+  this.getPublicId = () => FlowRouter.getParam('_publicId');
   this.autorun(() => {
-    const _jobId = this.getJobId();
-    this.subscribe('job', _jobId);
+    const _publicId = this.getPublicId();
+    this.subscribe('job', _publicId);
     this.subscribe('nodes');
-    this.subscribe('logs', _jobId);
+    this.subscribe('logs', _publicId);
   });
 });
 
 Template.jobForm.helpers({
   job() {
-    const _id = Template.instance().getJobId();
-    const job = Jobs.findOne({ _id });
+    const _publicId = Template.instance().getPublicId();
+    const job = Jobs.findOne({ _publicId });
     return job;
   },
   nodes() {
@@ -109,30 +108,17 @@ Template.jobForm.events({
   'change .node-checkbox': event => {
     const id = $(event.target).attr('id');
     const checked = $(event.target).is(':checked');
-    Meteor.call(checked ? 'job:addNode' : 'job:removeNode', Template.instance().getJobId(), id);
+    Meteor.call(checked ? 'job:addNode' : 'job:removeNode', Template.instance().getPublicId(), id);
   },
   'keyup input[name="fn.name"]': renderLivePreview,
   'change input[name="fn.strict"]': renderLivePreview,
   'click #run': event => {
     $(event.target).prop('disabled', true);
-    Meteor.call('job:submit', Template.instance().getJobId());
+    Meteor.call('job:submit', Template.instance().getPublicId());
   },
 });
 
 Template.jobForm.onRendered(() => {
   codeMirror();
   renderLivePreview();
-});
-
-Template.afQuickField_unlistedCheckbox.helpers({ // eslint-disable-line meteor/template-names
-  // atts: () => {
-  //   let atts = _.clone(this.atts);
-  //   const context = AutoForm.getFormSchema().namedContext(AutoForm.getFormId());
-  //
-  //   if (context.keyIsInvalid(atts.name)) {
-  //     atts = AutoForm.Utility.addClass(atts, 'invalid');
-  //   }
-  //
-  //   return atts;
-  // },
 });

@@ -1,4 +1,4 @@
-import '/imports/ui/components/unlistedCheckbox.html';
+import '/imports/ui/components/listedCheckbox.html';
 import '/imports/ui/components/jobForm.html';
 import '/imports/ui/components/jobShow.html';
 import '/imports/ui/components/jobLogs.html';

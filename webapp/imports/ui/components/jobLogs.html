@@ -6,18 +6,25 @@
         <li>
           <div class="collapsible-header">
             <div class="chip">server</div>
-            {{#if (compareStatus job 'running')}}
+            {{#if (compareStatus job 'ready')}}
               <div class="progress">
                 <div class="indeterminate"></div>
               </div>
+            {{else}}
+              {{#if (compareStatus job 'running')}}
+                <div class="progress">
+                  <div class="indeterminate preloader-running"></div>
+                </div>
+              {{/if}}
             {{/if}}
           </div>
           <div class="collapsible-body">
             <div class="blue-grey lighten-4">
-              <pre class="log-lines">{{#each execLogs}}{{ isoTime time }} {{{ message }}}<br>{{/each}}</pre>
+              <pre class="log-lines">{{#each (logs 'undefined')}}{{ isoTime time }} {{{ message }}}<br>{{/each}}</pre>
             </div>
           </div>
         </li>
+
         {{#each _id in job.nodes}}
           {{#let nodeStatus=(status _id)}}
             <li>
@@ -28,19 +35,23 @@
                     {{nodeStatus.status}}
                   </div>
                 {{ else }}
-                  {{#if (compareStatus job 'running')}}
+                  {{#if (compareStatus job 'ready')}}
                     <div class="progress">
                       <div class="indeterminate"></div>
                     </div>
+                  {{else}}
+                    {{#if (compareStatus job 'running')}}
+                      <div class="progress">
+                        <div class="indeterminate preloader-running"></div>
+                      </div>
+                    {{/if}}
                   {{/if}}
                 {{/if}}
               </div>
               <div class="collapsible-body" id="node-log-{{_id}}">
-                {{#let logs=(logsFrom _id)}}
-                  <div class="blue-grey lighten-4">
-                    <pre class="log-lines">{{#each logs}}{{{ message }}}<br>{{/each}}</pre>
-                  </div>
-                {{/let}}
+                <div class="blue-grey lighten-4">
+                  <pre class="log-lines">{{#each (logs _id)}}{{{ message }}}<br>{{/each}}</pre>
+                </div>
               </div>
             </li>
           {{/let}}

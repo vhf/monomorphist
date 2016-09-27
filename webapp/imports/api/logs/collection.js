@@ -28,4 +28,10 @@ const LogsSchema = new SimpleSchema({
 const Logs = new Meteor.Collection('logs');
 Logs.attachSchema(LogsSchema);
 
+if (Meteor.isServer) {
+  Meteor.startup(() => {
+    Logs._ensureIndex({ _jobId: 1 });
+  });
+}
+
 export default Logs;

@@ -1,0 +1,13 @@
+<template name="afCheckbox_listedCheckbox">
+  <p>
+    <input type="checkbox" value="{{this.value}}" {{atts}} />
+    <label for="{{atts.id}}">
+      <i class="material-icons checkbox-icon">{{#if this.value}}visibility{{else}}visibility_off{{/if}}</i>
+      {{#if this.value}}
+        Listed (job will be accessible from job history)
+      {{else}}
+        Unlisted (job url won't be listed)
+      {{/if}}
+    </label>
+  </p>
+</template>

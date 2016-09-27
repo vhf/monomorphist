@@ -12,17 +12,17 @@ import '../components/footer.js';
 const { concurrency, timeout } = Meteor.settings.public;
 
 Template.index.onCreated(function onCreated() {
-  this.getJobId = () => FlowRouter.getParam('_id');
+  this.getPublicId = () => FlowRouter.getParam('_publicId');
   this.autorun(() => {
-    const _jobId = this.getJobId();
-    this.subscribe('job', _jobId);
+    const _publicId = this.getPublicId();
+    this.subscribe('job', _publicId);
   });
 });
 
 Template.index.helpers({
   job() {
-    const _id = Template.instance().getJobId();
-    const job = Jobs.findOne({ _id });
+    const _publicId = Template.instance().getPublicId();
+    const job = Jobs.findOne({ _publicId });
     return job;
   },
   compareStatus(job, status) {

@@ -4,7 +4,7 @@ import Logs from '/imports/api/logs/collection';
 import Nodes from '/imports/api/nodes/collection';
 import Queue from '/imports/api/queue/collection';
 import { Job } from 'meteor/vsivsi:job-collection';
-import { optimizationStatus, parseRawOutput } from '/imports/api/jobs/utils';
+import { optimizationStatuses, parseRawOutput } from '/imports/api/jobs/utils';
 
 const fs = require('fs');
 const childProcess = require('child_process');
@@ -12,20 +12,35 @@ const childProcess = require('child_process');
 const { concurrency, pollInterval, timeout } = Meteor.settings.public;
 const workTimeout = timeout;
 
-const createReaper = (jc, type, timeOut) => {
+const timeoutFail = (jc, type, timeOut) => {
   const autofail = () => {
     const stale = new Date(new Date() - timeOut);
     jc.find({ status: 'running', type: type, updated: { $lt: stale } })
       .forEach(job => {
         Jobs.update({ _id: job.data._jobId }, { $set: { killed: true, status: 'done' } });
-        Logs.insert({ _jobId: job.data._jobId, time: new Date(), message: 'job killed server side after timeout' });
+        Logs.insert({ _jobId: job.data._jobId, time: new Date(), message: 'Killed by server (timeout).' });
         new Job(jc, job).fail('Timed out by autofail');
       });
   };
   return Meteor.setInterval(autofail, timeOut);
 };
 
-createReaper(Queue, 'run', timeout);
+const queueFailsAsDoneJobs = (jc, type, timeOut) => {
+  const markDeadAsDone = () => {
+    const stale = new Date(new Date() - (timeOut * 3));
+    jc.find({ status: 'failed', type: type, updated: { $lt: stale } })
+      .forEach(job => {
+        const updated = Jobs.update({ _id: job.data._jobId, killed: false, status: 'running' }, { $set: { killed: true, status: 'done' } });
+        if (updated) {
+          Logs.insert({ _jobId: job.data._jobId, time: new Date(), message: 'This job died.' });
+        }
+      });
+  };
+  return Meteor.setInterval(markDeadAsDone, Math.floor(timeOut / 1.95));
+};
+
+timeoutFail(Queue, 'run', timeout);
+queueFailsAsDoneJobs(Queue, 'run', timeout);
 
 const exec = (resolve, reject, _jobId, _nodeId, container) => {
   childProcess.exec(
@@ -58,7 +73,7 @@ const exec = (resolve, reject, _jobId, _nodeId, container) => {
         const raw = stderr;
         Logs.insert({ _jobId, _nodeId, time: new Date(), raw, message: `stderr: ${stderr}` });
       }
-      const status = verdict in optimizationStatus ? optimizationStatus[verdict] : '';
+      const status = verdict in optimizationStatuses ? optimizationStatuses[verdict] : '';
       Jobs.update({ _id: _jobId }, { $set: { killed }, $push: { nodesStatus: { _id: _nodeId, verdict, status } } });
       resolve(_nodeId);
     })
@@ -70,7 +85,7 @@ Job.processJobs(Queue, 'run', { concurrency, pollInterval, workTimeout },
     const { _jobId } = qObj.data;
     const job = Jobs.findOne({ _id: _jobId });
 
-    Jobs.update({ _id: _jobId, status: 'queued' }, { $set: { status: 'running' } });
+    Jobs.update({ _id: _jobId, status: 'ready' }, { $set: { status: 'running' } });
     Logs.insert({ _jobId, time: new Date(), message: `job ${_jobId} started running...` });
 
     const instrumented = Meteor.call('job:instrument', job.fn, false);

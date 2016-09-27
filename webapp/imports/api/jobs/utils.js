@@ -1,6 +1,6 @@
 // kudos to https://gist.github.com/mathiasbynens/6334847 for this one
 
-const optimizationStatus = {
+const optimizationStatuses = {
   1: 'Function is optimized',
   2: 'Function is not optimized',
   3: 'Function is always optimized',
@@ -87,4 +87,4 @@ const parseRawOutput = (_line) => {
   return { line, verdict };
 };
 
-export { optimizationStatus, deoptimizedVerdicts, unsureVerdicts, optimizedVerdicts, reasons, parseRawOutput };
+export { optimizationStatuses, deoptimizedVerdicts, unsureVerdicts, optimizedVerdicts, reasons, parseRawOutput };

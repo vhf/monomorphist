@@ -3,39 +3,43 @@ import { FlowRouter } from 'meteor/kadira:flow-router';
 
 import Jobs from '/imports/api/jobs/collection';
 import Nodes from '/imports/api/nodes/collection';
-import Queue from '/imports/api/queue/collection';
 
 const { concurrency } = Meteor.settings.public;
 
 Template.jobQueue.onCreated(function onCreated() {
-  this.getJobId = () => FlowRouter.getParam('_id');
+  this.getPublicId = () => FlowRouter.getParam('_publicId');
   this.autorun(() => {
-    this.subscribe('queue');
     this.subscribe('nodes');
     this.subscribe('jobs');
+    this.subscribe('unlistedJobs');
+    this.subscribe('queue');
   });
 });
 
 Template.jobQueue.helpers({
   runningStatus() {
-    const running = Queue.find({ status: 'running' }).count();
-    if (!running) {
+    const ready = Jobs.find({ status: 'ready' }).count();
+    const running = Jobs.find({ status: 'running' }).count();
+    if (ready + running === 0) {
       return 'No work, go ahead.';
     }
     return `${running}/${concurrency} running`;
   },
   jobsDone() {
-    return Jobs.find({ status: 'done', unlisted: false }, { limit: 50, sort: { createdAt: -1 } }).fetch();
+    const listed = Jobs.find({ status: 'done', listed: true }, { limit: 50, sort: { createdAt: -1 } }).fetch();
+    const unlisted = Jobs.find({ status: 'done', listed: false }, { limit: 50, sort: { createdAt: -1 } }).fetch();
+    const all = _.chain(listed).union(unlisted).sort((a, b) => (+b) - (+a)).value();
+    return all;
   },
   jobsReady() {
-    return Queue.find({ status: 'ready' }, { sort: { created: -1 } }).fetch();
+    return Jobs.find({ status: 'ready' }, { sort: { created: -1 } }).fetch();
   },
   jobsRunning() {
-    return Queue.find({ status: 'running' }).fetch();
+    return Jobs.find({ status: 'running' }).fetch();
   },
   currentJob(_jobId) {
-    const _id = Template.instance().getJobId();
-    return _jobId === _id;
+    const _publicId = Template.instance().getPublicId();
+    return _jobId === _publicId;
   },
   nodeVersion(_id) {
     const node = Nodes.findOne({ _id });

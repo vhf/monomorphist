@@ -1,28 +1,30 @@
 import { Template } from 'meteor/templating';
 import { FlowRouter } from 'meteor/kadira:flow-router';
+import { ReactiveVar } from 'meteor/reactive-var';
+import { ReactiveMethod } from 'meteor/simple:reactive-method';
 import { $ } from 'meteor/jquery';
 
 import Jobs from '/imports/api/jobs/collection';
 import Nodes from '/imports/api/nodes/collection';
-import Logs from '/imports/api/logs/collection';
 
 import { deoptimizedVerdicts, unsureVerdicts, optimizedVerdicts } from '/imports/api/jobs/utils';
 
 Template.jobLogs.onCreated(function onCreated() {
-  this.getJobId = () => FlowRouter.getParam('_id');
+  this.getPublicId = () => FlowRouter.getParam('_publicId');
+  this.job = new ReactiveVar();
   this.autorun(() => {
-    const _jobId = this.getJobId();
-    this.subscribe('job', _jobId);
+    const _publicId = this.getPublicId();
+    this.subscribe('job', _publicId);
     this.subscribe('nodes');
-    this.subscribe('logs', _jobId);
+    if (this.subscriptionsReady()) {
+      this.job.set(Jobs.findOne({ _publicId }));
+    }
   });
 });
 
 Template.jobLogs.helpers({
   job() {
-    const _id = Template.instance().getJobId();
-    const job = Jobs.findOne({ _id });
-    return job;
+    return Template.instance().job.get();
   },
   nodeVersion(_id) {
     const node = Nodes.findOne({ _id });
@@ -32,8 +34,7 @@ Template.jobLogs.helpers({
     return (job && job.status) ? job.status === status : false;
   },
   status(_nodeId) {
-    const _jobId = Template.instance().getJobId();
-    const job = Jobs.findOne({ _id: _jobId });
+    const job = Template.instance().job.get();
     if (job && job.nodesStatus && job.nodesStatus.length) {
       return _.findWhere(job.nodesStatus, { _id: _nodeId });
     }
@@ -51,13 +52,13 @@ Template.jobLogs.helpers({
     }
     return '';
   },
-  logsFrom(_nodeId) {
-    const _jobId = Template.instance().getJobId();
-    return Logs.find({ _jobId, _nodeId }).fetch();
-  },
-  execLogs() {
-    const _jobId = Template.instance().getJobId();
-    return Logs.find({ _jobId, _nodeId: { $exists: false } }).fetch();
+  logs(_nodeId = 'undefined') {
+    const job = Template.instance().job.get();
+    const logs = ReactiveMethod.call('logs:job', job);
+    if (logs && _nodeId in logs) {
+      return logs[_nodeId];
+    }
+    return [];
   },
   isoTime(time) {
     return new Date(time).toISOString();

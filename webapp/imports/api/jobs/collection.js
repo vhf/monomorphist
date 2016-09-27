@@ -2,6 +2,10 @@ import { Meteor } from 'meteor/meteor';
 import { SimpleSchema } from 'meteor/aldeed:simple-schema';
 
 const JobsSchema = new SimpleSchema({
+  _publicId: {
+    type: String,
+    regEx: SimpleSchema.RegEx.Id,
+  },
   createdAt: {
     type: Date,
     autoValue: function autoValue() {
@@ -90,7 +94,7 @@ const JobsSchema = new SimpleSchema({
     defaultValue: 'editing',
     autoform: {
       options: (): Object[] => {
-        const statuses = ['editing', 'queued', 'running', 'done'];
+        const statuses = ['editing', 'ready', 'running', 'done'];
         return statuses.map(status => ({ label: status, value: status }));
       },
     },
@@ -99,14 +103,20 @@ const JobsSchema = new SimpleSchema({
     type: Boolean,
     defaultValue: false,
   },
-  unlisted: {
-    label: "Unlisted (job url won't be listed)",
+  listed: {
+    label: 'labels are hardcoded in listedCheckbox.html',
     type: Boolean,
-    defaultValue: false,
+    defaultValue: true,
   },
 });
 
 const Jobs = new Meteor.Collection('jobs');
 Jobs.attachSchema(JobsSchema);
+
+if (Meteor.isServer) {
+  Meteor.startup(() => {
+    Jobs._ensureIndex({ _publicId: 1 }, { unique: true });
+  });
+}
 
 export default Jobs;

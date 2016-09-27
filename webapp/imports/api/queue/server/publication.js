@@ -1,9 +1,9 @@
 import { Meteor } from 'meteor/meteor';
 import Queue from '../collection';
 
-Meteor.publish('queue', () => Queue.find({}));
+Meteor.publish('queue', () => Queue.find({}, { fields: { data: 0 } }));
 
-// Start the queue queue running
+// Run the job queue
 Queue.startJobServer((err, succ) => {
   if (succ) {
     console.log('Queue server started.');
