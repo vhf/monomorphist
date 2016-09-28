@@ -72,7 +72,7 @@ Meteor.methods({
     Logs.insert({ _jobId: job._id, time: new Date(), message: 'job queued...' });
   },
   'jobs:total'() {
-    return Jobs.find({}).count();
+    return Jobs.find({ updatedAt: { $exists: true } }).count();
   },
   'jobs:done'() {
     return Jobs.find({ status: 'done' }).count();
