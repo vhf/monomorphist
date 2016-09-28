@@ -34,7 +34,7 @@ What's available right now is a tool to trace [V8 bailouts / deopts](http://vhf.
   - [ ] what are the common mistakes
 - [x] Kill jobs after 30s
 - [ ] In the job logs per node, highlight every occurrence of the function name
-- [ ] Sort the node packageVersions by version comparison
+- [ ] Sort the node versions by version comparison
 - [ ] Compare several exampleFunctions and see what could be removed if printStatus() wasn't defined in the file being profiled
 - [ ] Install a few popular packages inside the node containers (lodash, bluebird, …?)
 - [ ] use `parallel` to benchmark the server

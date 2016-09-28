@@ -91,7 +91,7 @@ Template.jobForm.helpers({
   },
   nodeVersion(_id) {
     const node = Nodes.findOne({ _id });
-    return node ? node.packageVersion : '';
+    return node ? node.version : '';
   },
   formInvalid(job) {
     if (job && job.fn) {

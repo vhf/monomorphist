@@ -5,17 +5,17 @@ import { _ } from 'meteor/underscore';
 import dedent from 'dedent-js';
 
 const nodesFixture = [
-  { packageVersion: '0.10.46', enabledByDefault: false },
-  { packageVersion: '0.12.15', enabledByDefault: false },
-  { packageVersion: '4.5.0', enabledByDefault: true },
-  { packageVersion: '5.12.0', enabledByDefault: false },
-  { packageVersion: '6.6.0', enabledByDefault: true },
+  { version: '0.10.46', enabledByDefault: false },
+  { version: '0.12.15', enabledByDefault: false },
+  { version: '4.5.0', enabledByDefault: true },
+  { version: '5.12.0', enabledByDefault: false },
+  { version: '6.6.0', enabledByDefault: true },
 ];
 
-const existingNodes = _.pluck(Nodes.find({}, { fields: { _id: 0, packageVersion: 1 } }).fetch(), 'packageVersion');
+const existingNodes = _.pluck(Nodes.find({}, { fields: { _id: 0, version: 1 } }).fetch(), 'version');
 
 nodesFixture.forEach(node => {
-  if (existingNodes.indexOf(node.packageVersion) === -1) {
+  if (existingNodes.indexOf(node.version) === -1) {
     Nodes.insert(node);
   }
 });
@@ -39,7 +39,7 @@ nodesFixture.forEach(node => {
 //   logs: [
 //     {
 //       _jobId: 'demo',
-//       _nodeId: Nodes.findOne({ packageVersion: '4.5.0' })._id,
+//       _nodeId: Nodes.findOne({ version: '4.5.0' })._id,
 //       time: new Date(),
 //       message: dedent`
 //         [disabled optimization for 0xd1c256df671 <SharedFunctionInfo NativeModule.compile>, reason: TryFinallyStatement]
@@ -66,7 +66,7 @@ nodesFixture.forEach(node => {
 //     },
 //     {
 //       _jobId: 'demo',
-//       _nodeId: Nodes.findOne({ packageVersion: '6.6.0' })._id,
+//       _nodeId: Nodes.findOne({ version: '6.6.0' })._id,
 //       time: new Date(),
 //       message: dedent`
 //         [disabled optimization for 0x3198e8947b11 <SharedFunctionInfo SAR>, reason: Call to a JavaScript runtime function]

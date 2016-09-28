@@ -8,7 +8,7 @@
     {{#each nodes}}
       <div class="col s1 switch center">
         <label for="{{ _id }}">
-          {{ packageVersion }}
+          {{ version }}
           <br>
           {{#if (nodeEnabled job _id)}}
             <input class="node-checkbox" type="checkbox" checked="checked" id="{{ _id }}" />

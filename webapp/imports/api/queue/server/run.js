@@ -99,7 +99,7 @@ Job.processJobs(Queue, 'run', { concurrency, pollInterval, workTimeout },
       const node = Nodes.findOne({ _id, disabled: false });
       return {
         _nodeId: _id,
-        container: `node-${node.packageVersion}`,
+        container: `node-${node.version}`,
       };
     });
 

@@ -25,7 +25,7 @@ const NodesSchema = new SimpleSchema({
     denyInsert: true,
     optional: true,
   },
-  packageVersion: {
+  version: {
     label: 'The package version used to download node when building the image.',
     type: String,
   },
@@ -44,7 +44,7 @@ Nodes.attachSchema(NodesSchema);
 
 if (Meteor.isServer) {
   Meteor.startup(() => {
-    Nodes._ensureIndex({ packageVersion: 1 }, { unique: true });
+    Nodes._ensureIndex({ version: 1 }, { unique: true });
   });
 }
 
