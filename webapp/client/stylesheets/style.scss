@@ -1,3 +1,5 @@
+$primary-color: #607d8b !default;
+
 @import "{poetic:materialize-scss}/sass/materialize.scss";
 
 .CodeMirror {
@@ -112,4 +114,16 @@ table.highlight.status-table > tbody > tr:hover {
 
 .preloader-running {
   @extend .light-green;
+}
+
+@media only screen and (min-width: 601px) {
+  nav, nav .nav-wrapper i, nav a.button-collapse, nav a.button-collapse i {
+    height: 28px;
+    line-height: 24px;
+  }
+}
+nav {
+  height: 21px;
+  line-height: 17px;
+  font-weight: bold;
 }
