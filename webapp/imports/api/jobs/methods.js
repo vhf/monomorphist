@@ -31,8 +31,16 @@ Meteor.methods({
   },
   'job:instrument'(p, screen = true) {
     check(p, Match.OneOf(Checks.Id, Object)); // eslint-disable-line new-cap
-    const fn = typeof p === 'string' ? Jobs.findOne({ _publicId: p }).fn : p;
-    if (!fn) return '';
+    let fn = p;
+    if (typeof p === 'string') {
+      const job = Jobs.findOne({ _publicId: p });
+      if (job && 'fn' in job) {
+        fn = job.fn;
+      }
+    }
+    if (!fn || ! (fn.definition || fn.call || fn.name)) {
+      return '';
+    }
     const strictLine = fn.strict ? `'use strict';\n` : '';
     const boilerplate = screen ? '' : dedent`
     function printStatus(fn) {

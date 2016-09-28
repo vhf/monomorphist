@@ -17,8 +17,10 @@ const renderLivePreview = () => {
   const strict = $('input[name="fn.strict"]').is(':checked');
 
   Meteor.call('job:instrument', { definition, call, name, strict }, (err, code) => {
-    $('#instrumented').parent('div').show();
-    $('#instrumented').html(code);
+    if (!err && code) {
+      $('#instrumented').parent('div').show();
+      $('#instrumented').html(code);
+    }
   });
   const modifier = AutoForm.getFormValues('jobForm').updateDoc;
   Jobs.update(FlowRouter.getParam('_id'), modifier);
