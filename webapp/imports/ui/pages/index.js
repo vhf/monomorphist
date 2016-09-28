@@ -1,4 +1,5 @@
 import { Template } from 'meteor/templating';
+import { $ } from 'meteor/jquery';
 import { FlowRouter } from 'meteor/kadira:flow-router';
 import Jobs from '/imports/api/jobs/collection';
 import Queue from '/imports/api/queue/collection';
@@ -40,4 +41,16 @@ Template.index.helpers({
     const rounded = Math.round(time / 100) * 100;
     return rounded;
   },
+});
+
+Template.index.onRendered(() => {
+  const _publicId = Template.instance().getPublicId();
+  // when leaving the page, we delete the job if it's empty
+  window.addEventListener('beforeunload', () => {
+    const job = Jobs.findOne({ _publicId });
+    if (typeof job.updatedAt === 'undefined') {
+      Jobs.remove({ _id: job._id });
+    }
+    return null; // avoids confirmation popup
+  });
 });

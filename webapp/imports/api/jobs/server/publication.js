@@ -12,4 +12,5 @@ Meteor.publish('unlistedJobs', () => Jobs.find({ status: 'done', listed: false }
 
 Jobs.allow({
   update: (userId, doc) => doc.status === 'editing',
+  remove: (userId, doc) => !('updatedAt' in doc),
 });
