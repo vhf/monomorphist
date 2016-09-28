@@ -23,7 +23,11 @@ const renderLivePreview = () => {
     }
   });
   const modifier = AutoForm.getFormValues('jobForm').updateDoc;
-  Jobs.update(FlowRouter.getParam('_id'), modifier);
+  const _publicId = FlowRouter.getParam('_publicId');
+  const job = Jobs.findOne({ _publicId });
+  if (job) {
+    Jobs.update(job._id, modifier);
+  }
 };
 
 const codeMirror = () => {
