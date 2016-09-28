@@ -42,13 +42,16 @@ const queueFailsAsDoneJobs = (jc, type, timeOut) => {
 timeoutFail(Queue, 'run', timeout);
 queueFailsAsDoneJobs(Queue, 'run', timeout);
 
+const envVarRegex = /^[a-z0-9][a-z0-9\-\.]{1,17}$/mi;
 const exec = (resolve, reject, _jobId, _nodeId, container) => {
+  if (!envVarRegex.test(_jobId) || !envVarRegex.test(container)) {
+    const raw = `Env var security check failed: ${_jobId} is ${envVarRegex.test(_jobId)}, ${container} is ${envVarRegex.test(container)}`;
+    Logs.insert({ _jobId, _nodeId, time: new Date(), raw, message: 'error: security check failed' });
+  }
   childProcess.exec(
     `docker-compose run -e JOB_ID=${_jobId} ${container}`, {
       cwd: '/mononodes',
     },
-    // `sleep ${Math.random() * 100}`, { timeout },
-    // `pwd`, { timeout: 10 * 1000 },
     Meteor.bindEnvironment((err, stdout, stderr) => {
       let killed = false;
       let verdict = -1;
