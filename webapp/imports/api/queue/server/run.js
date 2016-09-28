@@ -49,7 +49,7 @@ const exec = (resolve, reject, _jobId, _nodeId, container) => {
     Logs.insert({ _jobId, _nodeId, time: new Date(), raw, message: 'error: security check failed' });
   }
   childProcess.exec(
-    `docker-compose run -e JOB_ID=${_jobId} ${container}`, {
+    `docker-compose run -e JOB_ID=${_jobId} -u 1010 ${container}`, {
       cwd: '/mononodes',
     },
     Meteor.bindEnvironment((err, stdout, stderr) => {
@@ -108,7 +108,10 @@ Job.processJobs(Queue, 'run', { concurrency, pollInterval, workTimeout },
         exec(resolve, reject, _jobId, _nodeId, container)));
 
     Promise.all(runningJobs).then(() => {
-      fs.unlinkSync(`/src/${_jobId}/${_jobId}.js`);
+      // make sure to completely wipe the directory
+      childProcess.execSync(`rm -rf /src/${_jobId}/`, (err) => {
+        console.log(err);
+      });
       Jobs.update({ _id: _jobId, status: 'running' }, { $set: { status: 'done' } });
       Logs.insert({ _jobId, time: new Date(), message: 'job done.' });
       qObj.done();
