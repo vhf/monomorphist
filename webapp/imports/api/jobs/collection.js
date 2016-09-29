@@ -61,6 +61,8 @@ const JobsSchema = new SimpleSchema({
   },
   nodes: {
     type: [String],
+    minCount: 1,
+    maxCount: 5,
     optional: true,
   },
   'nodes.$': {

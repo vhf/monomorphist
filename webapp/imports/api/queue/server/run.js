@@ -95,19 +95,35 @@ Job.processJobs(Queue, 'run', { concurrency, pollInterval, workTimeout },
     fs.mkdirSync(`/src/${_jobId}`);
     fs.writeFileSync(`/src/${_jobId}/${_jobId}.js`, instrumented);
 
-    const containers = job.nodes.map(_id => {
-      const node = Nodes.findOne({ _id, disabled: false });
-      return {
-        _nodeId: _id,
-        container: `node-${node.version}`,
-      };
-    });
+    const containers = _
+      .chain(job.nodes)
+      .map(_id => {
+        // we make sure the job cannot run on disabled node version
+        const node = Nodes.findOne({ _id, enabled: true });
+        if (node) {
+          return {
+            _nodeId: _id,
+            container: `node-${node.version}`,
+          };
+        }
+        return false;
+      })
+      .compact()
+      .value();
 
-    const runningJobs = containers.map(({ _nodeId, container }) =>
+    if (!containers.length) {
+      const err = 'Job failed because no valid node version found.';
+      Jobs.update({ _id: _jobId }, { $set: { status: 'done' } });
+      Logs.insert({ _jobId, time: new Date(), message: err });
+      qObj.fail(err);
+      cb();
+    }
+
+    const runJobs = containers.map(({ _nodeId, container }) =>
       new Promise((resolve, reject) =>
         exec(resolve, reject, _jobId, _nodeId, container)));
 
-    Promise.all(runningJobs).then(() => {
+    Promise.all(runJobs).then(() => {
       // make sure to completely wipe the directory
       childProcess.execSync(`rm -rf /src/${_jobId}/`, (err) => {
         console.log(err);

@@ -14,8 +14,10 @@ Meteor.methods({
   'job:getOrCreate'(selector) {
     check(selector, Match.ObjectIncluding({ _publicId: Checks.Id })); // eslint-disable-line new-cap
     if (!Jobs.findOne(selector)) {
-      const defaultNodes = Nodes.find({ disabled: false, enabledByDefault: true }).fetch();
-      const job = _.extend(selector, { nodes: _.pluck(defaultNodes, '_id') });
+      const defaultNodes = Nodes.find({ enabled: true, enabledByDefault: true }).fetch();
+      const job = defaultNodes.length ?
+          _.extend(selector, { nodes: _.pluck(defaultNodes, '_id') })
+        : selector;
       Jobs.insert(job);
     }
   },
@@ -38,7 +40,7 @@ Meteor.methods({
         fn = job.fn;
       }
     }
-    if (!fn || ! (fn.definition || fn.call || fn.name)) {
+    if (!fn || !(fn.definition || fn.call || fn.name)) {
       return '';
     }
     const strictLine = fn.strict ? `'use strict';\n` : '';
@@ -72,8 +74,7 @@ Meteor.methods({
   'job:submit'(_publicId) {
     check(_publicId, Checks.Id);
     const job = Jobs.findOne({ _publicId });
-    if (!job) return;
-
+    if (!job || !job.nodes.length) return;
     Jobs.update({ _id: job._id, status: 'editing' }, { $set: { status: 'ready' } });
     const queuedJob = new Job(Queue, 'run', { _jobId: job._id, nodes: job.nodes, listed: job.listed });
     queuedJob.priority('normal').save();

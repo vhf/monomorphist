@@ -25,18 +25,68 @@ const NodesSchema = new SimpleSchema({
     denyInsert: true,
     optional: true,
   },
-  version: {
-    label: 'The package version used to download node when building the image.',
-    type: String,
-  },
+  /*
+  Cannot be used. Doesn't show up in the form.
+  */
   disabled: {
     type: Boolean,
     defaultValue: false,
+    optional: true,
   },
+  /*
+  Switched on by default in the form.
+  */
   enabledByDefault: {
     type: Boolean,
     defaultValue: false,
+    optional: true,
   },
+  /*
+  this version is the latest version of this major release
+  */
+  latest: {
+    type: Boolean,
+    defaultValue: false,
+    optional: true,
+  },
+  /*
+  this a nightly build
+  */
+  nightly: {
+    type: Boolean,
+    defaultValue: false,
+    optional: true,
+  },
+  // <https://nodejs.org/dist/index.json>
+  version: {
+    // e.g. '6.6.0'
+    type: String,
+  },
+  date: {
+    type: Date,
+  },
+  npm: {
+    type: String,
+  },
+  v8: {
+    type: String,
+  },
+  uv: {
+    type: String,
+  },
+  zlib: {
+    type: String,
+  },
+  openssl: {
+    type: String,
+  },
+  modules: {
+    type: String,
+  },
+  lts: {
+    type: String,
+  },
+  // </https://nodejs.org/dist/index.json>
 });
 
 const Nodes = new Meteor.Collection('nodes');

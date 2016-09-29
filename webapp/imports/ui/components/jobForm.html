@@ -8,7 +8,11 @@
     {{#each nodes}}
       <div class="col s1 switch center">
         <label for="{{ _id }}">
-          {{ version }}
+          {{#if nightly}}
+            nightly
+          {{else}}
+            {{ version }}
+          {{/if}}
           <br>
           {{#if (nodeEnabled job _id)}}
             <input class="node-checkbox" type="checkbox" checked="checked" id="{{ _id }}" />
@@ -19,7 +23,9 @@
         </label>
       </div>
     {{else}}
-      <p>loading nodes</p>
+    <div class="col s12 center">
+      <p>please wait, we're hunting nodes</p>
+    </div>
     {{/each}}
   </div>
   <div class="row">
@@ -51,7 +57,13 @@
       </button>
       <br>
       <p>
-        Current job waiting time is {{ estimate }} seconds.
+        {{#let seconds=estimate}}
+          {{#if seconds}}
+            Current job waiting time is {{ seconds }} seconds.
+          {{else}}
+            Queue empty, your job will run immediately!
+          {{/if}}
+        {{/let}}
       </p>
     </div>
   </div>

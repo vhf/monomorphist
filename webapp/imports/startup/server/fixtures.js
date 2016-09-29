@@ -33,7 +33,7 @@ nodesFixture.forEach(node => {
 //     //   call: 'numbers = _.chain(_.range(0, 50)).map(function(n) {\n  return _.random(10000)\n}).value();\nsum(numbers);\n',
 //     //   name: 'sum',
 //     // },
-//     nodes: _.pluck(Nodes.find({ disabled: false, enabledByDefault: true }).fetch(), '_id'),
+//     nodes: _.pluck(Nodes.find({ enabled: true, enabledByDefault: true }).fetch(), '_id'),
 //     logs: [],
 //   },
 //   logs: [

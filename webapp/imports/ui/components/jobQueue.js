@@ -21,7 +21,7 @@ Template.jobQueue.helpers({
     const ready = Jobs.find({ status: 'ready' }).count();
     const running = Jobs.find({ status: 'running' }).count();
     if (ready + running === 0) {
-      return 'No work, go ahead.';
+      return false;
     }
     return `${running}/${concurrency} running`;
   },
@@ -43,6 +43,9 @@ Template.jobQueue.helpers({
   },
   nodeVersion(_id) {
     const node = Nodes.findOne({ _id });
-    return node ? node.version : '';
+    if (node && node.version) {
+      return node.nightly ? 'nightly' : node.version;
+    }
+    return '';
   },
 });

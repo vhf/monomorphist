@@ -84,10 +84,10 @@ Template.jobForm.helpers({
     return job;
   },
   nodes() {
-    return Nodes.find({ disabled: false }).fetch();
+    return Nodes.find({ enabled: true }, { sort: { version: 1 } }).fetch();
   },
   nodeEnabled(job, node) {
-    return job ? job.nodes.indexOf(node) !== -1 : false;
+    return job ? job.nodes && job.nodes.length && job.nodes.indexOf(node) !== -1 : false;
   },
   nodeVersion(_id) {
     const node = Nodes.findOne({ _id });

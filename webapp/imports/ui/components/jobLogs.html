@@ -25,7 +25,7 @@
           </div>
         </li>
 
-        {{#each _id in job.nodes}}
+        {{#each _id in jobNodes}}
           {{#let nodeStatus=(status _id)}}
             <li>
               <div class="collapsible-header {{optimizationClass nodeStatus}}">

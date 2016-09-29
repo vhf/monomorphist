@@ -26,9 +26,21 @@ Template.jobLogs.helpers({
   job() {
     return Template.instance().job.get();
   },
+  jobNodes() {
+    const job = Template.instance().job.get();
+    if (job && job.nodes && job.nodes.length) {
+      console.log(job.nodes);
+      const nodes = Nodes.find({ _id: { $in: job.nodes } }, { fields: { _id: 1 }, sort: { version: 1 } }).fetch();
+      return _.pluck(nodes, '_id');
+    }
+    return [];
+  },
   nodeVersion(_id) {
     const node = Nodes.findOne({ _id });
-    return node ? node.version : '';
+    if (node && node.version) {
+      return node.nightly ? 'nightly' : node.version;
+    }
+    return '';
   },
   compareStatus(job, status) {
     return (job && job.status) ? job.status === status : false;
