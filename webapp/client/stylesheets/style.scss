@@ -140,6 +140,7 @@ nav {
     overflow: hidden;
     margin-top: 0;
     .brand-logo {
+      font-weight: bold;
       position: inherit;
       display: block;
       float: left;
@@ -168,5 +169,32 @@ nav {
 .collection-item.queue-item {
   .btn {
     text-transform: inherit;
+  }
+}
+
+.modal.compact {
+  padding: 2px 24px;
+}
+table.compact {
+  tr.selected-version {
+    @extend .light-green, .lighten-2;
+  }
+  th, td {
+    padding: 0;
+    height: 24px;
+    line-height: 1;
+  }
+}
+
+.switch {
+  min-width: 40px;
+  label {
+    display: block;
+    span {
+      display: block;
+    }
+    .lever {
+      margin: 6px 0 0 0;
+    }
   }
 }

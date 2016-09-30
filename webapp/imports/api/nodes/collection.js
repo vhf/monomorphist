@@ -26,9 +26,9 @@ const NodesSchema = new SimpleSchema({
     optional: true,
   },
   /*
-  Cannot be used. Doesn't show up in the form.
+  This version can be used by, it'll show up in the form.
   */
-  disabled: {
+  enabled: {
     type: Boolean,
     defaultValue: false,
     optional: true,
@@ -62,6 +62,11 @@ const NodesSchema = new SimpleSchema({
     // e.g. '6.6.0'
     type: String,
   },
+  hash: {
+    // only used for nightlies
+    type: String,
+    optional: true,
+  },
   date: {
     type: Date,
   },
@@ -85,6 +90,8 @@ const NodesSchema = new SimpleSchema({
   },
   lts: {
     type: String,
+    optional: true,
+    defaultValue: '',
   },
   // </https://nodejs.org/dist/index.json>
 });

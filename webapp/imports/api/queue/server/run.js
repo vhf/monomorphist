@@ -1,10 +1,13 @@
 import { Meteor } from 'meteor/meteor';
+import { Random } from 'meteor/random';
+
+import { Job } from 'meteor/vsivsi:job-collection';
+import { optimizationStatuses, parseRawOutput } from '/imports/api/jobs/utils';
+
 import Jobs from '/imports/api/jobs/collection';
 import Logs from '/imports/api/logs/collection';
 import Nodes from '/imports/api/nodes/collection';
 import Queue from '/imports/api/queue/collection';
-import { Job } from 'meteor/vsivsi:job-collection';
-import { optimizationStatuses, parseRawOutput } from '/imports/api/jobs/utils';
 
 const fs = require('fs');
 const childProcess = require('child_process');
@@ -42,14 +45,15 @@ const queueFailsAsDoneJobs = (jc, type, timeOut) => {
 timeoutFail(Queue, 'run', timeout);
 queueFailsAsDoneJobs(Queue, 'run', timeout);
 
-const envVarRegex = /^[a-z0-9][a-z0-9\-\.]{1,17}$/mi;
+const envVarRegex = /^[a-z0-9][a-z0-9\-\.]+$/mi;
 const exec = (resolve, reject, _jobId, _nodeId, container) => {
   if (!envVarRegex.test(_jobId) || !envVarRegex.test(container)) {
     const raw = `Env var security check failed: ${_jobId} is ${envVarRegex.test(_jobId)}, ${container} is ${envVarRegex.test(container)}`;
     Logs.insert({ _jobId, _nodeId, time: new Date(), raw, message: 'error: security check failed' });
+    reject('security check failed');
   }
   childProcess.exec(
-    `docker-compose run -e JOB_ID=${_jobId} -u 1010 ${container}`, {
+    `docker-compose run -e JOB_ID=${_jobId} -u 1010 --name=${Random.id()} ${container}`, {
       cwd: '/mononodes',
     },
     Meteor.bindEnvironment((err, stdout, stderr) => {
@@ -132,6 +136,14 @@ Job.processJobs(Queue, 'run', { concurrency, pollInterval, workTimeout },
       Logs.insert({ _jobId, time: new Date(), message: 'job done.' });
       qObj.done();
       cb();
+    }).catch(() => {
+      // make sure to completely wipe the directory
+      childProcess.execSync(`rm -rf /src/${_jobId}/`, (err) => {
+        console.log(err);
+      });
+      Jobs.update({ _id: _jobId, status: 'running' }, { $set: { status: 'done' } });
+      Logs.insert({ _jobId, time: new Date(), message: 'job done: a node failed for security reason, so we quit.' });
+      qObj.done();
     });
   }
 );

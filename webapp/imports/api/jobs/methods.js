@@ -10,6 +10,8 @@ import Nodes from '/imports/api/nodes/collection';
 import Queue from '/imports/api/queue/collection';
 import Checks from '/imports/checks';
 
+const { maxNodesPerJob } = Meteor.settings.public;
+
 Meteor.methods({
   'job:getOrCreate'(selector) {
     check(selector, Match.ObjectIncluding({ _publicId: Checks.Id })); // eslint-disable-line new-cap
@@ -24,7 +26,7 @@ Meteor.methods({
   'job:addNode'(_publicId, nodeId) {
     check(_publicId, Checks.Id);
     check(nodeId, Checks.Id);
-    Jobs.update({ _publicId }, { $addToSet: { nodes: nodeId } });
+    Jobs.update({ _publicId }, { $push: { nodes: { $each: [nodeId], $slice: -parseInt(maxNodesPerJob, 10) } } });
   },
   'job:removeNode'(_publicId, nodeId) {
     check(_publicId, Checks.Id);

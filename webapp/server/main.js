@@ -11,3 +11,4 @@ import '/imports/api/nodes/server/publication';
 import '/imports/api/logs/server/publication';
 
 import '/imports/api/queue/server/run';
+import '/imports/startup/server/fixtures';

@@ -1,19 +1,20 @@
 <template name="jobForm">
   <div class="row">
     <div class="col s12">
-      <h5>Choose node versions</h5>
+      <h5>Choose node versions ({{ length job.nodes }}/{{ maxNodesPerJob }})</h5>
     </div>
   </div>
   <div class="row">
     {{#each nodes}}
       <div class="col s1 switch center">
         <label for="{{ _id }}">
-          {{#if nightly}}
-            nightly
-          {{else}}
-            {{ version }}
-          {{/if}}
-          <br>
+          <span class="node-modal-trigger">
+            {{#if nightly}}
+              nightly
+            {{else}}
+              {{ version }}
+            {{/if}}
+          </span>
           {{#if (nodeEnabled job _id)}}
             <input class="node-checkbox" type="checkbox" checked="checked" id="{{ _id }}" />
           {{ else }}

@@ -14,5 +14,44 @@
       </div>
     </div>
   </div>
+
+  <div id="node-info-modal" class="modal bottom-sheet">
+    <div class="modal-content compact">
+      <h5>Available node versions</h5>
+      <table id="node-versions-table" class="bordered highlight compact">
+        <thead>
+          <tr>
+            <th data-field="version">version</th>
+            <th data-field="date">date</th>
+            <th data-field="npm">npm</th>
+            <th data-field="v8">v8</th>
+            <th data-field="uv">uv</th>
+            <th data-field="zlib">zlib</th>
+            <th data-field="openssl">openssl</th>
+            <th data-field="modules">modules</th>
+            <th data-field="lts">lts</th>
+            <th data-field="latest">latest</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          {{#each nodes}}
+            <tr data-version="{{#if nightly}}nightly{{else}}{{ version }}{{/if}}">
+              <td>{{version}}{{#if hash}}<br>{{ hash }}{{/if}}</td>
+              <td>{{formatDate date}}</td>
+              <td>{{npm}}</td>
+              <td>{{v8}}</td>
+              <td>{{uv}}</td>
+              <td>{{zlib}}</td>
+              <td>{{openssl}}</td>
+              <td>{{modules}}</td>
+              <td>{{#if lts}}{{lts}}{{/if}}</td>
+              <td>{{#if latest}}<i class="material-icons">done</i>{{/if}}</td>
+            </tr>
+          {{/each}}
+        </tbody>
+      </table>
+    </div>
+  </div>
   {{> footer}}
 </template>

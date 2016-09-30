@@ -1,7 +1,9 @@
 import { Template } from 'meteor/templating';
 import { $ } from 'meteor/jquery';
 import { FlowRouter } from 'meteor/kadira:flow-router';
+
 import Jobs from '/imports/api/jobs/collection';
+import Nodes from '/imports/api/nodes/collection';
 import Queue from '/imports/api/queue/collection';
 
 import '../components/jobForm.js';
@@ -17,10 +19,16 @@ Template.index.onCreated(function onCreated() {
   this.autorun(() => {
     const _publicId = this.getPublicId();
     this.subscribe('job', _publicId);
+    this.subscribe('nodes');
   });
 });
 
 Template.index.helpers({
+  nodes() {
+    // all nodes except the old nightlies
+    // WHERE nightly = false OR enabled = true
+    return Nodes.find({ $or: [{ nightly: false }, { enabled: true }] }, { sort: { version: 1 } }).fetch();
+  },
   job() {
     const _publicId = Template.instance().getPublicId();
     const job = Jobs.findOne({ _publicId });
@@ -40,6 +48,9 @@ Template.index.helpers({
     const time = ((jobs / concurrency) * timeout) / 1000;
     const rounded = Math.round(time / 100) * 100;
     return rounded;
+  },
+  formatDate(date) {
+    return date.toLocaleDateString();
   },
 });
 

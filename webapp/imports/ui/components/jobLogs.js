@@ -29,7 +29,6 @@ Template.jobLogs.helpers({
   jobNodes() {
     const job = Template.instance().job.get();
     if (job && job.nodes && job.nodes.length) {
-      console.log(job.nodes);
       const nodes = Nodes.find({ _id: { $in: job.nodes } }, { fields: { _id: 1 }, sort: { version: 1 } }).fetch();
       return _.pluck(nodes, '_id');
     }
@@ -53,14 +52,16 @@ Template.jobLogs.helpers({
     return false;
   },
   optimizationClass(status) {
-    if (deoptimizedVerdicts.indexOf(status.verdict) !== -1) {
-      return 'deep-orange darken-1';
-    }
-    if (unsureVerdicts.indexOf(status.verdict) !== -1) {
-      return 'blue lighten-4';
-    }
-    if (optimizedVerdicts.indexOf(status.verdict) !== -1) {
-      return 'light-green';
+    if (status && status.verdict) {
+      if (deoptimizedVerdicts.indexOf(status.verdict) !== -1) {
+        return 'deep-orange darken-1';
+      }
+      if (unsureVerdicts.indexOf(status.verdict) !== -1) {
+        return 'blue lighten-4';
+      }
+      if (optimizedVerdicts.indexOf(status.verdict) !== -1) {
+        return 'light-green';
+      }
     }
     return '';
   },

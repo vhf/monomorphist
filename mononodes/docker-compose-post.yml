@@ -1,4 +1,0 @@
-networks:
-  default:
-    external:
-      name: traefik_traefik_enabled

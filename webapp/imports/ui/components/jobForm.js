@@ -8,7 +8,7 @@ import Jobs from '/imports/api/jobs/collection';
 import Nodes from '/imports/api/nodes/collection';
 import Queue from '/imports/api/queue/collection';
 
-const { concurrency, timeout } = Meteor.settings.public;
+const { concurrency, timeout, maxNodesPerJob } = Meteor.settings.public;
 
 const renderLivePreview = () => {
   const definition = $('textarea[name="fn.definition"]').val();
@@ -108,12 +108,21 @@ Template.jobForm.helpers({
     const rounded = Math.round(time / 100) * 100;
     return rounded;
   },
+  maxNodesPerJob() {
+    return maxNodesPerJob;
+  },
+  length(xs) {
+    return (xs && xs.length) || 0;
+  },
 });
 
 Template.jobForm.events({
   'change .node-checkbox': event => {
     const id = $(event.target).attr('id');
     const checked = $(event.target).is(':checked');
+    // if ($('.node-checkbox:checked').length > parseInt(maxNodesPerJob, 10)) {
+    //
+    // }
     Meteor.call(checked ? 'job:addNode' : 'job:removeNode', Template.instance().getPublicId(), id);
   },
   'keyup input[name="fn.name"]': renderLivePreview,
@@ -121,6 +130,13 @@ Template.jobForm.events({
   'click #run': event => {
     $(event.target).prop('disabled', true);
     Meteor.call('job:submit', Template.instance().getPublicId());
+  },
+  'click .node-modal-trigger': (event) => {
+    event.preventDefault();
+    const version = $(event.target).text().trim();
+    $('#node-versions-table tr').removeClass('selected-version');
+    $(`#node-versions-table tr[data-version="${version}"]`).addClass('selected-version');
+    $('#node-info-modal').openModal();
   },
 });
 

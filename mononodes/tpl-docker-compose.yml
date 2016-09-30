@@ -1,0 +1,16 @@
+version: '2'
+services:<% nodes.forEach(function(node){ %>
+  node-<%= node.version %>:
+    build:
+      context: .
+      dockerfile: Dockerfile.<%= node.version %>
+    network_mode: none
+    volumes:
+      - /opt/monomorphist/volume/start.sh:/start.sh
+      - /opt/monomorphist/volume/src:/src
+    labels:
+      - "node_container=1"<% }); %>
+networks:
+  default:
+    external:
+      name: traefik_traefik_enabled

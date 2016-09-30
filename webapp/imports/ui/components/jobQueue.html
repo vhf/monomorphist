@@ -7,7 +7,7 @@
         </li>
         {{#each jobsRunning}}
           <li class="collection-item queue-item queue-item-running {{#if currentJob _publicId}}active{{/if}}">
-            {{#each nodes}}<span class="btn disabled">{{nodeVersion(this)}}</span> {{/each}}
+            {{#each nodes}}<span class="btn disabled node-modal-trigger">{{nodeVersion(this)}}</span> {{/each}}
             {{#if listed}}
               <a href="/job/{{ _publicId }}" class="btn disabled" target="_blank"><i class="material-icons">visibility</i></a>
             {{else}}
@@ -21,7 +21,7 @@
           </li>
           {{#each jobsReady}}
             <li class="collection-item queue-item queue-item-ready {{#if currentJob _publicId}}active{{/if}}">
-              {{#each nodes}}<span class="btn disabled">{{nodeVersion(this)}}</span> {{/each}}
+              {{#each nodes}}<span class="btn disabled node-modal-trigger">{{nodeVersion(this)}}</span> {{/each}}
               {{#if listed}}
                 <a href="/job/{{ _publicId }}" class="btn disabled" target="_blank"><i class="material-icons">visibility</i></a>
               {{else}}
@@ -36,8 +36,8 @@
       past jobs
     </li>
     {{#each jobsDone}}
-      <li class="collection-item queue-item queue-item-ready">
-        {{#each nodes}}<span class="btn disabled">{{nodeVersion(this)}}</span> {{/each}}
+      <li class="collection-item queue-item queue-item-ready {{#if currentJob _publicId}}active{{/if}}">
+        {{#each nodes}}<span class="btn disabled node-modal-trigger">{{nodeVersion(this)}}</span> {{/each}}
         {{#if listed}}
           <a href="/job/{{ _publicId }}" class="btn disabled" target="_blank"><i class="material-icons">visibility</i></a>
         {{else}}

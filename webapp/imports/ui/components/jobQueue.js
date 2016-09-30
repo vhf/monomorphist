@@ -37,9 +37,9 @@ Template.jobQueue.helpers({
   jobsRunning() {
     return Jobs.find({ status: 'running' }).fetch();
   },
-  currentJob(_jobId) {
+  currentJob(_id) {
     const _publicId = Template.instance().getPublicId();
-    return _jobId === _publicId;
+    return _id === _publicId;
   },
   nodeVersion(_id) {
     const node = Nodes.findOne({ _id });
@@ -47,5 +47,15 @@ Template.jobQueue.helpers({
       return node.nightly ? 'nightly' : node.version;
     }
     return '';
+  },
+});
+
+Template.jobQueue.events({
+  'click .node-modal-trigger': (event) => {
+    event.preventDefault();
+    const version = $(event.target).text().trim();
+    $('#node-versions-table tr').removeClass('selected-version');
+    $(`#node-versions-table tr[data-version="${version}"]`).addClass('selected-version');
+    $('#node-info-modal').openModal();
   },
 });

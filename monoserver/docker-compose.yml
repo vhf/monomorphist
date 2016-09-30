@@ -10,8 +10,8 @@ services:
       - meteor.env
     volumes:
       - /opt/monomorphist/monoserver:/bundle
-      - /opt/monomorphist/mononodes/:/mononodes/
-      - /opt/monomorphist/volume/src/:/src/
+      - /opt/monomorphist/mononodes/:/mononodes
+      - /opt/monomorphist/volume/src/:/src
       - /var/run/docker.sock:/var/run/docker.sock
     restart: always
     labels:
