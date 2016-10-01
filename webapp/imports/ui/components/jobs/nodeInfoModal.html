@@ -1,20 +1,4 @@
-<template name="index">
-  <div class="container">
-    <div class="row">
-      <div class="col s12 m10">
-        {{#if (compareStatus job 'editing')}}
-          {{> jobForm}}
-        {{else}}
-          {{> jobShow}}
-          {{> jobLogs}}
-        {{/if}}
-      </div>
-      <div class="col m2 hide-on-small-only">
-        {{> jobQueue}}
-      </div>
-    </div>
-  </div>
-
+<template name="nodeInfoModal">
   <div id="node-info-modal" class="modal bottom-sheet">
     <div class="modal-content compact">
       <h5>Available node versions</h5>
@@ -53,5 +37,4 @@
       </table>
     </div>
   </div>
-  {{> footer}}
 </template>

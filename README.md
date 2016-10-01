@@ -1,9 +1,9 @@
 # monomorphist
 ## a JavaScript performance companion
 
-This repo contains the code running at <https://mono.morph.ist>. It's still early stage / beta software. It's a quick hack I built in airports and airplanes between New York, Hamburg, and Switzerland.
+This repo contains the code running at [mono.morph.ist](https://mono.morph.ist). It's still early stage / beta software. It's a quick hack I built in airports and airplanes between New York, Hamburg, and Switzerland.
 
-The goal is to provide a few online tools helping devs understand JavaScript performance things.
+The goal is to provide a few online tools giving V8 JavaScript performance insights.
 
 What's available right now is a tool to trace [V8 bailouts / deopts](http://vhf.github.io/blog/2016/01/22/chromium-chrome-v8-crankshaft-bailout-reasons/) by running snippets on various Node versions.
 
@@ -40,7 +40,7 @@ What happens every night is the following:
 1. fetch new node versions info from nodejs.org
 2. disable all versions
 3. put all "latest" flag to false
-4. insert and enable the ["pinned" versions](https://github.com/vhf/monomorphist/blob/master/webapp/imports/api/nodes/methods.js#L7)
+4. insert and enable the ["pinned" versions](https://github.com/vhf/monomorphist/blob/43474419811e5b60f7900aa5cc8bf21dc1841bda/webapp/imports/api/nodes/methods.js#L22-L27)
 5. add latest versions of each major release if they don't already exist
 6. enable the latest version of each major version
 7. enable by default the latest version of each LTS release
@@ -49,12 +49,14 @@ What happens every night is the following:
 ### What I'd like to add:
 
 * A hosted [IRHydra](https://github.com/mraleph/irhydra) instance
-* Provide insights, tips, stats
+* More things leveraging `native-syntax`
+* Provide tips, stats
 
 ### What you can do:
 
 * Open issues to discuss features, suggest improvements or notify me of a bug
 * Via PRs, fix bugs, improve the design, the docs or anything else
+* Contribute explanations about [bailout/deopt reasons](https://github.com/vhf/v8-bailout-reasons)
 
 ### TODO
 

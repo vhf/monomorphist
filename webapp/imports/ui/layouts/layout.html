@@ -1,4 +1,4 @@
-<body>
+<template name="layout">
   <header>
     <div class="container">
       <nav>
@@ -10,9 +10,7 @@
       </nav>
     </div>
   </header>
-  {{> layout}}
-</body>
-
-<template name="layout">
   {{> Template.dynamic template=main }}
+  {{> footer }}
+  {{> nodeInfoModal }}
 </template>

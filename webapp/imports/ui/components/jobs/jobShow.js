@@ -10,8 +10,6 @@ Template.jobShow.onCreated(function onCreated() {
   });
 });
 
-Template.jobShow.helpers({});
-
 Template.jobShow.onRendered(() => {
   Meteor.call('job:instrument', Template.instance().getPublicId(), (err, code) => {
     $('#instrumented').html(code);
