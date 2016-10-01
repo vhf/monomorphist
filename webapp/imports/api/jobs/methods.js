@@ -45,7 +45,10 @@ Meteor.methods({
     if (!fn || !(fn.definition || fn.call || fn.name)) {
       return '';
     }
-    const boilerplate = screen ? '' : dedent`
+    const prepend = process.env.PREPEND ? process.env.PREPEND : '';
+
+    const boilerplate = screen ? "'use strict';\n" : dedent`
+    ${prepend}
     function printStatus(fn) {
       switch(%GetOptimizationStatus(fn)) {
         case 1: console.log("Function is optimized (OptimizationStatus {1})"); break;
@@ -61,7 +64,6 @@ Meteor.methods({
     `;
 
     return dedent`
-    'use strict';
     ${boilerplate}${fn.definition}
 
     ${fn.call}
