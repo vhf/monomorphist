@@ -27,7 +27,7 @@ Template.jobQueue.helpers({
   jobsDone() {
     const listed = Jobs.find({ status: 'done', listed: true }, { limit: 50, sort: { createdAt: -1 } }).fetch();
     const unlisted = Jobs.find({ status: 'done', listed: false }, { limit: 50, sort: { createdAt: -1 } }).fetch();
-    const all = _.chain(listed).union(unlisted).sort((a, b) => (+b) - (+a)).value();
+    const all = _.chain(listed).union(unlisted).sort((a, b) => (+b.createdAt) - (+a.createdAt)).first(50).value();
     return all;
   },
   jobsReady() {
@@ -38,6 +38,7 @@ Template.jobQueue.helpers({
   },
   currentJob(_id) {
     const _publicId = FlowRouter.getParam('_publicId');
+    if (!_publicId) return false;
     return _id === _publicId;
   },
   nodeVersion(_id) {
