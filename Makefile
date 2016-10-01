@@ -11,3 +11,6 @@ up: fix-settings
 
 build-webapp:
 	bash ./monoserver/build-webapp-bundle.sh
+
+logs:
+	ssh monomorphist 'cd /opt/monomorphist/monoserver && docker-compose logs -f monomorphist'

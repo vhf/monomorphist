@@ -60,15 +60,15 @@ What happens every night is the following:
 
 ### TODO
 
-- [ ] Provide a link to a sample job output.
-- [ ] Validate function call and function name
-- [ ] In the job logs per node, highlight every occurrence of the function name
-- [ ] use `parallel` to benchmark the server
 - [ ] maintenance mode while rebuilding images
+- [ ] validate function call and function name
+- [ ] in the job logs per node, highlight every occurrence of the function name
 - [ ] Stats:
   - [ ] how long does a job usually last
-  - [x] how long until my job runs
   - [ ] what are the common mistakes
+  - [x] how long until my job runs
+- [x] Provide a link to a sample job output.
+- [x] use `parallel` to benchmark the server
 - [x] Security: Node containers shouldn't be able to network at all
 - [x] Live preview of the instrumented code when filling the form
 - [x] Dynamically add panes when adding an engine.

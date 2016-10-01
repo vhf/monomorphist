@@ -13,9 +13,9 @@ FlowRouter.route('/', {
 
 FlowRouter.route('/job/new', {
   name: 'newJob',
-  action() {
-    FlowRouter.go(`/job/${Random.id()}`);
-  },
+  triggersEnter: [(context, redirect) => {
+    redirect(`/job/${Random.id()}`);
+  }],
 });
 
 FlowRouter.route('/job/:_publicId', {
