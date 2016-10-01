@@ -252,16 +252,18 @@ Meteor.methods({
   },
   'nodes:buildImages'() {
     if (this.connection !== null) return false; // make sure the client cannot call this
+    const future = new Future();
+
     childProcess.exec(
-      'docker-compose build', {
-        cwd: root,
-      },
-      Meteor.bindEnvironment((err, stdout, stderr) => {
-        if (err) console.log(JSON.stringify({ err }));
-        if (stdout) console.log(JSON.stringify({ stdout }));
-        if (stderr) console.log(JSON.stringify({ stderr }));
-      })
+      'docker-compose build',
+      { cwd: root },
+      (err, stdout, stderr) => future.return({ err, stdout, stderr })
     );
+
+    const { err, stdout, stderr } = future.wait(future);
+    if (err) console.log(JSON.stringify({ err }));
+    if (stdout) console.log(JSON.stringify({ stdout }));
+    if (stderr) console.log(JSON.stringify({ stderr }));
     return true;
   },
   'nodes:imagesUpdate'() {

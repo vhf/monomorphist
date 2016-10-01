@@ -1,7 +1,7 @@
 <template name="home">
   <div class="container">
     <div class="row">
-      <div class="col s12">
+      <div class="col s12 m10">
         <h1>monomorphist</h1>
         <h4>a JavaScript performance companion</h4>
 
@@ -18,6 +18,9 @@
           <a class="waves-effect waves-light btn-large" href="/job/new">create a job</a>
           <a class="waves-effect waves-light btn-large node-modal-trigger">show node versions</a>
         </p>
+      </div>
+      <div class="col m2 hide-on-small-only">
+        {{> jobQueue}}
       </div>
     </div>
   </div>
