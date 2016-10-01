@@ -4,8 +4,8 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    ports:
-      - "127.0.0.1:4013:80"
+    expose:
+      - 80
     env_file:
       - meteor.env
     volumes:
