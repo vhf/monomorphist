@@ -15,8 +15,9 @@ const root = (() => {
       return `${cwd}/mononodes`;
     }
   } catch (e) {
-    return '/mononodes';
+    //
   }
+  return '/mononodes';
 })();
 
 const pinnedVersions = [
@@ -25,23 +26,6 @@ const pinnedVersions = [
   '4.5.0',
   '6.6.0',
 ];
-
-const logUpdate = (err, mod, str) => {
-  if (err) {
-    console.log(`${str} errored: ${err}`);
-  } else {
-    console.log(`${str} modified ${mod} docs`);
-  }
-};
-
-const logUpsert = (err, mod, selector, data) => {
-  if (err) {
-    console.log(`upsert ${JSON.stringify(selector)} errored: ${err}`);
-  }
-  if (mod) {
-    console.log(`upsert modified ${mod} docs, ${JSON.stringify(selector)} - ${JSON.stringify(data)}`);
-  }
-};
 
 Meteor.methods({
   'nodes:fetchNodeVersions'() {
@@ -153,13 +137,11 @@ Meteor.methods({
     // 2. disable all versions
     Nodes.update({},
                  { $set: { enabled: false } },
-                 { multi: 1 },
-                 (err, mod) => logUpdate(err, mod, 'disabling all versions'));
+                 { multi: 1 });
     // 3. put all "latest" flag to false
     Nodes.update({ latest: true },
                  { $set: { latest: false } },
-                 { multi: 1 },
-                 (err, mod) => logUpdate(err, mod, 'resetting "latest" flag'));
+                 { multi: 1 });
     // 4. insert and enable the "pinned" versions
     pinnedVersions.forEach(version => {
       if (!(version in distDict)) return;
@@ -172,8 +154,7 @@ Meteor.methods({
       }
       Nodes.update({ version },
                    { $set: node },
-                   { upsert: true },
-                   (err, mod) => logUpsert(err, mod, { version }, node));
+                   { upsert: true });
     });
     // 5. add latest versions of each major release if they don't already exist
     genericToExact.forEach(version => {
@@ -198,8 +179,7 @@ Meteor.methods({
       }
       Nodes.update({ version: version.exact },
                    { $set: node },
-                   { upsert: true },
-                   (err, mod) => logUpsert(err, mod, { version: version.exact }, node));
+                   { upsert: true });
     });
     // 8. upsert the latest nightly build
     const latestNightly = descendingNightlies[0];
@@ -214,8 +194,7 @@ Meteor.methods({
       .value();
     Nodes.update({ version: latestNightly.version },
                  { $set: node },
-                 { upsert: true },
-                 (err, mod) => logUpsert(err, mod, { version: latestNightly.version }, node));
+                 { upsert: true });
     return true;
   },
   'nodes:createDockerConfig'() {
