@@ -5,7 +5,7 @@ This repo contains the code running at [mono.morph.ist](https://mono.morph.ist).
 
 The goal is to provide a few online tools giving V8 JavaScript performance insights.
 
-What's available right now is a tool to trace [V8 bailouts / deopts](http://vhf.github.io/blog/2016/01/22/chromium-chrome-v8-crankshaft-bailout-reasons/) by running snippets on various Node versions.
+What's available right now is a tool to trace [V8 bailouts / deopts](http://vhf.github.io/blog/2016/01/22/chromium-chrome-v8-crankshaft-bailout-reasons/) by running snippets on various Node versions. If you're not familiar with these things, take a look at [bluebird/Optimization killers](https://github.com/petkaantonov/bluebird/wiki/Optimization-killers) and [v8 bailout reasons](https://github.com/vhf/v8-bailout-reasons).
 
 Each job instance has the following NPM packages pre-installed:
 
