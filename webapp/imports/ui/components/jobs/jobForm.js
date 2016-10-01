@@ -14,9 +14,8 @@ const renderLivePreview = () => {
   const definition = $('textarea[name="fn.definition"]').val();
   const call = $('textarea[name="fn.call"]').val();
   const name = $('input[name="fn.name"]').val();
-  const strict = $('input[name="fn.strict"]').is(':checked');
 
-  Meteor.call('job:instrument', { definition, call, name, strict }, (err, code) => {
+  Meteor.call('job:instrument', { definition, call, name }, (err, code) => {
     if (!err && code) {
       $('#instrumented').parent('div').show();
       $('#instrumented').html(code);
@@ -126,7 +125,6 @@ Template.jobForm.events({
     Meteor.call(checked ? 'job:addNode' : 'job:removeNode', Template.instance().getPublicId(), id);
   },
   'keyup input[name="fn.name"]': renderLivePreview,
-  'change input[name="fn.strict"]': renderLivePreview,
   'click #run': event => {
     $(event.target).prop('disabled', true);
     Meteor.call('job:submit', Template.instance().getPublicId());

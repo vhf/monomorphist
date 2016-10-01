@@ -26,12 +26,12 @@ Meteor.methods({
   'job:addNode'(_publicId, nodeId) {
     check(_publicId, Checks.Id);
     check(nodeId, Checks.Id);
-    Jobs.update({ _publicId }, { $push: { nodes: { $each: [nodeId], $slice: -parseInt(maxNodesPerJob, 10) } } });
+    Jobs.update({ _publicId, status: 'editing' }, { $push: { nodes: { $each: [nodeId], $slice: -parseInt(maxNodesPerJob, 10) } } });
   },
   'job:removeNode'(_publicId, nodeId) {
     check(_publicId, Checks.Id);
     check(nodeId, Checks.Id);
-    Jobs.update({ _publicId }, { $pull: { nodes: nodeId } });
+    Jobs.update({ _publicId, status: 'editing' }, { $pull: { nodes: nodeId } });
   },
   'job:instrument'(p, screen = true) {
     check(p, Match.OneOf(Checks.Id, Object)); // eslint-disable-line new-cap
@@ -45,7 +45,6 @@ Meteor.methods({
     if (!fn || !(fn.definition || fn.call || fn.name)) {
       return '';
     }
-    const strictLine = fn.strict ? `'use strict';\n` : '';
     const boilerplate = screen ? '' : dedent`
     function printStatus(fn) {
       switch(%GetOptimizationStatus(fn)) {
@@ -62,7 +61,8 @@ Meteor.methods({
     `;
 
     return dedent`
-    ${strictLine}${boilerplate}${fn.definition}
+    'use strict';
+    ${boilerplate}${fn.definition}
 
     ${fn.call}
     ${fn.call}
@@ -75,7 +75,7 @@ Meteor.methods({
   },
   'job:submit'(_publicId) {
     check(_publicId, Checks.Id);
-    const job = Jobs.findOne({ _publicId });
+    const job = Jobs.findOne({ _publicId, status: 'editing' });
     if (!job || !job.nodes.length) return;
     Jobs.update({ _id: job._id, status: 'editing' }, { $set: { status: 'ready' } });
     const queuedJob = new Job(Queue, 'run', { _jobId: job._id, nodes: job.nodes, listed: job.listed });

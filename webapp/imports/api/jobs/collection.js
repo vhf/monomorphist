@@ -54,11 +54,6 @@ const JobsSchema = new SimpleSchema({
     type: String,
     optional: true,
   },
-  'fn.strict': {
-    label: 'Use strict',
-    type: Boolean,
-    optional: true,
-  },
   nodes: {
     type: [String],
     minCount: 1,
