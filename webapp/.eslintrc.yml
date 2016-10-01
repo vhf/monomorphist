@@ -21,7 +21,8 @@ env:
 
 rules:
   max-len: [2, 150, 2, { ignoreUrls: true, ignoreComments: false }]
-
+  import/no-absolute-path: 0
+  import/extensions: 0
   no-unexpected-multiline: 2
   no-throw-literal: 0
   no-underscore-dangle: 0

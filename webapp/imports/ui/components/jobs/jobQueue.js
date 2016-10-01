@@ -7,7 +7,6 @@ import Nodes from '/imports/api/nodes/collection';
 const { concurrency } = Meteor.settings.public;
 
 Template.jobQueue.onCreated(function onCreated() {
-  this.getPublicId = () => FlowRouter.getParam('_publicId');
   this.autorun(() => {
     this.subscribe('nodes');
     this.subscribe('jobs');
@@ -38,7 +37,7 @@ Template.jobQueue.helpers({
     return Jobs.find({ status: 'running' }).fetch();
   },
   currentJob(_id) {
-    const _publicId = Template.instance().getPublicId();
+    const _publicId = FlowRouter.getParam('_publicId');
     return _id === _publicId;
   },
   nodeVersion(_id) {

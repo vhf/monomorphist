@@ -67,9 +67,8 @@ const codeMirror = () => {
 };
 
 Template.jobForm.onCreated(function onCreated() {
-  this.getPublicId = () => FlowRouter.getParam('_publicId');
   this.autorun(() => {
-    const _publicId = this.getPublicId();
+    const _publicId = FlowRouter.getParam('_publicId');
     this.subscribe('job', _publicId);
     this.subscribe('nodes');
     this.subscribe('logs', _publicId);
@@ -78,7 +77,7 @@ Template.jobForm.onCreated(function onCreated() {
 
 Template.jobForm.helpers({
   job() {
-    const _publicId = Template.instance().getPublicId();
+    const _publicId = FlowRouter.getParam('_publicId');
     const job = Jobs.findOne({ _publicId });
     return job;
   },
@@ -122,12 +121,12 @@ Template.jobForm.events({
     // if ($('.node-checkbox:checked').length > parseInt(maxNodesPerJob, 10)) {
     //
     // }
-    Meteor.call(checked ? 'job:addNode' : 'job:removeNode', Template.instance().getPublicId(), id);
+    Meteor.call(checked ? 'job:addNode' : 'job:removeNode', FlowRouter.getParam('_publicId'), id);
   },
   'keyup input[name="fn.name"]': renderLivePreview,
   'click #run': event => {
     $(event.target).prop('disabled', true);
-    Meteor.call('job:submit', Template.instance().getPublicId());
+    Meteor.call('job:submit', FlowRouter.getParam('_publicId'));
   },
   'click .node-modal-trigger': (event) => {
     event.preventDefault();

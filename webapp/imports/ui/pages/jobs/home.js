@@ -10,16 +10,15 @@ import '/imports/ui/components/footer.js';
 const { concurrency, timeout } = Meteor.settings.public;
 
 Template.jobHome.onCreated(function onCreated() {
-  this.getPublicId = () => FlowRouter.getParam('_publicId');
   this.autorun(() => {
-    const _publicId = this.getPublicId();
+    const _publicId = FlowRouter.getParam('_publicId');
     this.subscribe('job', _publicId);
   });
 });
 
 Template.jobHome.helpers({
   job() {
-    const _publicId = Template.instance().getPublicId();
+    const _publicId = FlowRouter.getParam('_publicId');
     const job = Jobs.findOne({ _publicId });
     return job;
   },
@@ -41,7 +40,7 @@ Template.jobHome.helpers({
 });
 
 Template.jobHome.onRendered(() => {
-  const _publicId = Template.instance().getPublicId();
+  const _publicId = FlowRouter.getParam('_publicId');
   // when leaving the page, we delete the job if it's empty
   window.addEventListener('beforeunload', () => {
     const job = Jobs.findOne({ _publicId });

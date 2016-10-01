@@ -10,10 +10,9 @@ import Nodes from '/imports/api/nodes/collection';
 import { deoptimizedVerdicts, unsureVerdicts, optimizedVerdicts } from '/imports/api/jobs/utils';
 
 Template.jobLogs.onCreated(function onCreated() {
-  this.getPublicId = () => FlowRouter.getParam('_publicId');
   this.job = new ReactiveVar();
   this.autorun(() => {
-    const _publicId = this.getPublicId();
+    const _publicId = FlowRouter.getParam('_publicId');
     this.subscribe('job', _publicId);
     this.subscribe('nodes');
     if (this.subscriptionsReady()) {
