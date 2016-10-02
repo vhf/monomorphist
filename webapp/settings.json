@@ -1,8 +1,12 @@
 {
   "public": {
+    "serverInstance": 1,
     "concurrency": 10,
     "pollInterval": 2000,
     "timeout": 10000,
-    "maxNodesPerJob": 5
+    "maxNodesPerJob": 5,
+    "analyticsSettings": {
+      "Google Analytics" : {"trackingId": "to-fill"}
+    }
   }
 }

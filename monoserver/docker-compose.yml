@@ -1,13 +1,13 @@
 version: '2'
 services:
-  monomorphist:
+  monomorphist-1:
     build:
       context: .
       dockerfile: Dockerfile
     expose:
       - 80
     env_file:
-      - meteor.env
+      - meteor.env.1
     volumes:
       - /opt/monomorphist/monoserver:/bundle
       - /opt/monomorphist/mononodes/:/mononodes
@@ -16,9 +16,62 @@ services:
     restart: always
     labels:
       - "traefik.backend=monomorphist"
-      - "traefik.port=80"
-      - "traefik.frontend.rule=Host:mono.morph.ist"
+      - "traefik.backend.loadbalancer.method=drr"
+      - "traefik.backend.loadbalancer.sticky=true"
+      - "traefik.backend.circuitbreaker.expression=ResponseCodeRatio(500, 600, 0, 600) > 0.1"
       - "traefik.docker.network=monomorphist_default"
+      - "traefik.frontend.rule=Host:mono.morph.ist"
+      - "traefik.port=80"
+    links:
+      - "mongodb:mongodb"
+
+  monomorphist-2:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    expose:
+      - 80
+    env_file:
+      - meteor.env.2
+    volumes:
+      - /opt/monomorphist/monoserver:/bundle
+      - /opt/monomorphist/mononodes/:/mononodes
+      - /opt/monomorphist/volume/src/:/src
+      - /var/run/docker.sock:/var/run/docker.sock
+    restart: always
+    labels:
+      - "traefik.backend=monomorphist"
+      - "traefik.backend.loadbalancer.method=drr"
+      - "traefik.backend.loadbalancer.sticky=true"
+      - "traefik.backend.circuitbreaker.expression=ResponseCodeRatio(500, 600, 0, 600) > 0.1"
+      - "traefik.docker.network=monomorphist_default"
+      - "traefik.frontend.rule=Host:mono.morph.ist"
+      - "traefik.port=80"
+    links:
+      - "mongodb:mongodb"
+
+  monomorphist-3:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    expose:
+      - 80
+    env_file:
+      - meteor.env.3
+    volumes:
+      - /opt/monomorphist/monoserver:/bundle
+      - /opt/monomorphist/mononodes/:/mononodes
+      - /opt/monomorphist/volume/src/:/src
+      - /var/run/docker.sock:/var/run/docker.sock
+    restart: always
+    labels:
+      - "traefik.backend=monomorphist"
+      - "traefik.backend.loadbalancer.method=drr"
+      - "traefik.backend.loadbalancer.sticky=true"
+      - "traefik.backend.circuitbreaker.expression=ResponseCodeRatio(500, 600, 0, 600) > 0.1"
+      - "traefik.docker.network=monomorphist_default"
+      - "traefik.frontend.rule=Host:mono.morph.ist"
+      - "traefik.port=80"
     links:
       - "mongodb:mongodb"
 

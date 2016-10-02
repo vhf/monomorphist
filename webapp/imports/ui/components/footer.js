@@ -1,7 +1,7 @@
 import { Template } from 'meteor/templating';
 import { ReactiveMethod } from 'meteor/simple:reactive-method';
 
-const { concurrency, timeout } = Meteor.settings.public;
+const { concurrency, timeout, serverInstance } = Meteor.settings.public;
 
 Template.footer.onCreated(function onCreated() {
   this.autorun(() => {
@@ -28,5 +28,8 @@ Template.footer.helpers({
     const time = (((ready + running) / concurrency) * timeout) / 1000;
     const rounded = Math.round(time / 100) * 100;
     return rounded;
+  },
+  serverInstance() {
+    return serverInstance || false;
   },
 });
