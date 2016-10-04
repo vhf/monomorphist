@@ -20,8 +20,14 @@ up:
 start:
 	bash ./monoserver/seq-compose-up.sh $(instances)
 
-build:
+generate-env-files:
+	bash ./monoserver/generate-env-files.sh $(instances)
+
+build: generate-env-files
 	bash ./monoserver/build-webapp-bundle.sh $(instances)
 
 logs:
 	ssh monomorphist 'cd /opt/monomorphist/monoserver && docker-compose logs -f monomorphist-1 monomorphist-2 monomorphist-3'
+
+upconf: generate-env-files
+	-rsync --progress -avhe ssh monoserver/meteor* monomorphist:/opt/monomorphist/monoserver
