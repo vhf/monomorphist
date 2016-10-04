@@ -49,12 +49,12 @@ const codeMirror = () => {
     extraKeys: { Tab: false, 'Shift-Tab': false },
   });
 
-  definitionEditor.on('keyup', (cMirror) => {
+  definitionEditor.on('inputRead', (cMirror) => {
     $definition.val(cMirror.getValue());
     renderLivePreview();
   });
 
-  callEditor.on('keyup', (cMirror) => {
+  callEditor.on('inputRead', (cMirror) => {
     const val = cMirror.getValue();
     $call.val(val);
     // if (!$('input[name="fn.name"]').val()) {
