@@ -8,7 +8,7 @@ help:
 	echo "make"
 	echo "  build - build the meteor project, create compose ENV file(s)"
 	echo "  all - build, upload, start"
-	echo "  start \$n - start \$n containers"
+	echo "  start - start $(instances) containers"
 	echo "  logs - tail logs"
 
 all: build up start

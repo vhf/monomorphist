@@ -31,7 +31,7 @@ for n in $(seq $N); do
   # |= updates the serverInstance value in settings.json
   SETTINGS=$(jq -c ".public.serverInstance |= $n" < ../webapp/settings.json)
   # now with $UA variable from meteor.env.secret, we update the JSON
-  SETTINGS=$(echo $SETTINGS | jq -c --arg x "$UA" '.public.analyticsSettings["Google Analytics"] |= $x')
+  SETTINGS=$(echo $SETTINGS | jq -c --arg x "$UA" '.public.analyticsSettings["Google Analytics"].trackingId |= $x')
   echo "Installed UA settings: $UA"
   # finally we write the JSON string
   LINE="METEOR_SETTINGS=$SETTINGS"
