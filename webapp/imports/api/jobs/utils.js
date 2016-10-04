@@ -1,6 +1,7 @@
 // kudos to https://gist.github.com/mathiasbynens/6334847 for this one
 
 const optimizationStatuses = {
+  '-1': "didn't properly finish",
   1: 'Function is optimized',
   2: 'Function is not optimized',
   3: 'Function is always optimized',

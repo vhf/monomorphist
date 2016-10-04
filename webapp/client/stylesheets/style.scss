@@ -26,12 +26,6 @@ $primary-color: #607d8b !default;
   .reason-label {
     @extend .grey-text, .text-lighten-1;
   }
-  /*.enabled {
-    background-color: #66BB6A !important;
-  }
-  .disabled {
-    background-color: #ffb74d !important;
-  }*/
   .reason, .disabled {
     background-color: #666 !important;
     @extend .lime-text, .text-lighten-5;
@@ -201,4 +195,51 @@ table.compact {
 
 .node-modal-trigger {
   cursor: pointer;
+}
+
+.job-queue {
+  width: 176px;
+
+  .queue-item {
+    padding-left: 8px;
+    .btn {
+      width: 76px;
+      margin: 0 1px;
+      text-align: right;
+      i {
+        @extend .material-icons;
+        font-size: 16px !important;
+        vertical-align: sub;
+      }
+      &.job-link {
+        width: 157px;
+        text-align: center;
+      }
+      &.verdict--1 {
+        i:after {
+          content: 'warning';
+        }
+      }
+      &.verdict-2,
+      &.verdict-4,
+      &.verdict-6 {
+        i:after {
+          content: 'thumb_down';
+        }
+      }
+      &.verdict-0,
+      &.verdict-6 {
+        i:after {
+          content: 'thumbs_up_down';
+        }
+      }
+      &.verdict-1,
+      &.verdict-3,
+      &.verdict-7 {
+        i:after {
+          content: 'thumb_up';
+        }
+      }
+    }
+  }
 }

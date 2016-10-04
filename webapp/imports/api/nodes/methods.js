@@ -240,10 +240,16 @@ Meteor.methods({
     );
 
     const { err, stdout, stderr } = future.wait(future);
-    if (err) console.log(JSON.stringify({ err }));
+    let ret = true;
+    if (err) {
+      console.log(JSON.stringify({ err }));
+      if (err && (err.killed || err.code === 1)) ret = false;
+    }
+    // this would be a good place to identify which nodes were successfully built
+    // and enable them...
     if (stdout) console.log(JSON.stringify({ stdout }));
     if (stderr) console.log(JSON.stringify({ stderr }));
-    return true;
+    return ret;
   },
   'nodes:imagesUpdate'() {
     if (this.connection !== null) return false; // make sure the client cannot call this

@@ -27,7 +27,12 @@ Template.jobQueue.helpers({
   jobsDone() {
     const listed = Jobs.find({ status: 'done', listed: true }, { limit: 50, sort: { createdAt: -1 } }).fetch();
     const unlisted = Jobs.find({ status: 'done', listed: false }, { limit: 50, sort: { createdAt: -1 } }).fetch();
-    const all = _.chain(listed).union(unlisted).sort((a, b) => (+b.createdAt) - (+a.createdAt)).first(50).value();
+    const all = _
+      .chain(listed)
+      .union(unlisted)
+      .sort((a, b) => (+b.createdAt) - (+a.createdAt))
+      .first(50)
+      .value();
     return all;
   },
   jobsReady() {
@@ -41,12 +46,13 @@ Template.jobQueue.helpers({
     if (!_publicId) return false;
     return _id === _publicId;
   },
-  nodeVersion(_id) {
-    const node = Nodes.findOne({ _id });
-    if (node && node.version) {
-      return node.nightly ? 'nightly' : node.version;
-    }
-    return '';
+  sortAndAugment(nodesStatuses) {
+    const nodes = _.indexBy(Nodes.find().fetch(), '_id');
+    return _
+      .chain(nodesStatuses)
+      .map(node => _.extend(node, nodes[node._id]))
+      .sortBy('version')
+      .value();
   },
 });
 

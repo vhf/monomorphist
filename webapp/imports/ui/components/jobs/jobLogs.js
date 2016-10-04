@@ -46,7 +46,11 @@ Template.jobLogs.helpers({
   status(_nodeId) {
     const job = Template.instance().job.get();
     if (job && job.nodesStatus && job.nodesStatus.length) {
-      return _.findWhere(job.nodesStatus, { _id: _nodeId });
+      const node = _.findWhere(job.nodesStatus, { _id: _nodeId });
+      if (job.killed && node && node.status) {
+        node.status = `${node.status} - killed`;
+      }
+      return node;
     }
     return false;
   },

@@ -1,16 +1,14 @@
 import { Template } from 'meteor/templating';
 import { FlowRouter } from 'meteor/kadira:flow-router';
-import { $ } from 'meteor/jquery';
+import { ReactiveMethod } from 'meteor/simple:reactive-method';
 
 Template.jobShow.onCreated(function onCreated() {
-  this.autorun(() => {
-    this.subscribe('queue');
-    this.subscribe('nodes');
-  });
+  this.subscribe('queue');
+  this.subscribe('nodes');
 });
 
-Template.jobShow.onRendered(() => {
-  Meteor.call('job:instrument', FlowRouter.getParam('_publicId'), (err, code) => {
-    $('#instrumented').html(code);
-  });
+Template.jobShow.helpers({
+  code() {
+    return ReactiveMethod.call('job:instrument', FlowRouter.getParam('_publicId'));
+  },
 });

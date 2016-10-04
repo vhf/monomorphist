@@ -1,49 +1,76 @@
 <template name="jobQueue">
-  <ul class="collection">
-    {{#let running=runningStatus}}
-      {{#if running}}
-        <li class="collection-item center">
-          {{ running }}
-        </li>
-        {{#each jobsRunning}}
-          <li class="collection-item queue-item queue-item-running {{#if currentJob _publicId}}active{{/if}}">
-            {{#each nodes}}<span class="btn disabled node-modal-trigger">{{nodeVersion(this)}}</span> {{/each}}
-            {{#if listed}}
-              <a href="/job/{{ _publicId }}" class="btn disabled" target="_blank"><i class="material-icons">visibility</i></a>
-            {{else}}
-              <span class="btn disabled"><i class="material-icons">visibility_off</i></span>
-            {{/if}}
-          </li>
-        {{/each}}
-        {{# if jobsReady}}
+  {{#if Template.subscriptionsReady}}
+    <ul class="collection job-queue">
+      {{#let running=runningStatus}}
+        {{#if running}}
           <li class="collection-item center">
-            up next
+            {{ running }}
           </li>
-          {{#each jobsReady}}
-            <li class="collection-item queue-item queue-item-ready {{#if currentJob _publicId}}active{{/if}}">
-              {{#each nodes}}<span class="btn disabled node-modal-trigger">{{nodeVersion(this)}}</span> {{/each}}
-              {{#if listed}}
-                <a href="/job/{{ _publicId }}" class="btn disabled" target="_blank"><i class="material-icons">visibility</i></a>
+          {{#each jobsRunning}}
+            <li class="collection-item queue-item queue-item-running {{#if currentJob _publicId}}active{{/if}}">
+              {{#if job.listed}}
+                <a href="/job/{{ job._publicId }}" class="btn disabled job-link"><i class="material-icons">visibility</i></a>
               {{else}}
-                <span class="btn disabled"><i class="material-icons">visibility_off</i></span>
+                <span class="btn disabled job-link"><i class="material-icons">visibility_off</i></span>
               {{/if}}
+              {{#each node in (sortAndAugment job.nodesStatus)}}
+                <span class="btn disabled node-modal-trigger">
+                  {{#if node.nightly}}
+                    nightly
+                  {{else}}
+                    {{ node.version }}
+                  {{/if}}
+                </span>
+              {{/each}}
             </li>
           {{/each}}
+          {{# if jobsReady}}
+            <li class="collection-item center">
+              up next
+            </li>
+            {{#each jobsReady}}
+              <li class="collection-item queue-item queue-item-ready {{#if currentJob _publicId}}active{{/if}}">
+                {{#if job.listed}}
+                  <a href="/job/{{ job._publicId }}" class="btn disabled job-link"><i class="material-icons">visibility</i></a>
+                {{else}}
+                  <span class="btn disabled job-link"><i class="material-icons">visibility_off</i></span>
+                {{/if}}
+                {{#each node in (sortAndAugment job.nodesStatus)}}
+                  <span class="btn disabled node-modal-trigger">
+                    {{#if node.nightly}}
+                      nightly
+                    {{else}}
+                      {{ node.version }}
+                    {{/if}}
+                  </span>
+                {{/each}}
+              </li>
+            {{/each}}
+          {{/if}}
         {{/if}}
-      {{/if}}
-    {{/let}}
-    <li class="collection-item center">
-      past jobs
-    </li>
-    {{#each jobsDone}}
-      <li class="collection-item queue-item queue-item-ready {{#if currentJob _publicId}}active{{/if}}">
-        {{#each nodes}}<span class="btn disabled node-modal-trigger">{{nodeVersion(this)}}</span> {{/each}}
-        {{#if listed}}
-          <a href="/job/{{ _publicId }}" class="btn disabled" target="_blank"><i class="material-icons">visibility</i></a>
-        {{else}}
-          <span class="btn disabled"><i class="material-icons">visibility_off</i></span>
-        {{/if}}
+      {{/let}}
+      <li class="collection-item center">
+        past jobs
       </li>
-    {{/each}}
-  </ul>
+      {{#each job in jobsDone}}
+        <li class="collection-item queue-item queue-item-done {{#if currentJob job._publicId}}active{{/if}}">
+          {{#if job.listed}}
+            <a href="/job/{{ job._publicId }}" class="btn disabled job-link"><i class="material-icons">visibility</i></a>
+          {{else}}
+            <span class="btn disabled job-link"><i class="material-icons">visibility_off</i></span>
+          {{/if}}
+          {{#each node in (sortAndAugment job.nodesStatus)}}
+            <span class="btn disabled node-modal-trigger verdict-{{node.verdict}}">
+              {{#if node.nightly}}
+                nightly
+              {{else}}
+                {{ node.version }}
+              {{/if}}
+              <i></i>
+            </span>
+          {{/each}}
+        </li>
+      {{/each}}
+    </ul>
+  {{/if}}
 </template>
