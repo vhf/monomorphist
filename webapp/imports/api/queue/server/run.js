@@ -53,7 +53,7 @@ const exec = (resolve, reject, _jobId, _nodeId, container) => {
     reject('security check failed');
   }
   childProcess.exec(
-    `docker-compose run -e JOB_ID=${_jobId} -u 1010 --name=${Random.id()} ${container}`, {
+    `docker-compose run --rm -e JOB_ID=${_jobId} -u 1010 --name=${Random.id()} ${container}`, {
       cwd: '/mononodes',
     },
     Meteor.bindEnvironment((err, stdout, stderr) => {
