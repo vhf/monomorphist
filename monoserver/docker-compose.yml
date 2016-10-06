@@ -24,6 +24,11 @@ services:
       - "traefik.port=80"
     links:
       - "mongodb:mongodb"
+    logging:
+      driver: "syslog"
+      options:
+        syslog-address: "udp://localhost:5000"
+        tag: "monomorphist-meteor-1"
 
   monomorphist-2:
     build:
@@ -49,6 +54,11 @@ services:
       - "traefik.port=80"
     links:
       - "mongodb:mongodb"
+    logging:
+      driver: "syslog"
+      options:
+        syslog-address: "udp://localhost:5000"
+        tag: "monomorphist-meteor-2"
 
   monomorphist-3:
     build:
@@ -74,6 +84,11 @@ services:
       - "traefik.port=80"
     links:
       - "mongodb:mongodb"
+    logging:
+      driver: "syslog"
+      options:
+        syslog-address: "udp://localhost:5000"
+        tag: "monomorphist-meteor-3"
 
   mongodb:
     image: mongo:3.2
@@ -85,6 +100,11 @@ services:
     restart: always
     labels:
       - "traefik.docker.network=monomorphist_default"
+    logging:
+      driver: "syslog"
+      options:
+        syslog-address: "udp://localhost:5000"
+        tag: "monomorphist-mongo"
 
 networks:
   default:
