@@ -26,6 +26,14 @@ const NodesSchema = new SimpleSchema({
     optional: true,
   },
   /*
+  This Docker image should be (re-)built
+  */
+  toBuild: {
+    type: Boolean,
+    defaultValue: false,
+    optional: true,
+  },
+  /*
   This version can be used by, it'll show up in the form.
   */
   enabled: {

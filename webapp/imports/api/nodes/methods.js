@@ -136,18 +136,18 @@ Meteor.methods({
     }
     // 2. disable all versions
     Nodes.update({},
-                 { $set: { enabled: false } },
+                 { $set: { enabled: false, toBuild: false } },
                  { multi: 1 });
-    // 3. put all "latest" flag to false
+    // 3. put all "latest" flag to false (separate step because it's an option flag)
     Nodes.update({ latest: true },
                  { $set: { latest: false } },
                  { multi: 1 });
-    // 4. insert and enable the "pinned" versions
+    // 4. insert and build the "pinned" versions
     pinnedVersions.forEach(version => {
       if (!(version in distDict)) return;
       const versionInfo = distDict[version];
       const node = _.chain(versionInfo).omit('version').extend({
-        enabled: true,
+        toBuild: true,
       }).value();
       if (node.lts === false) {
         node.lts = ''; // '' is falsy, better than 'false'
@@ -160,13 +160,13 @@ Meteor.methods({
     genericToExact.forEach(version => {
       if (!(version.exact in distDict)) return;
       const versionInfo = distDict[version.exact];
-      // 6. enable the latest version of each major version
+      // 6. build the latest version of each major version
       const node = _
         .chain(versionInfo)
         .omit('version')
         .extend({
           latest: true,
-          enabled: true,
+          toBuild: true,
           enabledByDefault: false,
         })
         .value();
@@ -188,7 +188,7 @@ Meteor.methods({
       .omit('version', 'lts')
       .extend({
         latest: true,
-        enabled: true,
+        toBuild: true,
         nightly: true,
       })
       .value();
@@ -203,7 +203,7 @@ Meteor.methods({
     const nightlyURL = 'https://nodejs.org/download/nightly/v';
     const urls = { distURL, nightlyURL };
     const nodes = Nodes.find(
-                            { enabled: true },
+                            { toBuild: true },
                             { fields: { _id: 0, version: 1, hash: 1, nightly: 1 }, sort: { version: 1 } }
                           ).fetch();
     const data = { nodes };
@@ -240,16 +240,56 @@ Meteor.methods({
     );
 
     const { err, stdout, stderr } = future.wait(future);
-    let ret = true;
     if (err) {
-      console.log(JSON.stringify({ err }));
-      if (err && (err.killed || err.code === 1)) ret = false;
+      if (err && (err.killed || err.code !== 0)) {
+        console.log(JSON.stringify({ err }));
+      }
     }
-    // this would be a good place to identify which nodes were successfully built
-    // and enable them...
-    if (stdout) console.log(JSON.stringify({ stdout }));
-    if (stderr) console.log(JSON.stringify({ stderr }));
-    return ret;
+    // we'll have to grep the logs to find out what was tentatively built
+    // although they should be the same versions as the one with toBuild: true
+    const buildAttempts = [];
+    let re = /ENV NODE_VERSION (\d+\.\d+\.\d+)(-nightly2\d{7})?/g;
+    let versionMatch = '';
+    do {
+      versionMatch = re.exec(stdout);
+      if (versionMatch) {
+        const [, version, nightlyPart] = versionMatch;
+        buildAttempts.push(`${version}${nightlyPart || ''}`);
+      }
+    } while (versionMatch);
+
+    // then we grep the stderr to see which build fail
+    re = /Cannot locate specified Dockerfile: Dockerfile\.(\d+\.\d+\.\d+)(-nightly2\d{7})?/g;
+    const dockerfileNotFound = [];
+    do {
+      versionMatch = re.exec(stderr);
+      if (versionMatch) {
+        const [, version, nightlyPart] = versionMatch;
+        dockerfileNotFound.push(`${version}${nightlyPart || ''}`);
+      }
+    } while (versionMatch);
+
+    re = /Service 'node-(\d+\.\d+\.\d+)(-nightly2\d{7})?' failed to build/g;
+    const buildFailed = [];
+    do {
+      versionMatch = re.exec(stderr);
+      if (versionMatch) {
+        const [, version, nightlyPart] = versionMatch;
+        buildFailed.push(`${version}${nightlyPart || ''}`);
+      }
+    } while (versionMatch);
+
+    // finally we only enable the versions successfully built and return the one
+    // which errored
+    const failed = _.chain(dockerfileNotFound).union(buildFailed).unique().value();
+    const toEnable = _.without(buildAttempts, ...failed);
+    toEnable.forEach(version => {
+      Nodes.update({ version }, { $set: { enabled: true } }, { multi: true });
+    });
+    if (failed.length) {
+      return failed;
+    }
+    return true;
   },
   'nodes:imagesUpdate'() {
     if (this.connection !== null) return false; // make sure the client cannot call this
@@ -264,8 +304,9 @@ Meteor.methods({
       return false;
     }
     console.log('createDockerConfig succeeded');
-    if (Meteor.call('nodes:buildImages') !== true) {
-      console.log('buildImages failed');
+    const buildStatus = Meteor.call('nodes:buildImages');
+    if (buildStatus !== true) {
+      console.log(`nodes:buildImages: Building the following Docker images failed:\n${JSON.stringify(buildStatus)}`);
       return false;
     }
     console.log('buildImages succeeded');
