@@ -11,6 +11,13 @@ FlowRouter.route('/', {
   },
 });
 
+FlowRouter.route('/login', {
+  name: 'login',
+  action() {
+    BlazeLayout.render('layout', { main: 'login' });
+  },
+});
+
 FlowRouter.route('/job/new', {
   name: 'newJob',
   triggersEnter: [(context, redirect) => {

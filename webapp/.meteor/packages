@@ -33,3 +33,5 @@ simple:reactive-method
 percolate:synced-cron
 email
 okgrow:analytics
+accounts-ui
+accounts-github

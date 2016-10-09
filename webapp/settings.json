@@ -8,5 +8,8 @@
     "analyticsSettings": {
       "Google Analytics" : {"trackingId": "to-fill"}
     }
-  }
+  },
+  "githubOauthClientId": "",
+  "githubOauthSecret": "",
+  "githubAuthorizedUsernames": []
 }

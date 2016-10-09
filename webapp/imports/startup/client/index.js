@@ -8,6 +8,7 @@ import '/imports/ui/components/footer.html';
 
 import '/imports/ui/pages/jobs/home.html';
 import '/imports/ui/pages/home.html';
+import '/imports/ui/pages/login.html';
 
 import '/imports/ui/layouts/layout.html';
 

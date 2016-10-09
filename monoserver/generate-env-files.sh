@@ -33,6 +33,12 @@ for n in $(seq $N); do
   # now with $UA variable from meteor.env.secret, we update the JSON
   SETTINGS=$(echo $SETTINGS | jq -c --arg x "$UA" '.public.analyticsSettings["Google Analytics"].trackingId |= $x')
   echo "Installed UA settings: $UA"
+  # update oauth settings for prod
+  SETTINGS=$(echo $SETTINGS | jq -c --arg x "$OAUTH_GITHUB_CLIENT" '.githubOauthClientId |= $x')
+  SETTINGS=$(echo $SETTINGS | jq -c --arg x "$OAUTH_GITHUB_SECRET" '.githubOauthSecret |= $x')
+  SETTINGS=$(echo $SETTINGS | jq -c --arg x "$GITHUB_AUTHORIZED_USERNAMES" '.githubAuthorizedUsernames |= ($x | fromjson)')
+  echo "Installed oauth settings:"
+  echo "github: $OAUTH_GITHUB_CLIENT / $OAUTH_GITHUB_SECRET / $GITHUB_AUTHORIZED_USERNAMES"
   # finally we write the JSON string
   LINE="METEOR_SETTINGS=$SETTINGS"
   cat $BASE_FILE > $FILE
