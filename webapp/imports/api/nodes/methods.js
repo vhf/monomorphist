@@ -286,6 +286,8 @@ Meteor.methods({
     toEnable.forEach(version => {
       Nodes.update({ version }, { $set: { enabled: true } }, { multi: true });
     });
+    // make sure we quit maintenance here
+    Nodes.update({}, { $set: { toBuild: false } }, { multi: 1 });
     if (failed.length) {
       return failed;
     }
