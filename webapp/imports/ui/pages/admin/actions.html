@@ -1,0 +1,19 @@
+<template name="adminActions">
+  <div class="container">
+    {{#if currentUser}}
+      <div class="row">
+        <div class="col s12">
+          <button id="rebuild" class="btn waves-effect waves-light" type="submit">
+            Rebuild
+          </button>
+        </div>
+      </div>
+    {{else}}
+      <div class="row">
+        <div class="col s12">
+          {{> loginButtons}}
+        </div>
+      </div>
+    {{/if}}
+  </div>
+</template>

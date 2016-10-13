@@ -11,10 +11,10 @@ FlowRouter.route('/', {
   },
 });
 
-FlowRouter.route('/login', {
-  name: 'login',
+FlowRouter.route('/admin', {
+  name: 'adminActions',
   action() {
-    BlazeLayout.render('layout', { main: 'login' });
+    BlazeLayout.render('layout', { main: 'adminActions' });
   },
 });
 
