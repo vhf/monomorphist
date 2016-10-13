@@ -8,6 +8,8 @@ const glob = require('glob');
 const ejs = require('ejs');
 const childProcess = require('child_process');
 
+const isAllowed = (ctx) => ctx.userId || ctx.connection === null;
+
 const root = (() => {
   const cwd = process.cwd().split('.meteor')[0];
   try {
@@ -30,7 +32,7 @@ const pinnedVersions = [
 Meteor.methods({
   'nodes:fetchNodeVersions'() {
     // anonymous remote users cannot call this method
-    if (!this.userId || this.connection !== null) return false;
+    if (!isAllowed(this)) return false;
     const rLatestVersion = /node-v(\d+\.\d+\.\d+)-/m;
 
     const urls = [
@@ -130,7 +132,7 @@ Meteor.methods({
   },
   'nodes:updateVersions'() {
     // anonymous remote users cannot call this method
-    if (!this.userId || this.connection !== null) return false;
+    if (!isAllowed(this)) return false;
     // 1. fetch new node versions info from nodejs.org
     const { genericToExact, distDict, descendingNightlies } = Meteor.call('nodes:fetchNodeVersions');
     if (!(Object.keys(genericToExact).length && Object.keys(distDict).length && descendingNightlies.length)) {
@@ -201,7 +203,7 @@ Meteor.methods({
   },
   'nodes:createDockerConfig'() {
     // anonymous remote users cannot call this method
-    if (!this.userId || this.connection !== null) return false;
+    if (!isAllowed(this)) return false;
     const distURL = 'https://nodejs.org/dist/v';
     const nightlyURL = 'https://nodejs.org/download/nightly/v';
     const urls = { distURL, nightlyURL };
@@ -234,7 +236,7 @@ Meteor.methods({
   },
   'nodes:buildImages'() {
     // anonymous remote users cannot call this method
-    if (!this.userId || this.connection !== null) return false;
+    if (!isAllowed(this)) return false;
     const future = new Future();
 
     childProcess.exec(
@@ -299,7 +301,7 @@ Meteor.methods({
   },
   'nodes:imagesUpdate'() {
     // anonymous remote users cannot call this method
-    if (!this.userId || this.connection !== null) return false;
+    if (!isAllowed(this)) return false;
     console.log('Updating images!');
     if (Meteor.call('nodes:updateVersions') !== true) {
       console.log('updateVersions failed');
