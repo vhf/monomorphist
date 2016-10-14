@@ -1,0 +1,3 @@
+[submodule "irhydra"]
+	path = irhydra
+	url = git@github.com:vhf/irhydra.git

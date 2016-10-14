@@ -9,11 +9,13 @@ services:
     env_file:
       - meteor.env.1
     volumes:
-      - /opt/monomorphist/monoserver/monomorphist.tar.gz:/bundle.tar.gz
-      - /opt/monomorphist/mononodes/:/mononodes
-      - /opt/monomorphist/volume/src/:/src
+      - ../mononodes/:/mononodes
+      - ../irhydra/irhydra/build/web:/irhydra
+      - ../volume/src/:/src
+      - ./monomorphist.tar.gz:/bundle.tar.gz
+      - ./nginx.conf:/etc/nginx/nginx.conf
+      - ./run_app.sh:/opt/meteord/run_app.sh
       - /var/run/docker.sock:/var/run/docker.sock
-      - /opt/monomorphist/monoserver/meteor-docker-image/run_app.sh:/opt/meteord/run_app.sh
     restart: always
     labels:
       - "traefik.backend=monomorphist"
@@ -40,11 +42,13 @@ services:
     env_file:
       - meteor.env.2
     volumes:
-      - /opt/monomorphist/monoserver/monomorphist.tar.gz:/bundle.tar.gz
-      - /opt/monomorphist/mononodes/:/mononodes
-      - /opt/monomorphist/volume/src/:/src
+      - ../mononodes/:/mononodes
+      - ../irhydra/irhydra/build/web:/irhydra
+      - ../volume/src/:/src
+      - ./monomorphist.tar.gz:/bundle.tar.gz
+      - ./nginx.conf:/etc/nginx/nginx.conf
+      - ./run_app.sh:/opt/meteord/run_app.sh
       - /var/run/docker.sock:/var/run/docker.sock
-      - /opt/monomorphist/monoserver/meteor-docker-image/run_app.sh:/opt/meteord/run_app.sh
     restart: always
     labels:
       - "traefik.backend=monomorphist"
@@ -71,11 +75,13 @@ services:
     env_file:
       - meteor.env.3
     volumes:
-      - /opt/monomorphist/monoserver/monomorphist.tar.gz:/bundle.tar.gz
-      - /opt/monomorphist/mononodes/:/mononodes
-      - /opt/monomorphist/volume/src/:/src
+      - ../mononodes/:/mononodes
+      - ../irhydra/irhydra/build/web:/irhydra
+      - ../volume/src/:/src
+      - ./monomorphist.tar.gz:/bundle.tar.gz
+      - ./nginx.conf:/etc/nginx/nginx.conf
+      - ./run_app.sh:/opt/meteord/run_app.sh
       - /var/run/docker.sock:/var/run/docker.sock
-      - /opt/monomorphist/monoserver/meteor-docker-image/run_app.sh:/opt/meteord/run_app.sh
     restart: always
     labels:
       - "traefik.backend=monomorphist"
@@ -98,8 +104,8 @@ services:
     expose:
       - "27017"
     volumes:
-      - /opt/monomorphist/mongodata:/data/db
-      - /opt/monomorphist/volume/src:/src
+      - ../mongodata:/data/db
+      - ../volume/src:/src
     restart: always
     labels:
       - "traefik.docker.network=monomorphist_default"

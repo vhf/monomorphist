@@ -4,6 +4,6 @@ cd ../webapp
 
 npm install --production
 meteor build ../monoserver --architecture os.linux.x86_64 --server https://mono.morph.ist --server-only && \
-cd ../monoserver && \
-mv webapp.tar.gz monomorphist.tar.gz && \
+cd .. && \
+mv monoserver/webapp.tar.gz monomorphist.tar.gz && \
 echo "Build done!"

@@ -14,16 +14,24 @@ help:
 all: build up start
 
 up:
-	-rsync --progress -avhe ssh monoserver volume monomorphist:/opt/monomorphist
+	ssh monomorphist mkdir -p /opt/monomorphist/irhydra/irhydra/
 	-rsync --progress -avhe ssh mononodes/tpl-* monomorphist:/opt/monomorphist/mononodes
-
+	-rsync --progress -avhe ssh irhydra/irhydra/build monomorphist:/opt/monomorphist/irhydra/irhydra/
+	-rsync --progress -avhe ssh monoserver monomorphist:/opt/monomorphist
+	-rsync --progress -avhe ssh volume monomorphist:/opt/monomorphist
+	-rsync --progress -avhe ssh monomorphist.tar.gz monomorphist:/opt/monomorphist/monoserver
 start:
 	bash ./monoserver/seq-compose-up.sh $(instances)
 
 generate-env-files:
 	bash ./monoserver/generate-env-files.sh $(instances)
 
-build: generate-env-files
+build-irhydra:
+	cd irhydra/irhydra && \
+	pub get && \
+	pub build
+
+build: build-irhydra generate-env-files
 	bash ./monoserver/build-webapp-bundle.sh $(instances)
 
 logs:

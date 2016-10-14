@@ -24,11 +24,8 @@ RUN curl -L https://github.com/docker/compose/releases/download/1.8.0/docker-com
 
 ENV METEORD_DIR /opt/meteord
 
-COPY ./nginx.conf /etc/nginx/nginx.conf
-COPY ./run_app.sh $METEORD_DIR/
-
 EXPOSE 80
 
-HEALTHCHECK CMD curl --fail http://localhost:80/ || exit 1
+HEALTHCHECK CMD curl --fail http://localhost:80 || exit 1
 
 ENTRYPOINT bash $METEORD_DIR/run_app.sh

@@ -16,6 +16,8 @@ else
   exit 1
 fi
 
+chown www-data:www-data -R /irhydra
+
 SERVER_NAME=$(echo $ROOT_URL | sed -r 's_^([^:/?#]+:)?(//([^/?#]*))?.*_\3_g')
 sed -i s/SERVER_NAME_PLACEHOLDER/$SERVER_NAME/ /etc/nginx/nginx.conf
 service nginx start &
