@@ -14,6 +14,7 @@ help:
 all: build up start
 
 up:
+	find . -name '*.DS_Store' -type f -ls -delete
 	ssh monomorphist mkdir -p /opt/monomorphist/irhydra/irhydra/
 	-rsync --progress -avhe ssh mononodes/tpl-* monomorphist:/opt/monomorphist/mononodes
 	-rsync --progress -avhe ssh irhydra/irhydra/build monomorphist:/opt/monomorphist/irhydra/irhydra/
