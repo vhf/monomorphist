@@ -77,24 +77,31 @@ const NodesSchema = new SimpleSchema({
   },
   date: {
     type: Date,
+    optional: true,
   },
   npm: {
     type: String,
+    optional: true,
   },
   v8: {
     type: String,
+    optional: true,
   },
   uv: {
     type: String,
+    optional: true,
   },
   zlib: {
     type: String,
+    optional: true,
   },
   openssl: {
     type: String,
+    optional: true,
   },
   modules: {
     type: String,
+    optional: true,
   },
   lts: {
     type: String,
