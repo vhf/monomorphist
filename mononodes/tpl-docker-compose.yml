@@ -7,7 +7,6 @@ services:<% nodes.forEach(function(node){ %>
     network_mode: none
     volumes:
       - /opt/monomorphist/volume/start.sh:/start.sh
-      - /opt/monomorphist/volume/prepend.js:/prepend.js
       - /opt/monomorphist/volume/src:/src
     labels:
       - "node_container=1"<% }); %>
