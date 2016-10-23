@@ -34,7 +34,7 @@ const NodesSchema = new SimpleSchema({
     optional: true,
   },
   /*
-  This version can be used by, it'll show up in the form.
+  This version can be used, it'll show up in the form.
   */
   enabled: {
     type: Boolean,

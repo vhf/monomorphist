@@ -1,0 +1,37 @@
+<template name="irjobLogs">
+  <div class="row">
+    <div class="col s6">
+      <h5>Logs</h5>
+    </div>
+    <div class="col s6 right-align">
+      <h6><a class="waves-effect waves-light btn" href="/ir/new">new job</a></h6>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col s12">
+      <ul class="collapsible" data-collapsible="expandable">
+        <li>
+          <div class="collapsible-header">
+            <div class="chip">server</div>
+            {{#if (compareStatus irjob 'ready')}}
+              <div class="progress">
+                <div class="indeterminate"></div>
+              </div>
+            {{else}}
+              {{#if (compareStatus irjob 'running')}}
+                <div class="progress">
+                  <div class="indeterminate preloader-running"></div>
+                </div>
+              {{/if}}
+            {{/if}}
+          </div>
+          <div class="collapsible-body">
+            <div class="blue-grey lighten-4">
+              <pre class="log-lines">{{#each logs}}{{ isoTime time }} {{{ message }}}<br>{{/each}}</pre>
+            </div>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </div>
+</template>

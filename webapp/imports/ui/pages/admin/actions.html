@@ -3,9 +3,68 @@
     {{#if currentUser}}
       <div class="row">
         <div class="col s12">
-          <button id="rebuild" class="btn waves-effect waves-light" type="submit">
-            Rebuild
+          <h2>Refresh images and db</h2>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col s4">
+          <button id="rebuild-nodes" class="btn waves-effect waves-light" type="submit">
+            Node
           </button>
+        </div>
+        <div class="col s4">
+          <button id="rebuild-v8" class="btn waves-effect waves-light" type="submit">
+            V8
+          </button>
+        </div>
+        <div class="col s4">
+          <button id="clear" class="btn waves-effect waves-light" type="submit">
+            clear
+          </button>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col s12">
+          <h2>Logs</h2>
+          <ul class="collapsible" data-collapsible="expandable">
+            {{#each logs}}{{collapsible}}
+              <li>
+                <div class="collapsible-header">
+                  <code>{{isoTime time}} {{message.title}}</code>
+                </div>
+                <div class="collapsible-body">
+                  <div class="blue-grey lighten-4">
+                    {{#if message.parsed}}
+                      {{#if message.err}}<pre class="log-lines">{{message.err}}</pre>{{/if}}
+                      {{#if message.stderr}}<pre class="log-lines">{{message.stderr}}</pre>{{/if}}
+                      {{#if message.stdout}}
+                        {{#if message.steps}}
+                          <ul class="collapsible" data-collapsible="expandable">
+                            {{#each message.steps}}{{collapsible}}
+                              <li>
+                                <div class="collapsible-header">
+                                  {{title}}
+                                </div>
+                                <div class="collapsible-body">
+                                  <div class="blue-grey lighten-4">
+                                    <pre class="log-lines">{{body}}</pre>
+                                  </div>
+                                </div>
+                              </li>
+                            {{/each}}
+                          </ul>
+                        {{else}}
+                          <pre class="log-lines">{{message.stdout}}</pre>
+                        {{/if}}
+                      {{/if}}
+                    {{else}}
+                      <pre class="log-lines">{{message}}</pre>
+                    {{/if}}
+                  </div>
+                </div>
+              </li>
+            {{/each}}
+          </ul>
         </div>
       </div>
     {{else}}

@@ -7,10 +7,10 @@ import dedent from 'dedent-js';
 import Jobs from '/imports/api/jobs/collection';
 import Logs from '/imports/api/logs/collection';
 import Nodes from '/imports/api/nodes/collection';
-import Queue from '/imports/api/queue/collection';
+import { Queue } from '/imports/api/queue/collection';
 import Checks from '/imports/checks';
 
-const { maxNodesPerJob } = Meteor.settings.public;
+const { maxContainersPerJob } = Meteor.settings.public.node;
 
 Meteor.methods({
   'job:getOrCreate'(selector) {
@@ -26,7 +26,7 @@ Meteor.methods({
   'job:addNode'(_publicId, nodeId) {
     check(_publicId, Checks.Id);
     check(nodeId, Checks.Id);
-    Jobs.update({ _publicId, status: 'editing' }, { $push: { nodes: { $each: [nodeId], $slice: -parseInt(maxNodesPerJob, 10) } } });
+    Jobs.update({ _publicId, status: 'editing' }, { $push: { nodes: { $each: [nodeId], $slice: -parseInt(maxContainersPerJob, 10) } } });
   },
   'job:removeNode'(_publicId, nodeId) {
     check(_publicId, Checks.Id);

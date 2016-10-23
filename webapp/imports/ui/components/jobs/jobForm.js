@@ -2,13 +2,13 @@ import { Template } from 'meteor/templating';
 import { FlowRouter } from 'meteor/kadira:flow-router';
 import { CodeMirror } from 'meteor/perak:codemirror';
 import { AutoForm } from 'meteor/aldeed:autoform';
+import { ReactiveMethod } from 'meteor/simple:reactive-method';
 import { $ } from 'meteor/jquery';
 
 import Jobs from '/imports/api/jobs/collection';
 import Nodes from '/imports/api/nodes/collection';
-import Queue from '/imports/api/queue/collection';
 
-const { concurrency, timeout, maxNodesPerJob } = Meteor.settings.public;
+const { concurrency, timeout, maxContainersPerJob } = Meteor.settings.public.node;
 
 const renderLivePreview = () => {
   const definition = $('textarea[name="fn.definition"]').val();
@@ -101,13 +101,14 @@ Template.jobForm.helpers({
     return Jobs;
   },
   estimate() {
-    const jobs = Queue.find({ status: { $not: 'done' } }).count();
-    const time = ((jobs / concurrency) * timeout) / 1000;
+    const ready = ReactiveMethod.call('jobs:ready');
+    const running = ReactiveMethod.call('jobs:running');
+    const time = (((ready + running) / concurrency) * timeout) / 1000;
     const rounded = Math.round(time / 100) * 100;
     return rounded;
   },
-  maxNodesPerJob() {
-    return maxNodesPerJob;
+  maxContainersPerJob() {
+    return maxContainersPerJob;
   },
   length(xs) {
     return (xs && xs.length) || 0;
@@ -118,7 +119,7 @@ Template.jobForm.events({
   'change .node-checkbox': event => {
     const id = $(event.target).attr('id');
     const checked = $(event.target).is(':checked');
-    // if ($('.node-checkbox:checked').length > parseInt(maxNodesPerJob, 10)) {
+    // if ($('.node-checkbox:checked').length > parseInt(maxContainersPerJob, 10)) {
     //
     // }
     Meteor.call(checked ? 'job:addNode' : 'job:removeNode', FlowRouter.getParam('_publicId'), id);

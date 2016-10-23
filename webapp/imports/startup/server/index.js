@@ -1,3 +1,4 @@
 import './oauth';
-import './queue';
+import './queues';
 import './crons';
+import './methods';

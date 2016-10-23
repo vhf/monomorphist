@@ -12,4 +12,15 @@ Meteor.methods({
     }
     return { undefined: [] };
   },
+  'logs:irjob'(irjob) { // eslint-disable-line meteor/audit-argument-checks
+    if (irjob) {
+      const logs = Logs.find({ _irjobId: irjob._id }, { fields: { raw: 0 } }).fetch();
+      return logs;
+    }
+    return [];
+  },
+  'logs:clearBuilds'() {
+    if (!this.userId) return;
+    Logs.remove({ _jobId: { $exists: false }, _irjobId: { $exists: false }, _nodeId: { $exists: false } });
+  },
 });

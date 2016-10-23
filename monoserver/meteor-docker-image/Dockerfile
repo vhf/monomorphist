@@ -5,7 +5,12 @@ ENV NODE_VERSION=4.4.7
 ENV NODE_ARCH=x64
 ENV NODE_DIST=node-v${NODE_VERSION}-linux-${NODE_ARCH}
 
-RUN apt-get update -y && apt-get install -y curl bzip2 build-essential python git nginx && \
+RUN apt-get update -y && \
+  apt-get install -y apt-transport-https ca-certificates && \
+  apt-key adv --keyserver hkp://p80.pool.sks-keyservers.net:80 --recv-keys 58118E89F3A912897C070ADBF76221572C52609D && \
+  echo 'deb https://apt.dockerproject.org/repo debian-jessie main' >> /etc/apt/sources.list.d/docker.list && \
+  apt-get update -y && \
+  apt-get install -y curl bzip2 build-essential python git nginx docker-engine && \
   cd /tmp && \
   curl -O -L http://nodejs.org/dist/v${NODE_VERSION}/${NODE_DIST}.tar.gz && \
   tar xzf ${NODE_DIST}.tar.gz && \

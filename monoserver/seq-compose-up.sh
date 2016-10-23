@@ -3,10 +3,10 @@
 function spawn() {
   echo "$(date) Spawning monomorphist-$1"
   ssh monomorphist "cd /opt/monomorphist/monoserver && docker-compose up -d monomorphist-$1" 2>&1 | grep 'up-to-date' &> /dev/null
-  if [ $? == 0 ]; then
-    echo "monomorphist-$1 config unchanged, restarting..."
-    ssh monomorphist "cd /opt/monomorphist/monoserver && docker-compose restart monomorphist-$1"
-  fi
+  # if [ $? == 0 ]; then
+  #   echo "monomorphist-$1 config unchanged, restarting..."
+  #   ssh monomorphist "cd /opt/monomorphist/monoserver && docker-compose restart monomorphist-$1"
+  # fi
   RET=1
   while [[ $RET != 0 ]]; do
     sleep 7
@@ -21,6 +21,8 @@ if [ "$1" ]; then
 else
   N=1
 fi
+
+# ssh monomorphist "cd /opt/monomorphist/monoserver && docker-compose build" 2>&1
 
 for n in $(seq $N); do
   spawn $n

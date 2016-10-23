@@ -1,7 +1,8 @@
 import { Template } from 'meteor/templating';
 import { ReactiveMethod } from 'meteor/simple:reactive-method';
 
-const { concurrency, timeout, serverInstance } = Meteor.settings.public;
+const { node, serverInstance } = Meteor.settings.public;
+const { concurrency, timeout } = node;
 
 Template.footer.onCreated(function onCreated() {
   this.autorun(() => {

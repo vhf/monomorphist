@@ -1,4 +1,4 @@
-<template name="jobQueue">
+<template name="queue">
   {{#if Template.subscriptionsReady}}
     <ul class="collection job-queue">
       {{#let running=runningStatus}}
@@ -9,7 +9,7 @@
           {{#each jobsRunning}}
             <li class="collection-item queue-item queue-item-running {{#if currentJob _publicId}}active{{/if}}">
               {{#if job.listed}}
-                <a href="/job/{{ job._publicId }}" class="btn disabled job-link"><i class="material-icons">visibility</i></a>
+                <a href="{{ link job }}" class="btn disabled job-link"><i class="material-icons">visibility</i></a>
               {{else}}
                 <span class="btn disabled job-link"><i class="material-icons">visibility_off</i></span>
               {{/if}}
@@ -31,7 +31,7 @@
             {{#each jobsReady}}
               <li class="collection-item queue-item queue-item-ready {{#if currentJob _publicId}}active{{/if}}">
                 {{#if job.listed}}
-                  <a href="/job/{{ job._publicId }}" class="btn disabled job-link"><i class="material-icons">visibility</i></a>
+                  <a href="{{ link job }}" class="btn disabled job-link"><i class="material-icons">visibility</i></a>
                 {{else}}
                   <span class="btn disabled job-link"><i class="material-icons">visibility_off</i></span>
                 {{/if}}
@@ -55,7 +55,7 @@
       {{#each job in jobsDone}}
         <li class="collection-item queue-item queue-item-done {{#if currentJob job._publicId}}active{{/if}}">
           {{#if job.listed}}
-            <a href="/job/{{ job._publicId }}" class="btn disabled job-link"><i class="material-icons">visibility</i></a>
+            <a href="{{ link job }}" class="btn disabled job-link"><i class="material-icons">visibility</i></a>
           {{else}}
             <span class="btn disabled job-link"><i class="material-icons">visibility_off</i></span>
           {{/if}}

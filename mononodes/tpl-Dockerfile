@@ -18,7 +18,6 @@ RUN set -ex \
 ENV NPM_CONFIG_LOGLEVEL info
 ENV NODE_URL <% if (nightly) { %><%= nightlyURL %><% } else { %><%= distURL %><% } %>
 ENV NODE_VERSION <%= version %><%= hash %>
-
 RUN buildDeps='xz-utils' \
     && set -x \
     && apt-get update \
@@ -34,6 +33,7 @@ RUN buildDeps='xz-utils' \
     && apt-get purge -y --auto-remove $buildDeps \
     && ln -s /usr/local/bin/node /usr/local/bin/nodejs
 
+ENV NODE_PATH=/usr/local/lib/node_modules
 RUN npm install -g lodash bluebird moment underscore q jquery
 
 ENTRYPOINT bash /start.sh
