@@ -54,7 +54,7 @@
                     {{else}}
                       <pre class="log-lines">{{stdout}}</pre>
                     {{/if}}
-                    {{#if miscJSON}}<pre class="log-lines">{{miscJSON}}</pre>{{/if}}
+                    {{#if (jsonContent miscJSON)}}<pre class="log-lines">{{miscJSON}}</pre>{{/if}}
                   </div>
                 </div>
               </li>

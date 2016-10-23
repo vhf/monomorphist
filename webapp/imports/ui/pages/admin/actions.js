@@ -45,6 +45,17 @@ Template.adminActions.helpers({
   isoTime(time) {
     return new Date(time).toISOString();
   },
+  jsonContent(string) {
+    if (string === 'null') {
+      return false;
+    }
+    try {
+      JSON.parse(string);
+    } catch (e) {
+      return false;
+    }
+    return true;
+  },
   collapsible() {
     $('.collapsible').collapsible({
       accordion: false,
