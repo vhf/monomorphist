@@ -1,0 +1,28 @@
+<template name="v8InfoModal">
+  <div id="d8-info-modal" class="modal bottom-sheet">
+    <div class="modal-content compact">
+      <h5>Available d8 versions</h5>
+      <table id="d8-versions-table" class="bordered highlight compact">
+        <thead>
+          <tr>
+            <th data-field="tag">v8 tag</th>
+            <th data-field="node">node</th>
+            <th data-field="chrome">Chrome</th>
+            <th data-field="gn">GN</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          {{#each v8s}}
+            <tr data-version="{{ _id }}">
+              <td>{{ tag }}</td>
+              <td>{{ nodeVersion }}</td>
+              <td>{{ chromeVersion }}</td>
+              <td>{{#if gnCompatible}}<i class="material-icons">done</i>{{/if}}</td>
+            </tr>
+          {{/each}}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</template>

@@ -7,7 +7,7 @@ const codeMirror = () => {
   const definition = document.getElementById('sampleDefinition');
   const call = document.getElementById('sampleCall');
 
-  CodeMirror((elt) => definition.parentNode.replaceChild(elt, definition), {
+  CodeMirror((elt) => definition.parentNode.replaceChild(elt, definition), { // eslint-disable-line new-cap
     readOnly: true,
     value: `function wEval(x) {
   console.log({ x: x });
@@ -22,7 +22,7 @@ var arg;`,
     extraKeys: { Tab: false, 'Shift-Tab': false },
   });
 
-  CodeMirror((elt) => call.parentNode.replaceChild(elt, call), {
+  CodeMirror((elt) => call.parentNode.replaceChild(elt, call), { // eslint-disable-line new-cap
     readOnly: true,
     value: `arg = Math.round(Math.random() * 100);
 wEval(arg);`,

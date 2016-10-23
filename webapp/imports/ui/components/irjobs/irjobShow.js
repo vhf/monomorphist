@@ -8,6 +8,6 @@ Template.irjobShow.onCreated(function onCreated() {
 
 Template.irjobShow.helpers({
   code() {
-    return 'haha';
+    return '';
   },
 });

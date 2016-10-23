@@ -33,7 +33,7 @@ Template.irjobForm.onCreated(function onCreated() {
     this.subscribe('irlogs', _publicId);
     this.subscribe('v8');
     if (this.subscriptionsReady()) {
-      this.v8s.set(V8.find({ gnCompatible: true }, { sort: { tag: 1 } }).fetch());
+      this.v8s.set(V8.find({}, { sort: { tag: 1 } }).fetch());
     }
   });
 });
@@ -46,22 +46,19 @@ Template.irjobForm.helpers({
   },
   v8ColA() {
     const v8s = Template.instance().v8s.get();
+    if (!v8s || !v8s.length) {
+      return [];
+    }
     const length = v8s.length;
     return v8s.slice(0, Math.ceil(length / 2));
   },
   v8ColB() {
     const v8s = Template.instance().v8s.get();
+    if (!v8s || !v8s.length) {
+      return [];
+    }
     const length = v8s.length;
     return v8s.slice(Math.ceil(length / 2));
-  },
-  versionAndTag(_id) {
-    const v8s = Template.instance().v8s.get();
-    const v8 = _.findWhere(v8s, { _id });
-    if (!v8) return '';
-    if (v8.nodeVersion) {
-      return `${v8.tag} (node v${v8.nodeVersion})`;
-    }
-    return `${v8.tag}`;
   },
   formInvalid(job) {
     return job && job.fn;
@@ -82,13 +79,17 @@ Template.irjobForm.events({
   'change .v8-radio': event => {
     const id = $(event.target).attr('id');
     console.log(id);
-    // if (job) {
-    //   Jobs.update(job._id, modifier);
-    // }
   },
   'click #run': event => {
     $(event.target).prop('disabled', true);
     Meteor.call('irjob:submit', FlowRouter.getParam('_publicId'));
+  },
+  'click .d8-modal-trigger': (event) => {
+    event.preventDefault();
+    const version = $(event.target).closest('.d8-modal-trigger').data('id');
+    $('#d8-versions-table tr').removeClass('selected-version');
+    $(`#d8-versions-table tr[data-version="${version}"]`).addClass('selected-version');
+    $('#d8-info-modal').openModal();
   },
 });
 

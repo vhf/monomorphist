@@ -2,6 +2,7 @@ import { HTTP } from 'meteor/http';
 import { check } from 'meteor/check';
 import { Job } from 'meteor/vsivsi:job-collection';
 
+import Logs from '/imports/api/logs/collection';
 import V8 from '/imports/api/v8/collection';
 import { BuildQueue } from '/imports/api/queue/collection';
 
@@ -60,15 +61,31 @@ const v8FromChromeVersion = ([, , chromeVersion, , , , , , , , tag = false]) => 
         out.tag = o.v8_version;
       }
     } catch (e) {
-      console.log(`V8 version for chrome ${chromeVersion} failed: ${e}`);
+      Logs.insert({
+        type: 'refresh',
+        queue: 'build-v8',
+        title: `Failed to find V8 version for chrome ${chromeVersion}`,
+        miscJSON: JSON.stringify(e),
+      });
     }
   }
   return out;
 };
 
 const nodeTagList = () => {
-  const request = HTTP.get('https://nodejs.org/dist/index.json');
-  if (!request.content) {
+  let request = null;
+  try {
+    request = HTTP.get('https://nodejs.org/dist/index.json');
+  } catch (e) {
+    Logs.insert({
+      type: 'refresh',
+      queue: 'build-v8',
+      title: 'Failed to retrieve node index',
+      miscJSON: JSON.stringify(e),
+    });
+    return [];
+  }
+  if (!('content' in request) || !request.content) {
     return [];
   }
   const xs = JSON.parse(request.content);
@@ -151,12 +168,13 @@ Meteor.methods({
 
     merged.forEach(_obj => {
       const obj = _obj;
-      if (obj.tag) {
+      obj.gnCompatible = true;
+      if (obj.tag !== 'master') {
         const shortV = obj.tag.slice(0, obj.tag.lastIndexOf('.'));
         try {
           obj.gnCompatible = semver.gt(shortV, '5.4.500');
         } catch (e) {
-          obj.gnCompatible = true;
+          //
         }
       }
       obj.chromeVersion = obj.chromeVersion || '';
@@ -168,7 +186,7 @@ Meteor.methods({
       const isMaster = obj.tag === 'master';
       const isForced = forced.indexOf(obj.tag) !== -1;
       const tagExists = tags.indexOf(obj.tag) !== -1;
-      console.log(obj);
+
       obj.rebuild = !tagExists || isMaster || isForced;
       V8.upsert({ tag: obj.tag }, { $set: obj });
     });

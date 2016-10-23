@@ -7,6 +7,7 @@ import '/imports/ui/components/jobs/nodeInfoModal.html';
 import '/imports/ui/components/irjobs/irjobForm.html';
 import '/imports/ui/components/irjobs/irjobShow.html';
 import '/imports/ui/components/irjobs/irjobLogs.html';
+import '/imports/ui/components/irjobs/v8InfoModal.html';
 
 import '/imports/ui/components/queue/queue.html';
 
