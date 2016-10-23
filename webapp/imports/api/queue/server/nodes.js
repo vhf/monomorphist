@@ -91,6 +91,17 @@ Job.processJobs(BuildQueue, 'refresh-nodes', { concurrency: 1, pollInterval: 100
       }
     } while (versionMatch);
 
+    // we also need to take into account containers based on images
+    re = /(\d+\.\d+\.\d+) uses an image, skipping/g;
+    versionMatch = '';
+    do {
+      versionMatch = re.exec(stderr);
+      if (versionMatch) {
+        const [, version] = versionMatch;
+        buildAttempts.push(version);
+      }
+    } while (versionMatch);
+
     // then we grep the stderr to see which build fail
     re = /Cannot locate specified Dockerfile: Dockerfile\.(\d+\.\d+\.\d+)(-nightly2\d{7})?/g;
     const dockerfileNotFound = [];

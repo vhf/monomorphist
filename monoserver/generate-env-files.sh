@@ -20,6 +20,7 @@ then
   sed=$(which sed)
 fi
 
+TAG=$(git describe --tags --abbrev=0)
 
 # we load into this script all bash variables 'export'ed by meteor.env.secret
 [ -f ./meteor.env.secret ] && source ./meteor.env.secret
@@ -39,6 +40,9 @@ for n in $(seq $N); do
   SETTINGS=$(echo $SETTINGS | jq -c --arg x "$GITHUB_AUTHORIZED_USERNAMES" '.githubAuthorizedUsernames |= ($x | fromjson)')
   echo "Installed oauth settings:"
   echo "github: $OAUTH_GITHUB_CLIENT / $OAUTH_GITHUB_SECRET / $GITHUB_AUTHORIZED_USERNAMES"
+  # git tag
+  SETTINGS=$(echo $SETTINGS | jq -c --arg x "$TAG" '.public.gittag |= $x')
+  echo "Tagged: $TAG"
   # finally we write the JSON string
   LINE="METEOR_SETTINGS=$SETTINGS"
   cat $BASE_FILE > $FILE

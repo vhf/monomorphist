@@ -1,7 +1,7 @@
 import { Template } from 'meteor/templating';
 import { ReactiveMethod } from 'meteor/simple:reactive-method';
 
-const { node, serverInstance } = Meteor.settings.public;
+const { node, serverInstance, gittag } = Meteor.settings.public;
 const { concurrency, timeout } = node;
 
 Template.footer.onCreated(function onCreated() {
@@ -11,6 +11,9 @@ Template.footer.onCreated(function onCreated() {
 });
 
 Template.footer.helpers({
+  gittag() {
+    return gittag;
+  },
   totalJobsCount() {
     return ReactiveMethod.call('jobs:total');
   },

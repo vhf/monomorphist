@@ -16,7 +16,8 @@
     },
     "analyticsSettings": {
       "Google Analytics" : {"trackingId": "to-fill"}
-    }
+    },
+    "gittag": ""
   },
   "githubOauthClientId": "",
   "githubOauthSecret": "",
