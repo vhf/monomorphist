@@ -53,27 +53,24 @@ Job.processJobs(BuildQueue, 'refresh-v8s', { concurrency: 1, pollInterval: 1000 
 
 Job.processJobs(BuildQueue, 'build-v8', { concurrency: 1, pollInterval: 1000 * 10, v8BuildTimeout },
   (qObj, cb) => {
-    Logs.insert({ time: new Date(), message: JSON.stringify({ title: 'Build v8' }) });
+    Logs.insert({
+      type: 'refresh',
+      queue: 'build-v8',
+      title: 'Building v8',
+      miscJSON: JSON.stringify(qObj.data),
+    });
     const { _v8Id, tag } = qObj.data;
     const v8 = V8.findOne({ _id: _v8Id });
     if (!v8) {
       Logs.insert({
-        time: new Date(),
-        message: JSON.stringify({
-          title: `v8 ${_v8Id} ${tag} not found`,
-          body: qObj.data,
-        }),
+        type: 'refresh',
+        queue: 'build-v8',
+        title: `v8 ${_v8Id} ${tag} not found`,
       });
       cb();
       qObj.fail();
       return;
     }
-    Logs.insert({
-      time: new Date(),
-      message: JSON.stringify({
-        title: `v8 ${_v8Id} ${tag} found`,
-      }),
-    });
     Meteor.call('v8:createDockerfile', v8);
     /*
       # how to test this stuff
@@ -88,7 +85,14 @@ Job.processJobs(BuildQueue, 'build-v8', { concurrency: 1, pollInterval: 1000 * 1
          for each execSync call
     */
     let { err, stdout, stderr } = execSync(`${v8Root}/dockerfiles`, `docker build -t dockervhf/d8:${tag} -f Dockerfile.${tag} .`);
-    Logs.insert({ time: new Date(), message: JSON.stringify({ err, stdout, stderr }) });
+    Logs.insert({
+      type: 'refresh',
+      queue: 'build-v8',
+      title: `v8 ${v8.tag} docker build`,
+      stdout,
+      stderr,
+      miscJSON: JSON.stringify(err),
+    });
     if (err && (err.killed || ('code' in err && err.code !== 0))) {
       cb();
       qObj.fail();
@@ -96,12 +100,24 @@ Job.processJobs(BuildQueue, 'build-v8', { concurrency: 1, pollInterval: 1000 * 1
 
     const { repo } = Meteor.settings.public.v8;
     ({ err, stdout, stderr } = execSync(`${v8Root}/dockerfiles`, `docker push ${repo}:${tag}`));
-    Logs.insert({ time: new Date(), message: JSON.stringify({ err, stdout, stderr }) });
+    Logs.insert({
+      type: 'refresh',
+      queue: 'build-v8',
+      title: `v8 ${v8.tag} docker push`,
+      stdout,
+      stderr,
+      miscJSON: JSON.stringify(err),
+    });
     if (err && (err.killed || ('code' in err && err.code !== 0))) {
       cb();
       qObj.fail();
     }
     V8.update({ _id: v8._id }, { $set: { rebuild: false } });
+    Logs.insert({
+      type: 'refresh',
+      queue: 'build-v8',
+      title: `v8 ${v8.tag} built and pushed!`,
+    });
     cb();
     qObj.done();
   }

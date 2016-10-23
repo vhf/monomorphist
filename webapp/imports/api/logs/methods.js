@@ -21,6 +21,6 @@ Meteor.methods({
   },
   'logs:clearBuilds'() {
     if (!this.userId) return;
-    Logs.remove({ _jobId: { $exists: false }, _irjobId: { $exists: false }, _nodeId: { $exists: false } });
+    Logs.update({ type: 'refresh' }, { $set: { type: 'refresh-old' } }, { multi: true });
   },
 });

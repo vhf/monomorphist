@@ -82,7 +82,7 @@ Meteor.methods({
     Jobs.update({ _id: job._id, status: 'editing' }, { $set: { status: 'ready' } });
     const queuedJob = new Job(Queue, 'run', { _jobId: job._id, nodes: job.nodes, listed: job.listed });
     queuedJob.priority('normal').save();
-    Logs.insert({ _jobId: job._id, time: new Date(), message: 'job queued...' });
+    Logs.insert({ _jobId: job._id, message: 'job queued...' });
   },
   'jobs:total'() {
     return Jobs.find({ updatedAt: { $exists: true } }).count();

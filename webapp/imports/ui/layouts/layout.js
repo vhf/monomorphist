@@ -36,7 +36,7 @@ Template.layout.onRendered(() => {
   } else {
     const broken = parseInt(breaker, 10);
     Cookie.set('break', `${broken + 1}`, { expires: 30 });
-    if (broken >= 3) {
+    if (broken >= 2) {
       deleteAllCookies();
     }
   }

@@ -14,7 +14,7 @@ Meteor.publish('irlogs', _irjobId => {
 
 Meteor.publish('refreshLogs', function refreshLogs() {
   if (this.userId) {
-    return Logs.find({ _jobId: { $exists: false }, _irjobId: { $exists: false }, _nodeId: { $exists: false } });
+    return Logs.find({ type: 'refresh' });
   }
   return undefined;
 });

@@ -3,6 +3,27 @@ import { $ } from 'meteor/jquery';
 
 import Logs from '/imports/api/logs/collection';
 
+const parseDockerBuildLogs = lines => lines.reduce((prev = [], curr, i) => {
+  if (i > 0) {
+    if (i === lines.length - 1) {
+      const tmp = _.compact(curr.split('\n'));
+      const step = `Step ${tmp[0]}`;
+      const body = tmp.slice(1, tmp.length - 2).join('\n');
+      const end = tmp.slice(tmp.length - 2);
+      prev.push({ step, body });
+      prev.push({ step: end[end.length - 1], body: end.join('\n') });
+      return prev;
+    }
+
+    const tmp = _.compact(curr.split('\n'));
+    const step = `Step ${tmp[0]}`;
+    const body = tmp.slice(1).join('\n');
+    prev.push({ step, body });
+    return prev;
+  }
+  return prev;
+}, []);
+
 Template.adminActions.onCreated(function onCreated() {
   this.autorun(() => {
     this.subscribe('refreshLogs');
@@ -14,37 +35,9 @@ Template.adminActions.helpers({
     const logs = Logs.find().fetch();
     logs.forEach(_log => {
       const log = _log;
-      try {
-        log.message = JSON.parse(log.message);
-        log.message.parsed = true;
-        if ('stdout' in log.message && log.message.stdout.indexOf('\nStep ')) {
-          log.message.title = 'Docker log';
-          const split = log.message.stdout.split('\nStep ');
-          log.message.steps = split.reduce((prev = [], curr, i) => {
-            if (i > 0) {
-              if (i === split.length - 1) {
-                const tmp = _.compact(curr.split('\n'));
-                const title = `Step ${tmp[0]}`;
-                const body = tmp.slice(1, tmp.length - 2).join('\n');
-                const end = tmp.slice(tmp.length - 2);
-                prev.push({ title, body });
-                prev.push({ title: end[end.length - 1], body: end.join('\n') });
-                return prev;
-              }
-
-              const tmp = _.compact(curr.split('\n'));
-              const title = `Step ${tmp[0]}`;
-              const body = tmp.slice(1).join('\n');
-              prev.push({ title, body });
-              return prev;
-            }
-            return prev;
-          }, []);
-          log.message.steps = log.message.steps.concat(log.message.stderr.split('\n'));
-          log.message.steps.push(JSON.stringify(log.message.err));
-        }
-      } catch (e) {
-        //
+      if (log.stdout && log.stdout.indexOf('\nStep ')) {
+        const lines = log.stdout.split('\nStep ');
+        log.steps = parseDockerBuildLogs(lines);
       }
     });
     return logs;

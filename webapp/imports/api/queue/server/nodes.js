@@ -50,10 +50,14 @@ Job.processJobs(BuildQueue, 'refresh-nodes', { concurrency: 1, pollInterval: 100
   (qObj, cb) => {
     if (Meteor.call('nodes:updateVersions') !== true) {
       Logs.insert({
-        time: new Date(),
         message: JSON.stringify({
           title: "nodes:updateVersions didn't properly return",
         }),
+      });
+      Logs.insert({
+        type: 'refresh',
+        queue: 'refresh-nodes',
+        title: "nodes:updateVersions didn't properly return",
       });
       cb();
       qObj.fail();
@@ -61,22 +65,26 @@ Job.processJobs(BuildQueue, 'refresh-nodes', { concurrency: 1, pollInterval: 100
     }
     if (Meteor.call('nodes:createDockerConfig') !== true) {
       Logs.insert({
-        time: new Date(),
-        message: JSON.stringify({
-          title: "nodes:createDockerConfig didn't properly return",
-        }),
+        type: 'refresh',
+        queue: 'refresh-nodes',
+        title: "odes:createDockerConfig didn't properly return",
       });
       cb();
       qObj.fail();
       return;
     }
-    const { err, stdout, stderr } = execSync(nodeRoot, 'docker-compose build');
-    Logs.insert({ time: new Date(), message: JSON.stringify({ err, stdout, stderr }) });
-    if (err) {
-      if (err && (err.killed || ('code' in err && err.code !== 0))) {
-        cb();
-        qObj.fail();
-      }
+    let { err, stdout, stderr } = execSync(nodeRoot, 'docker-compose build');
+    Logs.insert({
+      type: 'refresh',
+      queue: 'refresh-nodes',
+      title: 'node docker-compose build',
+      stdout,
+      stderr,
+      miscJSON: JSON.stringify(err),
+    });
+    if (err && (err.killed || ('code' in err && err.code !== 0))) {
+      cb();
+      qObj.fail();
     }
     // we'll have to grep the logs to find out what was tentatively built
     // although they should be the same versions as the one with toBuild: true
@@ -110,10 +118,9 @@ Job.processJobs(BuildQueue, 'refresh-nodes', { concurrency: 1, pollInterval: 100
       if (versionMatch) {
         const [, version, nightlyPart] = versionMatch;
         Logs.insert({
-          time: new Date(),
-          message: JSON.stringify({
-            title: `Dockerfile not found: ${version}${nightlyPart || ''}`,
-          }),
+          type: 'refresh',
+          queue: 'refresh-nodes',
+          title: `Dockerfile node found ${version}${nightlyPart || ''}`,
         });
         dockerfileNotFound.push(`${version}${nightlyPart || ''}`);
       }
@@ -126,10 +133,9 @@ Job.processJobs(BuildQueue, 'refresh-nodes', { concurrency: 1, pollInterval: 100
       if (versionMatch) {
         const [, version, nightlyPart] = versionMatch;
         Logs.insert({
-          time: new Date(),
-          message: JSON.stringify({
-            title: `Node build failed: ${version}${nightlyPart || ''}`,
-          }),
+          type: 'refresh',
+          queue: 'refresh-nodes',
+          title: `Node build failed: ${version}${nightlyPart || ''}`,
         });
         buildFailed.push(`${version}${nightlyPart || ''}`);
       }
@@ -138,27 +144,49 @@ Job.processJobs(BuildQueue, 'refresh-nodes', { concurrency: 1, pollInterval: 100
     // now we only enable the versions successfully built and return the one
     // which errored
     const failed = _.chain(dockerfileNotFound).concat(buildFailed).unique().value();
+    if (failed.length) {
+      Logs.insert({
+        type: 'refresh',
+        queue: 'refresh-nodes',
+        title: 'Some node build failed',
+        stderr: failed.join('\n'),
+      });
+    }
     const toEnable = _.without(buildAttempts, ...failed);
     toEnable.forEach(version => {
       Nodes.update({ version }, { $set: { enabled: true } }, { multi: true });
     });
     // make sure we quit maintenance here
     Nodes.update({}, { $set: { toBuild: false } }, { multi: 1 });
+    if (toEnable.length) {
+      Logs.insert({
+        type: 'refresh',
+        queue: 'refresh-nodes',
+        title: 'Some node successfully built',
+        stderr: toEnable.join('\n'),
+      });
+    }
 
     // finally we can tag images and push them to docker hub
     const { repo } = Meteor.settings.public.node;
     toEnable.forEach(version => {
+      ({ err, stdout, stderr } = execSync(nodeRoot, `docker tag mononodes_node-${version}:latest ${repo}:${version}`));
       Logs.insert({
-        time: new Date(),
-        message: JSON.stringify(
-          execSync(nodeRoot, `docker tag mononodes_node-${version}:latest ${repo}:${version}`)
-        ),
+        type: 'refresh',
+        queue: 'refresh-nodes',
+        title: `Tagging node ${version}`,
+        stdout,
+        stderr,
+        miscJSON: JSON.stringify(err),
       });
+      ({ err, stdout, stderr } = execSync(nodeRoot, `docker push ${repo}:${version}`));
       Logs.insert({
-        time: new Date(),
-        message: JSON.stringify(
-          execSync(nodeRoot, `docker push ${repo}:${version}`)
-        ),
+        type: 'refresh',
+        queue: 'refresh-nodes',
+        title: `Pushing node ${version}`,
+        stdout,
+        stderr,
+        miscJSON: JSON.stringify(err),
       });
     });
     cb();

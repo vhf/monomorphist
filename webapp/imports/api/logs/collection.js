@@ -12,12 +12,23 @@ const LogsSchema = new SimpleSchema({
     label: 'The irjob these log lines belong to.',
     optional: true,
   },
+  time: {
+    type: Date,
+    autoValue: function autoValue(): any {
+      if (this.isInsert) {
+        return new Date();
+      } else if (this.isUpsert) {
+        return { $setOnInsert: new Date() };
+      } else if (this.isUpdate) {
+        return new Date();
+      }
+      this.unset();
+      return undefined;
+    },
+  },
   _nodeId: {
     type: String,
     optional: true,
-  },
-  time: {
-    type: Date,
   },
   raw: {
     type: String,
@@ -25,6 +36,31 @@ const LogsSchema = new SimpleSchema({
   },
   message: {
     type: String,
+    optional: true,
+  },
+  type: {
+    type: String,
+    optional: true,
+  },
+  queue: {
+    type: String,
+    optional: true,
+  },
+  title: {
+    type: String,
+    optional: true,
+  },
+  stdout: {
+    type: String,
+    optional: true,
+  },
+  stderr: {
+    type: String,
+    optional: true,
+  },
+  miscJSON: {
+    type: String,
+    optional: true,
   },
 });
 

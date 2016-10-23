@@ -21,7 +21,7 @@ Meteor.methods({
     IRJobs.update({ _id: irjob._id, status: 'editing' }, { $set: { status: 'ready' } });
     const queuedJob = new Job(Queue, 'run-ir', { _irjobId: irjob._id, v8: irjob.v8, listed: irjob.listed });
     queuedJob.priority('normal').save();
-    Logs.insert({ _irjobId: irjob._id, time: new Date(), message: 'irjob queued...' });
+    Logs.insert({ _irjobId: irjob._id, message: 'irjob queued...' });
   },
   'irjobs:total'() {
     return IRJobs.find({ updatedAt: { $exists: true } }).count();

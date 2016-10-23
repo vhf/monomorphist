@@ -21,7 +21,7 @@ const timeoutFail = (jc, type, timeOut) => {
     jc.find({ status: 'running', type: type, updated: { $lt: stale } })
       .forEach(job => {
         Jobs.update({ _id: job.data._jobId }, { $set: { killed: true, status: 'done' } });
-        Logs.insert({ _jobId: job.data._jobId, time: new Date(), message: 'Killed by server (timeout).' });
+        Logs.insert({ _jobId: job.data._jobId, message: 'Killed by server (timeout).' });
         new Job(jc, job).fail('Timed out by autofail');
       });
   };
@@ -35,7 +35,7 @@ const queueFailsAsDoneJobs = (jc, type, timeOut) => {
       .forEach(job => {
         const updated = Jobs.update({ _id: job.data._jobId, killed: false, status: 'running' }, { $set: { killed: true, status: 'done' } });
         if (updated) {
-          Logs.insert({ _jobId: job.data._jobId, time: new Date(), message: 'This job died.' });
+          Logs.insert({ _jobId: job.data._jobId, message: 'This job died.' });
         }
       });
   };
@@ -49,7 +49,7 @@ const envVarRegex = /^[a-z0-9][a-z0-9\-\.]+$/mi;
 const exec = (resolve, reject, _jobId, _nodeId, container) => {
   if (!envVarRegex.test(_jobId) || !envVarRegex.test(container)) {
     const raw = `Env var security check failed: ${_jobId} is ${envVarRegex.test(_jobId)}, ${container} is ${envVarRegex.test(container)}`;
-    Logs.insert({ _jobId, _nodeId, time: new Date(), raw, message: 'error: security check failed' });
+    Logs.insert({ _jobId, _nodeId, raw, message: 'error: security check failed' });
     reject('security check failed');
   }
   childProcess.exec(
@@ -62,7 +62,7 @@ const exec = (resolve, reject, _jobId, _nodeId, container) => {
       if (err) {
         killed = true;
         const raw = JSON.stringify(err);
-        Logs.insert({ _jobId, _nodeId, time: new Date(), raw, message: `error: ${raw}` });
+        Logs.insert({ _jobId, _nodeId, raw, message: `error: ${raw}` });
       }
       if (stdout) {
         const raw = stdout;
@@ -74,11 +74,11 @@ const exec = (resolve, reject, _jobId, _nodeId, container) => {
             return { accLines, finalVerdict: currentVerdict !== -1 ? currentVerdict : finalVerdict };
           }, { accLines: [], finalVerdict: -1 });
         verdict = parsed.finalVerdict;
-        Logs.insert({ _jobId, _nodeId, time: new Date(), raw, message: parsed.accLines.join('\n') });
+        Logs.insert({ _jobId, _nodeId, raw, message: parsed.accLines.join('\n') });
       }
       if (stderr) {
         const raw = stderr;
-        Logs.insert({ _jobId, _nodeId, time: new Date(), raw, message: `stderr: ${stderr}` });
+        Logs.insert({ _jobId, _nodeId, raw, message: `stderr: ${stderr}` });
       }
       const status = verdict in optimizationStatuses ? optimizationStatuses[verdict] : '';
       Jobs.update({ _id: _jobId }, { $set: { killed }, $push: { nodesStatus: { _id: _nodeId, verdict, status } } });
@@ -93,7 +93,7 @@ Job.processJobs(Queue, 'run', { concurrency, pollInterval, workTimeout },
     const job = Jobs.findOne({ _id: _jobId });
 
     Jobs.update({ _id: _jobId, status: 'ready' }, { $set: { status: 'running' } });
-    Logs.insert({ _jobId, time: new Date(), message: `job ${_jobId} started running...` });
+    Logs.insert({ _jobId, message: `job ${_jobId} started running...` });
 
     const instrumented = Meteor.call('job:instrument', job.fn, false);
     fs.mkdirSync(`/src/${_jobId}`);
@@ -118,7 +118,7 @@ Job.processJobs(Queue, 'run', { concurrency, pollInterval, workTimeout },
     if (!containers.length) {
       const err = 'Job failed because no valid node version found.';
       Jobs.update({ _id: _jobId }, { $set: { status: 'done' } });
-      Logs.insert({ _jobId, time: new Date(), message: err });
+      Logs.insert({ _jobId, message: err });
       qObj.fail(err);
       cb();
     }
@@ -133,7 +133,7 @@ Job.processJobs(Queue, 'run', { concurrency, pollInterval, workTimeout },
         console.log(err);
       });
       Jobs.update({ _id: _jobId, status: 'running' }, { $set: { status: 'done' } });
-      Logs.insert({ _jobId, time: new Date(), message: 'job done.' });
+      Logs.insert({ _jobId, message: 'job done.' });
       qObj.done();
       cb();
     }).catch(() => {
@@ -142,7 +142,7 @@ Job.processJobs(Queue, 'run', { concurrency, pollInterval, workTimeout },
         console.log(err);
       });
       Jobs.update({ _id: _jobId, status: 'running' }, { $set: { status: 'done' } });
-      Logs.insert({ _jobId, time: new Date(), message: 'job done: a node failed for security reason, so we quit.' });
+      Logs.insert({ _jobId, message: 'job done: a node failed for security reason, so we quit.' });
       qObj.done();
     });
   }

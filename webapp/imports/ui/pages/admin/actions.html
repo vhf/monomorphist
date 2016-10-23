@@ -30,36 +30,31 @@
             {{#each logs}}{{collapsible}}
               <li>
                 <div class="collapsible-header">
-                  <code>{{isoTime time}} {{message.title}}</code>
+                  <code>{{isoTime time}}</code> {{title}}
+                  <div class="right">{{queue}}</div>
                 </div>
                 <div class="collapsible-body">
                   <div class="blue-grey lighten-4">
-                    {{#if message.parsed}}
-                      {{#if message.err}}<pre class="log-lines">{{message.err}}</pre>{{/if}}
-                      {{#if message.stderr}}<pre class="log-lines">{{message.stderr}}</pre>{{/if}}
-                      {{#if message.stdout}}
-                        {{#if message.steps}}
-                          <ul class="collapsible" data-collapsible="expandable">
-                            {{#each message.steps}}{{collapsible}}
-                              <li>
-                                <div class="collapsible-header">
-                                  {{title}}
-                                </div>
-                                <div class="collapsible-body">
-                                  <div class="blue-grey lighten-4">
-                                    <pre class="log-lines">{{body}}</pre>
-                                  </div>
-                                </div>
-                              </li>
-                            {{/each}}
-                          </ul>
-                        {{else}}
-                          <pre class="log-lines">{{message.stdout}}</pre>
-                        {{/if}}
-                      {{/if}}
+                    {{#if stderr}}<pre class="log-lines">{{stderr}}</pre>{{/if}}
+                    {{#if steps}}
+                      <ul class="collapsible" data-collapsible="expandable">
+                        {{#each steps}}{{collapsible}}
+                          <li>
+                            <div class="collapsible-header">
+                              {{step}}
+                            </div>
+                            <div class="collapsible-body">
+                              <div class="blue-grey lighten-4">
+                                <pre class="log-lines">{{body}}</pre>
+                              </div>
+                            </div>
+                          </li>
+                        {{/each}}
+                      </ul>
                     {{else}}
-                      <pre class="log-lines">{{message}}</pre>
+                      <pre class="log-lines">{{stdout}}</pre>
                     {{/if}}
+                    {{#if miscJSON}}<pre class="log-lines">{{miscJSON}}</pre>{{/if}}
                   </div>
                 </div>
               </li>
