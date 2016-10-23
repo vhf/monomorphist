@@ -1,3 +1,4 @@
+// (TODO: document native syntax)
 // kudos to https://gist.github.com/mathiasbynens/6334847 for this one
 
 const optimizationStatuses = {

@@ -7,12 +7,12 @@ import { optimizationStatuses, parseRawOutput } from '/imports/api/jobs/utils';
 import Jobs from '/imports/api/jobs/collection';
 import Logs from '/imports/api/logs/collection';
 import Nodes from '/imports/api/nodes/collection';
-import Queue from '/imports/api/queue/collection';
+import { Queue } from '/imports/api/queue/collection';
 
 const fs = require('fs');
 const childProcess = require('child_process');
 
-const { concurrency, pollInterval, timeout } = Meteor.settings.public;
+const { concurrency, pollInterval, timeout } = Meteor.settings.public.node;
 const workTimeout = timeout;
 
 const timeoutFail = (jc, type, timeOut) => {

@@ -1,0 +1,72 @@
+<template name="irjobForm">
+  <div class="row">
+    <div class="col s12">
+      <h5>
+        Choose v8 version
+        <small class="right">
+          <a href="https://github.com/vhf/monomorphist/issues/new" target="_blank">Request a v8 version</a>
+        </small>
+      </h5>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col s12 m6">
+      {{#each v8ColA}}
+        <input name="v8-tag" class="v8-radio" type="radio" id="{{ _id }}" />
+        <label for="{{ _id }}">
+          <span class="v8-modal-trigger">
+            {{ versionAndTag _id }}
+          </span>
+        </label>
+        <br>
+      {{/each}}
+    </div>
+    <div class="col s12 m6">
+      {{#each v8ColB}}
+        <input name="v8-tag" class="v8-radio" type="radio" id="{{ _id }}" />
+        <label for="{{ _id }}">
+          <span class="v8-modal-trigger">
+            {{ versionAndTag _id }}
+          </span>
+        </label>
+        <br>
+      {{/each}}
+      <input name="v8-tag" class="v8-radio" type="radio" id="master" />
+      <label for="master">
+        <span class="v8-modal-trigger">
+          current master
+        </span>
+      </label>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col s12">
+      <h5>Enter your code</h5>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col s12">
+      {{#autoForm collection=IRJobs autosave=true doc=job id="irjobForm" type="update"}}
+        {{> afQuickField name="code" label-style="margin-left: 34px;"}}
+        {{> afQuickField name="listed" type="boolean-checkbox" template="listedCheckbox"}}
+      {{/autoForm}}
+    </div>
+  </div>
+  <div class="row">
+    <div class="col s12 center">
+      <button id="run" class="btn waves-effect waves-light" type="submit" name="action" disabled="{{formInvalid job}}">
+        Run
+      </button>
+      <br>
+      <p>
+        {{#let seconds=estimate}}
+          {{#if seconds}}
+            Current job waiting time is {{ seconds }} seconds.
+          {{else}}
+            Queue empty, your job will run immediately!
+          {{/if}}
+        {{/let}}
+      </p>
+    </div>
+  </div>
+</template>

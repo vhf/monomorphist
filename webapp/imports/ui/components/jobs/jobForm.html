@@ -1,7 +1,12 @@
 <template name="jobForm">
   <div class="row">
     <div class="col s12">
-      <h5>Choose node versions ({{ length job.nodes }}/{{ maxNodesPerJob }})</h5>
+      <h5>
+        Choose node versions ({{ length job.nodes }}/{{ maxContainersPerJob }})
+        <small class="right">
+          <a href="https://github.com/vhf/monomorphist/issues/new" target="_blank">Request a node version</a>
+        </small>
+      </h5>
     </div>
   </div>
   <div class="row">

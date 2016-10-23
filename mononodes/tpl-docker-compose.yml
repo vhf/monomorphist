@@ -1,9 +1,10 @@
 version: '2'
 services:<% nodes.forEach(function(node){ %>
-  node-<%= node.version %>:
+  node-<%= node.version %>:<% if (node.__build) { %>
     build:
       context: .
-      dockerfile: Dockerfile.<%= node.version %>
+      dockerfile: Dockerfile.<%= node.version %><% } else { %>
+    image: <%= repo %>:<%= node.version %><% } %>
     network_mode: none
     volumes:
       - /opt/monomorphist/volume/start.sh:/start.sh

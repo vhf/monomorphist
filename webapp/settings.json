@@ -1,10 +1,19 @@
 {
   "public": {
     "serverInstance": 1,
-    "concurrency": 10,
-    "pollInterval": 2000,
-    "timeout": 10000,
-    "maxNodesPerJob": 5,
+    "node": {
+      "pollInterval": 2000,
+      "concurrency": 10,
+      "timeout": 10000,
+      "maxContainersPerJob": 5,
+      "repo": "dockervhf/mononode"
+    },
+    "v8": {
+      "pollInterval": 2000,
+      "concurrency": 20,
+      "timeout": 10000,
+      "repo": "dockervhf/d8"
+    },
     "analyticsSettings": {
       "Google Analytics" : {"trackingId": "to-fill"}
     }

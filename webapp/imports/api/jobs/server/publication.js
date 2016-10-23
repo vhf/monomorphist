@@ -8,7 +8,7 @@ Meteor.publish('job', _publicId => {
 });
 
 Meteor.publish('jobs', () => Jobs.find({ status: 'done', listed: true }));
-Meteor.publish('unlistedJobs', () => Jobs.find({ status: 'done', listed: false }, { fields: { _publicId: 0 } }));
+Meteor.publish('unlistedJobs', () => Jobs.find({ status: 'done', listed: false }, { fields: { _publicId: 0, fn: 0 } }));
 
 Jobs.allow({
   update: (userId, doc) => doc.status === 'editing',

@@ -13,11 +13,11 @@ echo "Generating $N environment files"
 
 if [ "${OSTYPE//[0-9.]/}" == "darwin" ]
 then
-	sed=$(which gsed)
+  sed=$(which gsed)
   [ -f $sed ] && echo "Using GNU sed" || echo "You need GNU sed: brew install gnu-sed"
 elif  [ "${OSTYPE//[0-9.]/}" == "linux-gnu" ]
 then
-	sed=$(which sed)
+  sed=$(which sed)
 fi
 
 
@@ -50,3 +50,8 @@ for n in $(seq $N); do
   [ -f ./meteor.env.secret ] && grep '#MAIL_URL=' meteor.env.secret | $sed 's/^##*//' >> $FILE
   [ -f ./meteor.env.secret ] && grep '#PREPEND=' meteor.env.secret | $sed 's/^##*//' >> $FILE
 done
+
+source meteor.env
+SERVER_NAME=$(echo $ROOT_URL | sed -r 's_^([^:/?#]+:)?(//([^/:?#]*))?.*_\3_g')
+
+cat tpl-nginx.conf | sed s/SERVER_NAME_PLACEHOLDER/$SERVER_NAME/ > nginx.conf

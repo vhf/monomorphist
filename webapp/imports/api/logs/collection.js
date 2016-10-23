@@ -4,10 +4,13 @@ import { SimpleSchema } from 'meteor/aldeed:simple-schema';
 const LogsSchema = new SimpleSchema({
   _jobId: {
     type: String,
-    label: 'The user who ran this job.',
-    autoform: {
-      type: 'select',
-    },
+    label: 'The job these log lines belong to.',
+    optional: true,
+  },
+  _irjobId: {
+    type: String,
+    label: 'The irjob these log lines belong to.',
+    optional: true,
   },
   _nodeId: {
     type: String,

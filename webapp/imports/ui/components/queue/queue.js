@@ -1,12 +1,13 @@
 import { Template } from 'meteor/templating';
 import { FlowRouter } from 'meteor/kadira:flow-router';
+import { _ } from 'meteor/underscore';
 
 import Jobs from '/imports/api/jobs/collection';
 import Nodes from '/imports/api/nodes/collection';
 
-const { concurrency } = Meteor.settings.public;
+const { node } = Meteor.settings.public;
 
-Template.jobQueue.onCreated(function onCreated() {
+Template.queue.onCreated(function onCreated() {
   this.autorun(() => {
     this.subscribe('nodes');
     this.subscribe('jobs');
@@ -15,14 +16,14 @@ Template.jobQueue.onCreated(function onCreated() {
   });
 });
 
-Template.jobQueue.helpers({
+Template.queue.helpers({
   runningStatus() {
     const ready = Jobs.find({ status: 'ready' }).count();
     const running = Jobs.find({ status: 'running' }).count();
     if (ready + running === 0) {
       return false;
     }
-    return `${running}/${concurrency} running`;
+    return `${running}/${node.concurrency} running`;
   },
   jobsDone() {
     const listed = Jobs.find({ status: 'done', listed: true }, { limit: 50, sort: { createdAt: -1 } }).fetch();
@@ -46,17 +47,21 @@ Template.jobQueue.helpers({
     if (!_publicId) return false;
     return _id === _publicId;
   },
+  link(job) {
+    return `/job/${job._publicId}`;
+  },
   sortAndAugment(nodesStatuses) {
     const nodes = _.indexBy(Nodes.find().fetch(), '_id');
-    return _
+    const augmentedAndSorted = _
       .chain(nodesStatuses)
-      .map(node => _.extend(node, nodes[node._id]))
+      .map(aNode => _.extend(aNode, nodes[aNode._id]))
       .sortBy('version')
       .value();
+    return augmentedAndSorted;
   },
 });
 
-Template.jobQueue.events({
+Template.queue.events({
   'click .node-modal-trigger': (event) => {
     event.preventDefault();
     const version = $(event.target).text().trim();

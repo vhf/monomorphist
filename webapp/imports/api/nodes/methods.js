@@ -1,12 +1,13 @@
-import Future from 'fibers/future';
-import Nodes from '/imports/api/nodes/collection';
+import { HTTP } from 'meteor/http';
 import { _ } from 'meteor/underscore';
+import { Job } from 'meteor/vsivsi:job-collection';
 
-const https = require('https');
+import Nodes from '/imports/api/nodes/collection';
+import { BuildQueue } from '/imports/api/queue/collection';
+
 const fs = require('fs');
 const glob = require('glob');
 const ejs = require('ejs');
-const childProcess = require('child_process');
 
 const isAllowed = (ctx) => ctx.userId || ctx.connection === null;
 
@@ -25,11 +26,15 @@ const root = (() => {
 const pinnedVersions = [
   '0.10.46',
   '4.4.0',
-  '4.5.0',
   '6.6.0',
 ];
 
 Meteor.methods({
+  'nodes:refresh'() {
+    if (!isAllowed(this)) return;
+    const queuedJob = new Job(BuildQueue, 'refresh-nodes', {});
+    queuedJob.priority('normal').save();
+  },
   'nodes:fetchNodeVersions'() {
     // anonymous remote users cannot call this method
     if (!isAllowed(this)) return false;
@@ -44,30 +49,13 @@ Meteor.methods({
       { name: 'nightly', url: 'https://nodejs.org/download/nightly/index.json' },
     ];
 
-    const futures = _.map(urls, ({ name, url }) => {
-      const future = new Future();
-      const onComplete = future.resolver();
-      https.get(url, (response) => {
-        response.setEncoding('utf8');
-        const chunks = [];
-        response.on('data', (chunk) => chunks.push(chunk));
-        response.on('end', () => {
-          let body = chunks.join('');
-          if (url.slice(-4) === 'json') {
-            body = JSON.parse(body);
-          }
-          onComplete(null, { name, body });
-        });
-      }).on('error', (error) => {
-        onComplete(error, null);
-      });
-      return future;
+    const results = _.map(urls, ({ name, url }) => {
+      const response = HTTP.get(url);
+      const body = (url.slice(-4) === 'json') ?
+                    JSON.parse(response.content)
+                    : response.content;
+      return { name, body };
     });
-
-    // wait for all requests to finish
-    Future.wait(futures);
-
-    const results = _.invoke(futures, 'get');
 
     const genericToExact = _
       .chain(results)
@@ -136,6 +124,7 @@ Meteor.methods({
     // 1. fetch new node versions info from nodejs.org
     const { genericToExact, distDict, descendingNightlies } = Meteor.call('nodes:fetchNodeVersions');
     if (!(Object.keys(genericToExact).length && Object.keys(distDict).length && descendingNightlies.length)) {
+      // TODO: handle error
       return false;
     }
     // 2. disable all versions
@@ -208,13 +197,29 @@ Meteor.methods({
     const nightlyURL = 'https://nodejs.org/download/nightly/v';
     const urls = { distURL, nightlyURL };
     const nodes = Nodes.find(
-                            { toBuild: true },
-                            { fields: { _id: 0, version: 1, hash: 1, nightly: 1 }, sort: { version: 1 } }
-                          ).fetch();
-    const data = { nodes };
+      { toBuild: true },
+      {
+        fields: {
+          _id: 0,
+          version: 1,
+          hash: 1,
+          nightly: 1,
+        },
+        sort: {
+          version: 1,
+        },
+      }
+    ).fetch();
+    const { repo } = Meteor.settings.public.node;
+    const tags = Meteor.call('docker:imageTags', repo);
+    const tplData = nodes.map(_node => {
+      const node = _node;
+      node.__build = node.nightly || tags.indexOf(node.version) === -1;
+      return node;
+    });
     const composeTemplate = fs.readFileSync(`${root}/tpl-docker-compose.yml`).toString();
     const compose = ejs.compile(composeTemplate);
-    fs.writeFileSync(`${root}/docker-compose.yml`, compose(data));
+    fs.writeFileSync(`${root}/docker-compose.yml`, compose({ nodes: tplData, repo }));
 
     const dockerfileTemplate = fs.readFileSync(`${root}/tpl-Dockerfile`).toString();
     const dockerfile = ejs.compile(dockerfileTemplate);
@@ -228,98 +233,15 @@ Meteor.methods({
     existingDockerfiles.forEach(file => {
       fs.unlinkSync(file);
     });
-    nodes.forEach(node => {
+    nodes.filter(node => node.__build).forEach(node => {
       const content = dockerfile(_.extend(nodeDefaults, node, urls));
       fs.writeFileSync(`${root}/Dockerfile.${node.version}`, content);
     });
     return true;
   },
-  'nodes:buildImages'() {
-    // anonymous remote users cannot call this method
-    if (!isAllowed(this)) return false;
-    const future = new Future();
-
-    childProcess.exec(
-      'docker-compose build',
-      { cwd: root },
-      (err, stdout, stderr) => future.return({ err, stdout, stderr })
-    );
-
-    const { err, stdout, stderr } = future.wait(future);
-    if (err) {
-      if (err && (err.killed || err.code !== 0)) {
-        console.log(JSON.stringify({ err }));
-      }
-    }
-    // we'll have to grep the logs to find out what was tentatively built
-    // although they should be the same versions as the one with toBuild: true
-    const buildAttempts = [];
-    let re = /ENV NODE_VERSION (\d+\.\d+\.\d+)(-nightly2\d{7})?/g;
-    let versionMatch = '';
-    do {
-      versionMatch = re.exec(stdout);
-      if (versionMatch) {
-        const [, version, nightlyPart] = versionMatch;
-        buildAttempts.push(`${version}${nightlyPart || ''}`);
-      }
-    } while (versionMatch);
-
-    // then we grep the stderr to see which build fail
-    re = /Cannot locate specified Dockerfile: Dockerfile\.(\d+\.\d+\.\d+)(-nightly2\d{7})?/g;
-    const dockerfileNotFound = [];
-    do {
-      versionMatch = re.exec(stderr);
-      if (versionMatch) {
-        const [, version, nightlyPart] = versionMatch;
-        dockerfileNotFound.push(`${version}${nightlyPart || ''}`);
-      }
-    } while (versionMatch);
-
-    re = /Service 'node-(\d+\.\d+\.\d+)(-nightly2\d{7})?' failed to build/g;
-    const buildFailed = [];
-    do {
-      versionMatch = re.exec(stderr);
-      if (versionMatch) {
-        const [, version, nightlyPart] = versionMatch;
-        buildFailed.push(`${version}${nightlyPart || ''}`);
-      }
-    } while (versionMatch);
-
-    // finally we only enable the versions successfully built and return the one
-    // which errored
-    const failed = _.chain(dockerfileNotFound).union(buildFailed).unique().value();
-    const toEnable = _.without(buildAttempts, ...failed);
-    toEnable.forEach(version => {
-      Nodes.update({ version }, { $set: { enabled: true } }, { multi: true });
-    });
-    // make sure we quit maintenance here
-    Nodes.update({}, { $set: { toBuild: false } }, { multi: 1 });
-    if (failed.length) {
-      return failed;
-    }
-    return true;
-  },
-  'nodes:imagesUpdate'() {
-    // anonymous remote users cannot call this method
-    if (!isAllowed(this)) return false;
-    console.log('Updating images!');
-    if (Meteor.call('nodes:updateVersions') !== true) {
-      console.log('updateVersions failed');
-      return false;
-    }
-    console.log('updateVersions succeeded');
-    if (Meteor.call('nodes:createDockerConfig') !== true) {
-      console.log('createDockerConfig failed');
-      return false;
-    }
-    console.log('createDockerConfig succeeded');
-    const buildStatus = Meteor.call('nodes:buildImages');
-    if (buildStatus !== true) {
-      console.log(`nodes:buildImages: Building the following Docker images failed:\n${JSON.stringify(buildStatus)}`);
-      return false;
-    }
-    console.log('buildImages succeeded');
-    console.log('nodes:imagesUpdate succeeded!');
+  'nodes:test'() {
+    const queuedJob = new Job(BuildQueue, 'refresh-nodes', {});
+    queuedJob.priority('normal').save();
     return true;
   },
 });

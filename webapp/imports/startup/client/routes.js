@@ -19,7 +19,7 @@ FlowRouter.route('/admin', {
 });
 
 FlowRouter.route('/job/new', {
-  name: 'newJob',
+  name: 'jobCreate',
   triggersEnter: [(context, redirect) => {
     redirect(`/job/${Random.id()}`);
   }],
@@ -29,5 +29,19 @@ FlowRouter.route('/job/:_publicId', {
   name: 'jobHome',
   action({ _publicId }) {
     Meteor.call('job:getOrCreate', { _publicId }, () => BlazeLayout.render('layout', { main: 'jobHome' }));
+  },
+});
+
+FlowRouter.route('/ir/new', {
+  name: 'irjobCreate',
+  triggersEnter: [(context, redirect) => {
+    redirect(`/ir/${Random.id()}`);
+  }],
+});
+
+FlowRouter.route('/ir/:_publicId', {
+  name: 'irjobHome',
+  action({ _publicId }) {
+    Meteor.call('irjob:getOrCreate', { _publicId }, () => BlazeLayout.render('layout', { main: 'irjobHome' }));
   },
 });
