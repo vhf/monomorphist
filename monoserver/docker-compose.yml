@@ -12,7 +12,7 @@ services:
       - /home/vhf/.docker/config.json:/root/.docker/config.json
       - ../mononodes/:/mononodes
       - ../irhydra/irhydra/build/web:/irhydra
-      - ../d8-artifacts:/artifacts
+      - ../d8-artifacts:/d8-artifacts
       - ../monod8:/monod8
       - ../volume/src/:/src
       - ../monomorphist.tar.gz:/bundle.tar.gz
@@ -37,9 +37,7 @@ services:
         tag: "monomorphist-meteor-1"
 
   monomorphist-2:
-    build:
-      context: ./meteor-docker-image
-      dockerfile: Dockerfile
+    image: monoserver_monomorphist-1
     expose:
       - 80
     env_file:
@@ -48,7 +46,7 @@ services:
       - /home/vhf/.docker/config.json:/root/.docker/config.json
       - ../mononodes/:/mononodes
       - ../irhydra/irhydra/build/web:/irhydra
-      - ../d8-artifacts:/artifacts
+      - ../d8-artifacts:/d8-artifacts
       - ../monod8:/monod8
       - ../volume/src/:/src
       - ../monomorphist.tar.gz:/bundle.tar.gz
@@ -73,9 +71,7 @@ services:
         tag: "monomorphist-meteor-2"
 
   monomorphist-3:
-    build:
-      context: ./meteor-docker-image
-      dockerfile: Dockerfile
+    image: monoserver_monomorphist-1
     expose:
       - 80
     env_file:
@@ -84,7 +80,7 @@ services:
       - /home/vhf/.docker/config.json:/root/.docker/config.json
       - ../mononodes/:/mononodes
       - ../irhydra/irhydra/build/web:/irhydra
-      - ../d8-artifacts:/artifacts
+      - ../d8-artifacts:/d8-artifacts
       - ../monod8:/monod8
       - ../volume/src/:/src
       - ../monomorphist.tar.gz:/bundle.tar.gz

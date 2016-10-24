@@ -46,7 +46,7 @@ timeoutFail(Queue, 'run', timeout);
 queueFailsAsDoneJobs(Queue, 'run', timeout);
 
 const envVarRegex = /^[a-z0-9][a-z0-9\-\.]+$/mi;
-const exec = (resolve, reject, _jobId, _nodeId, container) => {
+const composeRun = (resolve, reject, _jobId, _nodeId, container) => {
   if (!envVarRegex.test(_jobId) || !envVarRegex.test(container)) {
     const raw = `Env var security check failed: ${_jobId} is ${envVarRegex.test(_jobId)}, ${container} is ${envVarRegex.test(container)}`;
     Logs.insert({ _jobId, _nodeId, raw, message: 'error: security check failed' });
@@ -125,7 +125,7 @@ Job.processJobs(Queue, 'run', { concurrency, pollInterval, workTimeout },
 
     const runJobs = containers.map(({ _nodeId, container }) =>
       new Promise((resolve, reject) =>
-        exec(resolve, reject, _jobId, _nodeId, container)));
+        composeRun(resolve, reject, _jobId, _nodeId, container)));
 
     Promise.all(runJobs).then(() => {
       // make sure to completely wipe the directory
@@ -143,7 +143,8 @@ Job.processJobs(Queue, 'run', { concurrency, pollInterval, workTimeout },
       });
       Jobs.update({ _id: _jobId, status: 'running' }, { $set: { status: 'done' } });
       Logs.insert({ _jobId, message: 'job done: a node failed for security reason, so we quit.' });
-      qObj.done();
+      qObj.fail();
+      cb();
     });
   }
 );

@@ -119,9 +119,6 @@ Template.jobForm.events({
   'change .node-checkbox': event => {
     const id = $(event.target).attr('id');
     const checked = $(event.target).is(':checked');
-    // if ($('.node-checkbox:checked').length > parseInt(maxContainersPerJob, 10)) {
-    //
-    // }
     Meteor.call(checked ? 'job:addNode' : 'job:removeNode', FlowRouter.getParam('_publicId'), id);
   },
   'keyup input[name="fn.name"]': renderLivePreview,

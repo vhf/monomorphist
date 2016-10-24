@@ -7,6 +7,16 @@ import Logs from '/imports/api/logs/collection';
 import { Queue } from '/imports/api/queue/collection';
 import Checks from '/imports/checks';
 
+const fs = require('fs');
+
+const createDir = path => {
+  try {
+    fs.mkdirSync(path);
+  } catch (e) {
+    //
+  }
+};
+
 Meteor.methods({
   'irjob:getOrCreate'(selector) {
     check(selector, Match.ObjectIncluding({ _publicId: Checks.Id })); // eslint-disable-line new-cap
@@ -19,7 +29,9 @@ Meteor.methods({
     const irjob = IRJobs.findOne({ _publicId, status: 'editing' });
     if (!irjob || !irjob.v8) return;
     IRJobs.update({ _id: irjob._id, status: 'editing' }, { $set: { status: 'ready' } });
-    const queuedJob = new Job(Queue, 'run-ir', { _irjobId: irjob._id, v8: irjob.v8, listed: irjob.listed });
+    createDir(`/d8-artifacts/${irjob._id}`);
+    fs.writeFileSync(`/d8-artifacts/${irjob._id}/code.js`, irjob.code);
+    const queuedJob = new Job(Queue, 'run-ir', { _irjobId: irjob._id, _v8Id: irjob._v8Id, listed: irjob.listed });
     queuedJob.priority('normal').save();
     Logs.insert({ _irjobId: irjob._id, message: 'irjob queued...' });
   },

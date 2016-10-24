@@ -33,11 +33,11 @@ const IRJobsSchema = new SimpleSchema({
     label: 'Your code',
     type: String,
     autoform: {
-      rows: 1,
+      rows: 14,
     },
     optional: true,
   },
-  v8Tag: {
+  _v8Id: {
     type: String,
     optional: true,
   },

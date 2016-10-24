@@ -10,10 +10,11 @@ import '/imports/api/logs/server/publication';
 import '/imports/api/nodes/methods';
 import '/imports/api/nodes/server/publication';
 
-import '/imports/api/queue/server/nodes';
 import '/imports/api/queue/server/publication';
-import '/imports/api/queue/server/run';
-import '/imports/api/queue/server/v8s';
+import '/imports/api/queue/server/nodes-build';
+import '/imports/api/queue/server/v8s-build';
+import '/imports/api/queue/server/node-run';
+import '/imports/api/queue/server/v8-run';
 
 import '/imports/api/v8/methods';
 import '/imports/api/v8/server/publication';

@@ -1,7 +1,7 @@
 # derived from abernix/meteord:base
 FROM debian:jessie
 
-ENV NODE_VERSION=4.4.7
+ENV NODE_VERSION=4.6.1
 ENV NODE_ARCH=x64
 ENV NODE_DIST=node-v${NODE_VERSION}-linux-${NODE_ARCH}
 

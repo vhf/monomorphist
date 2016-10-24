@@ -22,7 +22,7 @@ else
   N=1
 fi
 
-# ssh monomorphist "cd /opt/monomorphist/monoserver && docker-compose build" 2>&1
+ssh monomorphist "cd /opt/monomorphist/monoserver && docker-compose build" 2>&1
 
 for n in $(seq $N); do
   spawn $n

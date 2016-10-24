@@ -1,6 +1,7 @@
 import { Template } from 'meteor/templating';
 import { FlowRouter } from 'meteor/kadira:flow-router';
 import { CodeMirror } from 'meteor/perak:codemirror';
+import { AutoForm } from 'meteor/aldeed:autoform';
 import { ReactiveMethod } from 'meteor/simple:reactive-method';
 import { $ } from 'meteor/jquery';
 
@@ -12,7 +13,7 @@ const { concurrency, timeout } = Meteor.settings.public.v8;
 const codeMirror = () => {
   const $code = $("textarea[data-schema-key='code']");
 
-  const definitionEditor = CodeMirror.fromTextArea($code.get(0), {
+  const codeEditor = CodeMirror.fromTextArea($code.get(0), {
     lineNumbers: true,
     mode: 'javascript',
     tabSize: 2,
@@ -20,8 +21,15 @@ const codeMirror = () => {
     extraKeys: { Tab: false, 'Shift-Tab': false },
   });
 
-  definitionEditor.on('inputRead', (cMirror) => {
+  const modifier = AutoForm.getFormValues('irjobForm').updateDoc;
+  const _publicId = FlowRouter.getParam('_publicId');
+  const irjob = IRJobs.findOne({ _publicId });
+
+  codeEditor.on('inputRead', (cMirror) => {
     $code.val(cMirror.getValue());
+    if (irjob) {
+      IRJobs.update(irjob._id, modifier);
+    }
   });
 };
 
@@ -61,7 +69,7 @@ Template.irjobForm.helpers({
     return v8s.slice(Math.ceil(length / 2));
   },
   formInvalid(job) {
-    return job && job.fn;
+    return !job || !job._v8Id || !job.code;
   },
   IRJobs() {
     return IRJobs;
@@ -77,8 +85,12 @@ Template.irjobForm.helpers({
 
 Template.irjobForm.events({
   'change .v8-radio': event => {
-    const id = $(event.target).attr('id');
-    console.log(id);
+    const _v8Id = $(event.target).attr('id');
+    const _publicId = FlowRouter.getParam('_publicId');
+    const irjob = IRJobs.findOne({ _publicId });
+    if (irjob) {
+      IRJobs.update(irjob._id, { $set: { _v8Id } });
+    }
   },
   'click #run': event => {
     $(event.target).prop('disabled', true);
