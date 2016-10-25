@@ -27,13 +27,17 @@ Meteor.methods({
   'irjob:submit'(_publicId) {
     check(_publicId, Checks.Id);
     const irjob = IRJobs.findOne({ _publicId, status: 'editing' });
-    if (!irjob || !irjob.v8) return;
+    if (!irjob || !irjob._v8Id) return;
+
     IRJobs.update({ _id: irjob._id, status: 'editing' }, { $set: { status: 'ready' } });
-    createDir(`/d8-artifacts/${irjob._id}`);
-    fs.writeFileSync(`/d8-artifacts/${irjob._id}/code.js`, irjob.code);
-    const queuedJob = new Job(Queue, 'run-ir', { _irjobId: irjob._id, _v8Id: irjob._v8Id, listed: irjob.listed });
+
+    createDir(`/d8-artifacts/${irjob._publicId}`);
+    fs.writeFileSync(`/d8-artifacts/${irjob._publicId}/code.js`, irjob.code);
+
+    const data = { _irjobId: irjob._id, _irjobPublicId: irjob._publicId, _v8Id: irjob._v8Id, listed: irjob.listed };
+    const queuedJob = new Job(Queue, 'run-ir', data);
     queuedJob.priority('normal').save();
-    Logs.insert({ _irjobId: irjob._id, message: 'irjob queued...' });
+    Logs.insert({ _irjobId: irjob._id, message: 'job queued...' });
   },
   'irjobs:total'() {
     return IRJobs.find({ updatedAt: { $exists: true } }).count();

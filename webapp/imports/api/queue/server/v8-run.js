@@ -5,7 +5,8 @@ import { Random } from 'meteor/random';
 import { Job } from 'meteor/vsivsi:job-collection';
 
 import IRJobs from '/imports/api/irjobs/collection';
-import V8 from '/imports/api/nodes/collection';
+import V8 from '/imports/api/v8/collection';
+import Logs from '/imports/api/logs/collection';
 import { Queue } from '/imports/api/queue/collection';
 
 const childProcess = require('child_process');
@@ -51,7 +52,7 @@ const execSync = (cwd, command) => {
 
 Job.processJobs(Queue, 'run-ir', { concurrency, pollInterval, workTimeout },
   (qObj, cb) => {
-    const { _irjobId, _v8Id } = qObj.data;
+    const { _irjobId, _irjobPublicId, _v8Id } = qObj.data;
     const v8 = V8.findOne({ _id: _v8Id });
 
     if (!v8) {
@@ -59,22 +60,30 @@ Job.processJobs(Queue, 'run-ir', { concurrency, pollInterval, workTimeout },
       cb();
     }
 
-    IRJobs.update({ _id: _irjobId, status: 'ready' }, { $set: { status: 'running' } });
+    IRJobs.update({ _publicId: _irjobPublicId, status: 'ready' }, { $set: { status: 'running' } });
+    Logs.insert({ _irjobId, message: `job ${_irjobId} started running...` });
 
     const dockerCmd = [
       'docker run',
       '--rm',
       `--name=${Random.id()}`,
-      `-v /opt/monomorphist/d8-artifacts/${_irjobId}:/io`,
+      `-v /opt/monomorphist/d8-artifacts/${_irjobPublicId}:/io`,
       '-v /opt/monomorphist/monod8/start.sh:/start.sh',
       '--entrypoint=/start.sh',
       `dockervhf/d8:${v8.tag}`,
     ];
 
-    execSync('.', dockerCmd.join(' '));
+    const { stdout, stderr, err } = execSync('/', dockerCmd.join(' '));
 
-    IRJobs.update({ _id: _irjobId, status: 'running' }, { $set: { status: 'done' } });
+    if (err && (err.killed || ('code' in err && err.code !== 0))) {
+      Logs.insert({ _irjobId, message: `${err}\n${stderr}` });
+      qObj.fail(`killed ${{ err }} ${{ stderr }}`);
+      cb();
+    }
 
+    Logs.insert({ _irjobId, message: stdout });
+    IRJobs.update({ _publicId: _irjobPublicId, status: 'running' }, { $set: { status: 'done' } });
+    Logs.insert({ _irjobId, message: 'job done.' });
     qObj.done();
     cb();
   }

@@ -2,6 +2,7 @@ import { Template } from 'meteor/templating';
 import { FlowRouter } from 'meteor/kadira:flow-router';
 import { CodeMirror } from 'meteor/perak:codemirror';
 import { AutoForm } from 'meteor/aldeed:autoform';
+import { ReactiveVar } from 'meteor/reactive-var';
 import { ReactiveMethod } from 'meteor/simple:reactive-method';
 import { $ } from 'meteor/jquery';
 
@@ -13,6 +14,8 @@ const { concurrency, timeout } = Meteor.settings.public.v8;
 const codeMirror = () => {
   const $code = $("textarea[data-schema-key='code']");
 
+  if ($code.length) return;
+
   const codeEditor = CodeMirror.fromTextArea($code.get(0), {
     lineNumbers: true,
     mode: 'javascript',
@@ -21,12 +24,12 @@ const codeMirror = () => {
     extraKeys: { Tab: false, 'Shift-Tab': false },
   });
 
-  const modifier = AutoForm.getFormValues('irjobForm').updateDoc;
   const _publicId = FlowRouter.getParam('_publicId');
-  const irjob = IRJobs.findOne({ _publicId });
 
   codeEditor.on('inputRead', (cMirror) => {
     $code.val(cMirror.getValue());
+    const modifier = AutoForm.getFormValues('irjobForm').updateDoc;
+    const irjob = IRJobs.findOne({ _publicId });
     if (irjob) {
       IRJobs.update(irjob._id, modifier);
     }
@@ -35,6 +38,7 @@ const codeMirror = () => {
 
 Template.irjobForm.onCreated(function onCreated() {
   this.v8s = new ReactiveVar();
+  this.job = new ReactiveVar();
   this.autorun(() => {
     const _publicId = FlowRouter.getParam('_publicId');
     this.subscribe('irjob', _publicId);
@@ -42,14 +46,17 @@ Template.irjobForm.onCreated(function onCreated() {
     this.subscribe('v8');
     if (this.subscriptionsReady()) {
       this.v8s.set(V8.find({}, { sort: { tag: 1 } }).fetch());
+      this.job.set(IRJobs.findOne({ _publicId }));
+      if (this.job.get() && this.job.get().status === 'done') {
+        FlowRouter.go(`/irhydra/#${_publicId}`);
+      }
     }
   });
 });
 
 Template.irjobForm.helpers({
   job() {
-    const _publicId = FlowRouter.getParam('_publicId');
-    const job = IRJobs.findOne({ _publicId });
+    const job = Template.instance().job.get();
     return job;
   },
   v8ColA() {
@@ -57,19 +64,20 @@ Template.irjobForm.helpers({
     if (!v8s || !v8s.length) {
       return [];
     }
-    const length = v8s.length;
-    return v8s.slice(0, Math.ceil(length / 2));
+    return v8s.slice(0, Math.ceil(v8s.length / 2));
   },
   v8ColB() {
     const v8s = Template.instance().v8s.get();
     if (!v8s || !v8s.length) {
       return [];
     }
-    const length = v8s.length;
-    return v8s.slice(Math.ceil(length / 2));
+    return v8s.slice(Math.ceil(v8s.length / 2));
   },
   formInvalid(job) {
-    return !job || !job._v8Id || !job.code;
+    if (job && ('_v8Id' in job) && job._v8Id && ('code' in job) && job.code) {
+      return false;
+    }
+    return true;
   },
   IRJobs() {
     return IRJobs;
@@ -86,10 +94,9 @@ Template.irjobForm.helpers({
 Template.irjobForm.events({
   'change .v8-radio': event => {
     const _v8Id = $(event.target).attr('id');
-    const _publicId = FlowRouter.getParam('_publicId');
-    const irjob = IRJobs.findOne({ _publicId });
-    if (irjob) {
-      IRJobs.update(irjob._id, { $set: { _v8Id } });
+    const job = Template.instance().job.get();
+    if (job) {
+      IRJobs.update(job._id, { $set: { _v8Id } });
     }
   },
   'click #run': event => {
