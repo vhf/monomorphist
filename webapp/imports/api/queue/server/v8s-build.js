@@ -67,6 +67,7 @@ Job.processJobs(BuildQueue, 'build-v8', { concurrency: 1, pollInterval: 1000 * 1
         queue: 'build-v8',
         title: `v8 ${_v8Id} ${tag} not found`,
       });
+      V8.update({ _id: v8._id }, { $set: { rebuild: false } });
       cb();
       qObj.fail();
       return;
@@ -86,17 +87,23 @@ Job.processJobs(BuildQueue, 'build-v8', { concurrency: 1, pollInterval: 1000 * 1
     */
     const noCache = tag === 'master' ? '--no-cache' : '';
     let { err, stdout, stderr } = execSync(`${v8Root}/dockerfiles`, `docker build ${noCache} -t dockervhf/d8:${tag} -f Dockerfile.${tag} .`);
+
+    const tagNotFound = stdout.indexOf('did not match any file(s) known to git') !== -1;
+    const failedMsg = ` failed: ${tag} tag not found`;
     Logs.insert({
       type: 'refresh',
       queue: 'build-v8',
-      title: `v8 ${v8.tag} docker build`,
+      title: `v8 ${v8.tag} docker build${failedMsg}`,
       stdout,
       stderr,
       miscJSON: JSON.stringify(err),
     });
-    if (err && (err.killed || ('code' in err && err.code !== 0))) {
+
+    if (tagNotFound || (err && (err.killed || ('code' in err && err.code !== 0)))) {
+      V8.update({ _id: v8._id }, { $set: { rebuild: false } });
       cb();
       qObj.fail();
+      return;
     }
 
     const { repo } = Meteor.settings.public.v8;
@@ -110,9 +117,12 @@ Job.processJobs(BuildQueue, 'build-v8', { concurrency: 1, pollInterval: 1000 * 1
       miscJSON: JSON.stringify(err),
     });
     if (err && (err.killed || ('code' in err && err.code !== 0))) {
+      V8.update({ _id: v8._id }, { $set: { rebuild: false } });
       cb();
       qObj.fail();
+      return;
     }
+
     V8.update({ _id: v8._id }, { $set: { rebuild: false } });
     Logs.insert({
       type: 'refresh',
