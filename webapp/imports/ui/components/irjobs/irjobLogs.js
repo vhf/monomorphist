@@ -35,7 +35,6 @@ Template.irjobLogs.helpers({
 });
 
 Template.irjobLogs.onRendered(() => {
-  $('.collapsible').collapsible({
-    accordion: false,
-  });
+  $('.collapsible-header').addClass('active');
+  $('.collapsible').collapsible({ accordion: false });
 });

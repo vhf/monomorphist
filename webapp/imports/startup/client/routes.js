@@ -39,6 +39,13 @@ FlowRouter.route('/ir/new', {
   }],
 });
 
+FlowRouter.route('/ir', {
+  name: 'irjobCreateRoot',
+  triggersEnter: [(context, redirect) => {
+    redirect(`/ir/${Random.id()}`);
+  }],
+});
+
 FlowRouter.route('/ir/:_publicId', {
   name: 'irjobHome',
   action({ _publicId }) {

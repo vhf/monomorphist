@@ -81,7 +81,7 @@ Job.processJobs(Queue, 'run-ir', { concurrency, pollInterval, workTimeout },
       cb();
     }
 
-    Logs.insert({ _irjobId, message: stdout });
+    Logs.insert({ _irjobId, message: `\n${stdout}` });
     IRJobs.update({ _publicId: _irjobPublicId, status: 'running' }, { $set: { status: 'done' } });
     Logs.insert({ _irjobId, message: 'job done.' });
     qObj.done();

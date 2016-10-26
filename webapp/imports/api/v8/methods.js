@@ -40,8 +40,7 @@ const chromeTagList = url => {
   }
   const parsed = parse(request.content);
   const tags = parsed
-    .filter(([, channel = false, chromeVersion = false]) =>
-      channel === 'stable' && chromeVersion);
+    .filter(([, , chromeVersion = false]) => chromeVersion);
   return tags;
 };
 

@@ -34,4 +34,14 @@
       </ul>
     </div>
   </div>
+  {{#if (compareStatus irjob 'done')}}
+    <div class="row">
+      <div class="col s12">
+        <p>
+          Your code has been successfully compiled!
+        </p>
+        <h6><a class="waves-effect waves-light btn" href="/irhydra/?id={{ irjob._publicId }}">Analyze</a></h6>
+      </div>
+    </div>
+  {{/if}}
 </template>

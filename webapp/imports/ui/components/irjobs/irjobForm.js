@@ -14,8 +14,6 @@ const { concurrency, timeout } = Meteor.settings.public.v8;
 const codeMirror = () => {
   const $code = $("textarea[data-schema-key='code']");
 
-  if ($code.length) return;
-
   const codeEditor = CodeMirror.fromTextArea($code.get(0), {
     lineNumbers: true,
     mode: 'javascript',
@@ -47,9 +45,6 @@ Template.irjobForm.onCreated(function onCreated() {
     if (this.subscriptionsReady()) {
       this.v8s.set(V8.find({}, { sort: { tag: 1 } }).fetch());
       this.job.set(IRJobs.findOne({ _publicId }));
-      if (this.job.get() && this.job.get().status === 'done') {
-        FlowRouter.go(`/irhydra/#${_publicId}`);
-      }
     }
   });
 });
@@ -102,6 +97,7 @@ Template.irjobForm.events({
   'click #run': event => {
     $(event.target).prop('disabled', true);
     Meteor.call('irjob:submit', FlowRouter.getParam('_publicId'));
+    $('body').scrollTop(0);
   },
   'click .d8-modal-trigger': (event) => {
     event.preventDefault();

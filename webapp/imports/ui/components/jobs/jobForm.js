@@ -57,11 +57,6 @@ const codeMirror = () => {
   callEditor.on('inputRead', (cMirror) => {
     const val = cMirror.getValue();
     $call.val(val);
-    // if (!$('input[name="fn.name"]').val()) {
-    //   while (m = findValidIdentifierCall.exec(val)) {
-    //     console.log(m[1], m[2]);
-    //   }
-    // }
     renderLivePreview();
   });
 };

@@ -129,18 +129,14 @@ Job.processJobs(Queue, 'run', { concurrency, pollInterval, workTimeout },
 
     Promise.all(runJobs).then(() => {
       // make sure to completely wipe the directory
-      childProcess.execSync(`rm -rf /src/${_jobId}/`, (err) => {
-        console.log(err);
-      });
+      childProcess.execSync(`rm -rf /src/${_jobId}/`, () => {});
       Jobs.update({ _id: _jobId, status: 'running' }, { $set: { status: 'done' } });
       Logs.insert({ _jobId, message: 'job done.' });
       qObj.done();
       cb();
     }).catch(() => {
       // make sure to completely wipe the directory
-      childProcess.execSync(`rm -rf /src/${_jobId}/`, (err) => {
-        console.log(err);
-      });
+      childProcess.execSync(`rm -rf /src/${_jobId}/`, () => {});
       Jobs.update({ _id: _jobId, status: 'running' }, { $set: { status: 'done' } });
       Logs.insert({ _jobId, message: 'job done: a node failed for security reason, so we quit.' });
       qObj.fail();

@@ -17,11 +17,9 @@ Template.irjobHome.helpers({
   job() {
     const _publicId = FlowRouter.getParam('_publicId');
     const job = IRJobs.findOne({ _publicId });
-    console.log(job);
     return job;
   },
   compareStatus(job, status) {
-    console.log(job);
     return (job && job.status) ? job.status === status : false;
   },
 });
