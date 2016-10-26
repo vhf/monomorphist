@@ -35,6 +35,7 @@
                 </div>
                 <div class="collapsible-body">
                   <div class="blue-grey lighten-4">
+                    {{#if message}}<pre class="log-lines">{{message}}</pre>{{/if}}
                     {{#if stderr}}<pre class="log-lines">{{stderr}}</pre>{{/if}}
                     {{#if steps}}
                       <ul class="collapsible" data-collapsible="expandable">

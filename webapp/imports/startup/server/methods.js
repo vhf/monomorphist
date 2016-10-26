@@ -1,6 +1,8 @@
 import { HTTP } from 'meteor/http';
 import { check } from 'meteor/check';
 
+import Logs from '/imports/api/logs/collection';
+
 Meteor.methods({
   'docker:imageTags'(repo) {
     check(repo, String);
@@ -14,6 +16,12 @@ Meteor.methods({
       const { tags } = JSON.parse(response.content);
       return tags;
     } catch (e) {
+      Logs.insert({
+        type: 'refresh',
+        queue: 'build-v8',
+        title: 'docker:imageTags error',
+        message: e,
+      });
       return false;
     }
   },

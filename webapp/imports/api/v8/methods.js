@@ -38,7 +38,7 @@ const chromeTagList = url => {
   if (!request.content) {
     return [];
   }
-  const parsed = parse(request.content);
+  const parsed = parse(request.content).slice(1);
   const tags = parsed
     .filter(([, , chromeVersion = false]) => chromeVersion);
   return tags;
@@ -64,6 +64,7 @@ const v8FromChromeVersion = ([, , chromeVersion, , , , , , , , tag = false]) => 
         type: 'refresh',
         queue: 'build-v8',
         title: `Failed to find V8 version for chrome ${chromeVersion}`,
+        message: `chromeVersion: "${chromeVersion}"`,
         miscJSON: JSON.stringify(e),
       });
     }
@@ -136,11 +137,31 @@ Meteor.methods({
     const history = chromeTagList('https://omahaproxy.appspot.com/history');
     const current = chromeTagList('https://omahaproxy.appspot.com/all');
 
+    Logs.insert({
+      type: 'refresh',
+      queue: 'build-v8',
+      title: 'Chrome tags from history',
+      miscJSON: JSON.stringify(history),
+    });
+    Logs.insert({
+      type: 'refresh',
+      queue: 'build-v8',
+      title: 'Chrome tags from current (/all)',
+      miscJSON: JSON.stringify(current),
+    });
+
     const chromeTags = _
       .chain(history)
       .concat(current)
       .map(tag => v8FromChromeVersion(tag))
       .value();
+
+    Logs.insert({
+      type: 'refresh',
+      queue: 'build-v8',
+      title: 'chomeTags',
+      message: chromeTags.map(o => JSON.stringify(o)).join('\n'),
+    });
 
     const index = _
       .chain(nodeTagList())
@@ -148,6 +169,13 @@ Meteor.methods({
       .groupBy('tag')
       .values()
       .value();
+
+    Logs.insert({
+      type: 'refresh',
+      queue: 'build-v8',
+      title: 'index',
+      message: index.map(o => JSON.stringify(o)).join('\n'),
+    });
 
     const merged = _
       .chain(index)
@@ -162,10 +190,25 @@ Meteor.methods({
       .concat([{ tag: 'master' }])
       .value();
 
+    Logs.insert({
+      type: 'refresh',
+      queue: 'build-v8',
+      title: 'merged',
+      message: merged.map(o => JSON.stringify(o)).join('\n'),
+    });
+
     const { repo } = Meteor.settings.public.v8;
     const tags = Meteor.call('docker:imageTags', repo);
 
-    merged.forEach(_obj => {
+
+    Logs.insert({
+      type: 'refresh',
+      queue: 'build-v8',
+      title: 'd8 tags found on docker hub',
+      message: tags.map(o => JSON.stringify(o)).join('\n'),
+    });
+
+    const objs = merged.map(_obj => {
       const obj = _obj;
       obj.gnCompatible = true;
       if (obj.tag !== 'master') {
@@ -188,6 +231,13 @@ Meteor.methods({
 
       obj.rebuild = !tagExists || isMaster || isForced;
       V8.upsert({ tag: obj.tag }, { $set: obj });
+      return obj;
+    });
+    Logs.insert({
+      type: 'refresh',
+      queue: 'build-v8',
+      title: 'upserted',
+      message: objs.map(o => JSON.stringify(o)).join('\n'),
     });
     return true;
   },

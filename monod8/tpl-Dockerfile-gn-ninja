@@ -4,9 +4,9 @@ MAINTAINER Victor Felder <victorfelder@gmail.com>
 ENV PATH=/usr/local/depot_tools:"$PATH"
 ENV LD_LIBRARY_PATH=/usr/local/lib
 
-<% if (tag) { %>ENV V8_TAG=<%= tag %><% }%>
-<% if (chromeVersion) { %>ENV CHROME_VERSION=<%= chromeVersion %><% }%>
-<% if (nodeVersion) { %>ENV NODE_VERSION=<%= nodeVersion %><% }%>
+<% if (tag) { %>ENV V8_TAG="<%= tag %>"<% }%>
+<% if (chromeVersion) { %>ENV CHROME_VERSION="<%= chromeVersion %>"<% }%>
+<% if (nodeVersion) { %>ENV NODE_VERSION="<%= nodeVersion %>"<% }%>
 ENV BUILT_WITH=gn-ninja
 
 COPY test.js /tmp
