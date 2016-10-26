@@ -2,6 +2,14 @@ $primary-color: #607d8b !default;
 
 @import "{poetic:materialize-scss}/sass/materialize.scss";
 
+.title {
+  margin: -15px -10px;
+  font-weight: 900;
+}
+.subtitle {
+  font-weight: 100;
+}
+
 .CodeMirror {
   height: initial !important;
   min-height: 24px;
@@ -134,7 +142,7 @@ nav {
     overflow: hidden;
     margin-top: 0;
     .brand-logo {
-      font-weight: bold;
+      font-weight: 100;
       position: inherit;
       display: block;
       float: left;
@@ -149,6 +157,7 @@ nav {
       float: left;
       display: block;
       .brand-logo {
+        font-weight: 900;
         color: #cfd8dc !important; // .blue-grey-text, .text-lighten-5;
       }
     }

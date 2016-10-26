@@ -68,6 +68,7 @@ modules-runtime@0.7.6_1
 momentjs:moment@2.15.1
 mongo@1.1.12_5
 mongo-id@1.0.5
+mrt:fittext@1.2.0
 mrt:later@1.6.1
 npm-mongo@2.2.10_1
 oauth@1.1.11

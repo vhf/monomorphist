@@ -38,8 +38,12 @@ Template.home.events({
   'click .node-modal-trigger': () => {
     $('#node-info-modal').openModal();
   },
+  'click .d8-modal-trigger': () => {
+    $('#d8-info-modal').openModal();
+  },
 });
 
 Template.home.onRendered(() => {
   codeMirror();
+  $('#title').fitText(0.657);
 });
