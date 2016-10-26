@@ -84,7 +84,8 @@ Job.processJobs(BuildQueue, 'build-v8', { concurrency: 1, pollInterval: 1000 * 1
       2. write ({ err, stdout, stderr }) to a file
          for each execSync call
     */
-    let { err, stdout, stderr } = execSync(`${v8Root}/dockerfiles`, `docker build -t dockervhf/d8:${tag} -f Dockerfile.${tag} .`);
+    const noCache = tag === 'master' ? '--no-cache' : '';
+    let { err, stdout, stderr } = execSync(`${v8Root}/dockerfiles`, `docker build ${noCache} -t dockervhf/d8:${tag} -f Dockerfile.${tag} .`);
     Logs.insert({
       type: 'refresh',
       queue: 'build-v8',
