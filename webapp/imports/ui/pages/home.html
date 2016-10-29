@@ -3,7 +3,7 @@
     <div class="row">
       <div class="col s12 m10">
         <h1 id="title" class="title hide-on-small-only">monomorphist</h1>
-        <h5 class="subtitle">a JavaScript performance companion</h5>
+        <h5 class="light-font">a JavaScript performance companion</h5>
 
         <p>
           Two useful tools to find out which parts of your JS won't get optimized by V8.
@@ -15,75 +15,39 @@
         </ol>
 
 
-        <p>
-          Here is an example:
-        </p>
-        <div class="row">
-          <div class="col s12 m6">
-            <div class="row">
-              <div class="input-field col s12">
-                <span id="sampleDefinition"></span>
-                <label style="margin-left: 34px;" class="active">
-                  Your function
-                </label>
-              </div>
-            </div>
-            <div class="row">
-              <div class="input-field col s12">
-                <span id="sampleCall"></span>
-                <label style="margin-left: 34px;" class="active">
-                  How to call the function
-                </label>
-              </div>
-            </div>
-            <div class="row">
-              <div class="input-field col s12">
-                <input type="text" name="fn.name" data-schema-key="fn.name" value="wEval" readonly="readonly" style="color: rgba(0, 0, 0, 0.870588);">
-                <label class="active" style="color: #9e9e9e">
-                  The name of the function to optimize
-                </label>
-              </div>
-            </div>
-          </div>
-          <div class="col m6 hide-on-small-only">
-            <div class="card-panel blue-grey lighten-4 instrumented">
-              <pre>
-'use strict';
-function wEval(x) {
-  console.log({ x: x });
-  return x;
-  eval('');
-}
-var arg;
-
-arg = Math.round(Math.random() * 100);
-wEval(arg);
-arg = Math.round(Math.random() * 100);
-wEval(arg);
-
-%OptimizeFunctionOnNextCall(wEval);
-
-arg = Math.round(Math.random() * 100);
-wEval(arg);
-
-printStatus(wEval);
-              </pre>
-            </div>
-          </div>
+        <h5 class="inter-t light-font">1.1 Enter a JavaScript function</h5>
+        <div class="home-pics" href="#code">
+          <img src="/slides/node-code.png" style="width: 580px">
         </div>
 
+        <h5 class="inter-t light-font">1.2 Decide which <a class="node-modal-trigger">Node versions</a> to use</h5>
+        <div class="home-pics" href="#versions">
+          <img src="/slides/node-versions.png" style="width: 580px">
+        </div>
+
+        <h5 class="inter-t light-font">1.3 Get a diagnostic</h5>
+        <div class="home-pics" href="#log">
+          <img src="/slides/node-log.png" style="width: 580px">
+          <p>
+            <a class="white-text" href="https://mono.morph.ist/job/N6GGo3NWyW2YC35Av">https://mono.morph.ist/job/N6GGo3NWyW2YC35Av</a>
+          </p>
+        </div>
+
+
         <p>
-          and its corresponding output: <a href="https://mono.morph.ist/job/N6GGo3NWyW2YC35Av">mono.morph.ist/job/N6GGo3NWyW2YC35Av</a>.
+          <a class="home-btn" href="/job/new">
+            1. check function<br>
+            <span class="small">(bailouts on node)</span>
+          </a>
+          <a class="home-btn node-modal-trigger">see all<br>node versions</a>
         </p>
 
         <p>
-          <a class="waves-effect waves-light btn-large" href="/job/new">bailouts on node</a>
-          <a class="waves-effect waves-light btn-large node-modal-trigger">show node versions</a>
-        </p>
-
-        <p>
-          <a class="waves-effect waves-light btn-large" href="/ir/new">IRHydra<sup>2</sup> for V8</a>
-          <a class="waves-effect waves-light btn-large d8-modal-trigger">show V8 versions</a>
+          <a class="home-btn" href="/ir/new">
+            2. analyze code<br>
+            <span class="small">(IRHydra<sup>2</sup> for V8)</span>
+          </a>
+          <a class="home-btn d8-modal-trigger">see all<br>V8 versions</a>
         </p>
       </div>
       <div class="col m2 hide-on-small-only">

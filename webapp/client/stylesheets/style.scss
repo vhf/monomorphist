@@ -6,8 +6,38 @@ $primary-color: #607d8b !default;
   margin: -15px -10px;
   font-weight: 900;
 }
-.subtitle {
+.light-font {
   font-weight: 100;
+}
+
+.inter-t {
+  font-size: 1.5rem;
+}
+
+.home-pics {
+  @extend .blue-grey;
+  @extend .darken-1;
+  @extend .center-align;
+  padding: 15px;
+}
+
+.btn-large {
+  @extend .btn-large;
+  @extend .blue-grey;
+  @extend .darken-2;
+}
+
+.home-btn {
+  @extend .waves-effect;
+  @extend .waves-light;
+  @extend .btn-large;
+  height: 90px;
+  width: 210px;
+  line-height: 2rem;
+  padding: 14px 0;
+  .small {
+    font-size: 0.8rem;
+  }
 }
 
 .CodeMirror {

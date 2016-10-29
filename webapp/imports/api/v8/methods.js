@@ -166,6 +166,14 @@ Meteor.methods({
     const index = _
       .chain(nodeTagList())
       .concat(chromeTags)
+      .map(_group => {
+        const group = _group;
+        const [major, minor, branch, patch] = group.tag.split('.');
+        if (patch === '0') {
+          group.tag = [major, minor, branch].join('.');
+        }
+        return group;
+      })
       .groupBy('tag')
       .values()
       .value();

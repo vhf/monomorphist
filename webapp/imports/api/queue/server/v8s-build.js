@@ -89,7 +89,7 @@ Job.processJobs(BuildQueue, 'build-v8', { concurrency: 1, pollInterval: 1000 * 1
     let { err, stdout, stderr } = execSync(`${v8Root}/dockerfiles`, `docker build ${noCache} -t dockervhf/d8:${tag} -f Dockerfile.${tag} .`);
 
     const tagNotFound = stdout.indexOf('did not match any file(s) known to git') !== -1;
-    const failedMsg = ` failed: ${tag} tag not found`;
+    const failedMsg = tagNotFound ? ` failed: ${tag} tag not found` : '';
     Logs.insert({
       type: 'refresh',
       queue: 'build-v8',
