@@ -123,6 +123,11 @@ h5 {
     height: 18px;
     line-height: 18px;
   }
+
+  .btn.disabled.unlisted:hover {
+    background-color: #f1f8e9 !important;
+    color: #9F9F9F !important;
+  }
 }
 
 footer {

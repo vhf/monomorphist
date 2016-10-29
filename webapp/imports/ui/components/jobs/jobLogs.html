@@ -26,7 +26,7 @@
             {{/if}}
           </div>
           <div class="collapsible-body">
-            <div class="blue-grey lighten-4">
+            <div>
               <pre class="log-lines">{{#each (logs 'undefined')}}{{ isoTime time }} {{{ message }}}<br>{{/each}}</pre>
             </div>
           </div>
@@ -56,7 +56,7 @@
                 {{/if}}
               </div>
               <div class="collapsible-body" id="node-log-{{_id}}">
-                <div class="blue-grey lighten-4">
+                <div>
                   <pre class="log-lines">{{#each (logs _id)}}{{{ message }}}<br>{{/each}}</pre>
                 </div>
               </div>

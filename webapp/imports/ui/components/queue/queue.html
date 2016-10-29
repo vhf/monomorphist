@@ -11,7 +11,7 @@
               {{#if job.listed}}
                 <a href="{{ link job }}" class="btn disabled job-link"><i class="material-icons">visibility</i></a>
               {{else}}
-                <span class="btn disabled job-link"><i class="material-icons">visibility_off</i></span>
+                <span class="btn disabled job-link unlisted"><i class="material-icons">visibility_off</i></span>
               {{/if}}
               {{#each node in (sortAndAugment job.nodesStatus)}}
                 <span class="btn disabled node-modal-trigger">
@@ -33,7 +33,7 @@
                 {{#if job.listed}}
                   <a href="{{ link job }}" class="btn disabled job-link"><i class="material-icons">visibility</i></a>
                 {{else}}
-                  <span class="btn disabled job-link"><i class="material-icons">visibility_off</i></span>
+                  <span class="btn disabled job-link unlisted"><i class="material-icons">visibility_off</i></span>
                 {{/if}}
                 {{#each node in (sortAndAugment job.nodesStatus)}}
                   <span class="btn disabled node-modal-trigger">
@@ -57,7 +57,7 @@
           {{#if job.listed}}
             <a href="{{ link job }}" class="btn disabled job-link"><i class="material-icons">visibility</i></a>
           {{else}}
-            <span class="btn disabled job-link"><i class="material-icons">visibility_off</i></span>
+            <span class="btn disabled job-link unlisted"><i class="material-icons">visibility_off</i></span>
           {{/if}}
           {{#each node in (sortAndAugment job.nodesStatus)}}
             <span class="btn disabled node-modal-trigger verdict-{{node.verdict}}">
