@@ -19,6 +19,10 @@ $primary-color: #607d8b !default;
   @extend .darken-1;
   @extend .center-align;
   padding: 15px;
+  img {
+    width: 100%;
+    max-width: 580px
+  }
 }
 
 .btn-large {

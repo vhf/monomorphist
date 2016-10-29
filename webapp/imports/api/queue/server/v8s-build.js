@@ -53,19 +53,19 @@ Job.processJobs(BuildQueue, 'refresh-v8s', { concurrency: 1, pollInterval: 1000 
 
 Job.processJobs(BuildQueue, 'build-v8', { concurrency: 1, pollInterval: 1000 * 10, v8BuildTimeout },
   (qObj, cb) => {
+    const { _v8Id, tag } = qObj.data;
     Logs.insert({
       type: 'refresh',
       queue: 'build-v8',
-      title: 'Building v8',
+      title: `Building v8 ${tag}`,
       miscJSON: JSON.stringify(qObj.data),
     });
-    const { _v8Id, tag } = qObj.data;
     const v8 = V8.findOne({ _id: _v8Id });
     if (!v8) {
       Logs.insert({
         type: 'refresh',
         queue: 'build-v8',
-        title: `v8 ${_v8Id} ${tag} not found`,
+        title: `v8 ${_v8Id} not found (${tag})`,
       });
       V8.update({ _id: v8._id }, { $set: { rebuild: false } });
       cb();
@@ -89,7 +89,10 @@ Job.processJobs(BuildQueue, 'build-v8', { concurrency: 1, pollInterval: 1000 * 1
     let { err, stdout, stderr } = execSync(`${v8Root}/dockerfiles`, `docker build ${noCache} -t dockervhf/d8:${tag} -f Dockerfile.${tag} .`);
 
     const tagNotFound = stdout.indexOf('did not match any file(s) known to git') !== -1;
-    const failedMsg = tagNotFound ? ` failed: ${tag} tag not found` : '';
+    const d8NotBuilt = stdout.indexOf('d8 not built!') !== -1;
+    let failedMsg = d8NotBuilt ? ` failed: ${tag} : d8 not built` : '';
+    failedMsg = tagNotFound ? ` failed: ${tag} : git tag not found` : failedMsg;
+
     Logs.insert({
       type: 'refresh',
       queue: 'build-v8',
@@ -99,7 +102,7 @@ Job.processJobs(BuildQueue, 'build-v8', { concurrency: 1, pollInterval: 1000 * 1
       miscJSON: JSON.stringify(err),
     });
 
-    if (tagNotFound || (err && (err.killed || ('code' in err && err.code !== 0)))) {
+    if (tagNotFound || d8NotBuilt || (err && (err.killed || ('code' in err && err.code !== 0)))) {
       V8.update({ _id: v8._id }, { $set: { rebuild: false } });
       cb();
       qObj.fail();

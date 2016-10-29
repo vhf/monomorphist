@@ -10,31 +10,61 @@
         </p>
 
         <ol>
-          <li>Check a JavaScript function simultanously on <a class="node-modal-trigger">various Node versions</a></li>
-          <li>Analyze <a class="d8-modal-trigger">V8</a> internal representation and assembly online</li>
+          <li><a href="#a-1">Check</a> a JavaScript function simultanously on <a class="node-modal-trigger">various Node versions</a></li>
+          <li><a href="#a-2">Analyze</a> <a class="d8-modal-trigger">V8</a> internal representation and assembly online</li>
         </ol>
 
 
-        <h5 class="inter-t light-font">1.1 Enter a JavaScript function</h5>
+        <h5 class="inter-t light-font" id="a-1">1.1 Enter a JavaScript function</h5>
         <div class="home-pics" href="#code">
-          <img src="/slides/node-code.png" style="width: 580px">
+          <img src="/slides/node-code.png">
         </div>
 
         <h5 class="inter-t light-font">1.2 Decide which <a class="node-modal-trigger">Node versions</a> to use</h5>
         <div class="home-pics" href="#versions">
-          <img src="/slides/node-versions.png" style="width: 580px">
+          <img src="/slides/node-versions.png">
         </div>
 
         <h5 class="inter-t light-font">1.3 Get a diagnostic</h5>
         <div class="home-pics" href="#log">
-          <img src="/slides/node-log.png" style="width: 580px">
+          <img src="/slides/node-log.png">
           <p>
             <a class="white-text" href="https://mono.morph.ist/job/N6GGo3NWyW2YC35Av">https://mono.morph.ist/job/N6GGo3NWyW2YC35Av</a>
+          </p>
+          <p>
+            <a class="white-text" href="#try-node">Try it!</a>
           </p>
         </div>
 
 
-        <p>
+        <h5 class="inter-t light-font" id="a-2">2.1 Enter a JavaScript file</h5>
+        <h5 class="inter-t light-font">2.2 Decide which <a class="d8-modal-trigger">V8 versions</a> to use</h5>
+        <div class="home-pics" href="#code-2">
+          <img src="/slides/ir-code.png">
+        </div>
+
+        <h5 class="light-font">2.3 See the result directly imported in IRHydra<sup>2</sup></h5>
+
+        <h5 class="inter-t light-font">2.3a Browse intermediate representation / disassembly</h5>
+        <div class="home-pics" href="#log-2">
+          <img src="/slides/ir-ir.png">
+          <p>
+            <a class="white-text" href="https://mono.morph.ist/irhydra/?id=vKSwRLfKFKNaXTZQj">https://mono.morph.ist/irhydra/?id=vKSwRLfKFKNaXTZQj</a>
+          </p>
+        </div>
+
+        <h5 class="inter-t light-font">2.3b See graph view</h5>
+        <div class="home-pics" href="#log-2">
+          <img src="/slides/ir-graph.png">
+          <p>
+            <a class="white-text" href="https://mono.morph.ist/irhydra/?id=vKSwRLfKFKNaXTZQj">https://mono.morph.ist/irhydra/?id=vKSwRLfKFKNaXTZQj</a>
+          </p>
+          <p>
+            <a class="white-text" href="#try-irhydra">Try it!</a>
+          </p>
+        </div>
+
+        <p id="try-node">
           <a class="home-btn" href="/job/new">
             1. check function<br>
             <span class="small">(bailouts on node)</span>
@@ -42,7 +72,7 @@
           <a class="home-btn node-modal-trigger">see all<br>node versions</a>
         </p>
 
-        <p>
+        <p id="try-irhydra">
           <a class="home-btn" href="/ir/new">
             2. analyze code<br>
             <span class="small">(IRHydra<sup>2</sup> for V8)</span>

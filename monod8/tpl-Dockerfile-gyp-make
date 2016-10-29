@@ -26,6 +26,7 @@ RUN echo "force-unsafe-io" > /etc/dpkg/dpkg.cfg.d/02apt-speedup && \
     cd /usr/local/v8 && \
     make x64.release disassembler=on snapshot=external objectprint=on snapshot=off -j 27 && \
     cd /usr/local/v8/out/x64.release && \
+    ls d8 || echo "d8 not built!" && \
     cp d8 /usr/local/bin/d8 && \
     cd /tmp `# test the build` && \
     d8 --trace_hydrogen --trace_phase=Z --trace_deopt \
