@@ -1,0 +1,37 @@
+.new-btn-wrapper {
+  border: none;
+  border-radius: 0;
+}
+.new-btn {
+  border: none;
+  width: 100%;
+  background-color: $primary-color !important;
+  font-size: 16px;
+  color: #fff;
+  font-weight: bold;
+}
+
+.collection .queue-item {
+  font-size: 12px;
+  padding: 5px;
+  &.queue-item-running {
+    @extend .light-green, .lighten-2;
+  }
+  &.active {
+    font-weight: bold;
+  }
+  i {
+    font-size: 18px;
+  }
+  .btn {
+    @extend .light-green, .lighten-5;
+    padding: 0 4px;
+    height: 18px;
+    line-height: 18px;
+  }
+
+  .btn.disabled.unlisted:hover {
+    background-color: #f1f8e9 !important;
+    color: #9F9F9F !important;
+  }
+}

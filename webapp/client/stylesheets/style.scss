@@ -1,13 +1,24 @@
-$primary-color: #607d8b !default;
+// $primary-color: #607d8b !default;
+$primary-color: #536e7b !default;
 
-@import "{poetic:materialize-scss}/sass/materialize.scss";
+@import '{poetic:materialize-scss}/sass/materialize.scss';
+@import 'sourcesanspro';
+@import 'nav';
+@import 'home';
+@import 'queue';
+
+html,
+button,
+input,
+optgroup,
+select,
+textarea {
+  font-family: 'Source Sans Pro', 'Roboto', sans-serif;
+}
 
 .title {
   margin: -15px -8px;
   font-weight: 900;
-}
-.light-font {
-  font-weight: 100;
 }
 
 .inter-t {
@@ -18,34 +29,10 @@ h5 {
   margin: 1.82rem 0 0.656rem 0;
 }
 
-.home-pics {
-  @extend .blue-grey;
-  @extend .darken-1;
-  @extend .center-align;
-  padding: 15px;
-  img {
-    width: 100%;
-    max-width: 580px
-  }
-}
-
 .btn-large {
   @extend .btn-large;
   @extend .blue-grey;
   @extend .darken-2;
-}
-
-.home-btn {
-  @extend .waves-effect;
-  @extend .waves-light;
-  @extend .btn-large;
-  height: 90px;
-  width: 210px;
-  line-height: 2rem;
-  padding: 14px 0;
-  .small {
-    font-size: 0.8rem;
-  }
 }
 
 .CodeMirror {
@@ -105,31 +92,6 @@ h5 {
   }
 }
 
-.collection .queue-item {
-  font-size: 12px;
-  padding: 5px;
-  &.queue-item-running {
-    @extend .light-green, .lighten-2;
-  }
-  &.active {
-    font-weight: bold;
-  }
-  i {
-    font-size: 18px;
-  }
-  .btn {
-    @extend .light-green, .lighten-5;
-    padding: 0 4px;
-    height: 18px;
-    line-height: 18px;
-  }
-
-  .btn.disabled.unlisted:hover {
-    background-color: #f1f8e9 !important;
-    color: #9F9F9F !important;
-  }
-}
-
 footer {
   @extend .blue-grey, .darken-1;
 }
@@ -161,57 +123,6 @@ table.highlight.status-table > tbody > tr:hover {
   @extend .light-green;
 }
 
-nav {
-  height: 21px;
-  line-height: 17px;
-  box-shadow: none;
-  h1 {
-    font-weight: bold;
-    margin: 0;
-    padding-top: 2px;
-    font-size: inherit;
-  }
-}
-
-@media only screen and (min-width: 601px) {
-  .nav-wrapper {
-    width: 300%;
-    overflow: hidden;
-  }
-  nav {
-    height: 21px;
-    line-height: 17px;
-    box-shadow: none;
-    overflow: hidden;
-    margin-top: 0;
-    .brand-logo {
-      font-weight: 100;
-      position: inherit;
-      display: block;
-      float: left;
-      color: #90a4ae !important;
-    }
-    h1 {
-      font-size: 2.1rem;
-      font-weight: bold;
-      line-height: inherit;
-      padding: 0;
-      margin: 0;
-      float: left;
-      display: block;
-      .brand-logo {
-        font-weight: 900;
-        color: #cfd8dc !important; // .blue-grey-text, .text-lighten-5;
-      }
-    }
-  }
-}
-@media only screen and (max-width: 992px) {
-  nav .brand-logo {
-    left: inherit;
-    transform: none;
-  }
-}
 .collection-item.queue-item {
   .btn {
     text-transform: inherit;

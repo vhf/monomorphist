@@ -1,0 +1,79 @@
+nav {
+  height: 21px;
+  line-height: 17px;
+  box-shadow: none;
+  h1 {
+    font-weight: bold;
+    margin: 0;
+    padding-top: 2px;
+  }
+  a {
+    font-size: 2.4rem !important;
+    margin-top: 16px;
+  }
+}
+@media only screen and (max-width: 600px) {
+  header {
+    width: 100%;
+    background-color: $primary-color;
+    nav {
+      height: 36px;
+      width: 90%;
+      margin-left: auto;
+      margin-right: auto;
+      .nav-wrapper {
+        width: 100%;
+        margin-left: auto;
+        left: auto;
+        right: auto;
+        .brand-logo {
+          color: #fff;
+          margin-top: -10px;
+          margin-left: -2px;
+        }
+      }
+    }
+  }
+  nav {
+  }
+}
+@media only screen and (min-width: 601px) {
+  .nav-wrapper {
+    width: 300%;
+    overflow: hidden;
+  }
+  nav {
+    height: 36px;
+    line-height: 17px;
+    box-shadow: none;
+    overflow: hidden;
+    margin-top: 0;
+    margin-bottom: 15px;
+    font-weight: bold;
+    letter-spacing: 0px;
+
+    .brand-logo {
+      position: inherit;
+      display: block;
+      float: left;
+      color: #90a4ae !important;
+    }
+    h1 {
+      line-height: inherit;
+      padding: 0;
+      margin: 0;
+      float: left;
+      display: block;
+      .brand-logo {
+        font-weight: 900;
+        color: #fff !important;
+      }
+    }
+  }
+}
+@media only screen and (max-width: 992px) {
+  nav .brand-logo {
+    left: inherit;
+    transform: none;
+  }
+}

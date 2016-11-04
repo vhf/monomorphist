@@ -11,5 +11,6 @@ Template.home.events({
 });
 
 Template.home.onRendered(() => {
-  $('#title').fitText(0.663);
+  $('#title').fitText(0.676);
+  $('.subtitle').fitText(2.4);
 });

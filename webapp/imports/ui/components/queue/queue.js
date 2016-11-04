@@ -69,4 +69,7 @@ Template.queue.events({
     $(`#node-versions-table tr[data-version="${version}"]`).addClass('selected-version');
     $('#node-info-modal').openModal();
   },
+  'click #new-btn': () => {
+    FlowRouter.go('/#try-node');
+  },
 });
