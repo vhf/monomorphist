@@ -1,7 +1,10 @@
 <template name="jobShow">
-  <div class="row">
+  <div class="row job-show">
     <div class="col s12">
-      <pre>{{code}}</pre>
+      <h1>Job #{{ shortId }}</h1>
+      {{#if Template.subscriptionsReady}}
+        {{> CodeMirror id="code" options=editorOptions code=code}}
+      {{/if}}
     </div>
   </div>
 </template>

@@ -3,12 +3,12 @@ import { _ } from 'meteor/underscore';
 import { check, Match } from 'meteor/check';
 import { Job } from 'meteor/vsivsi:job-collection';
 
-import dedent from 'dedent-js';
 import Jobs from '/imports/api/jobs/collection';
 import Logs from '/imports/api/logs/collection';
 import Nodes from '/imports/api/nodes/collection';
 import { Queue } from '/imports/api/queue/collection';
 import Checks from '/imports/checks';
+import { instrument } from './utils';
 
 const { maxContainersPerJob } = Meteor.settings.public.node;
 
@@ -46,34 +46,7 @@ Meteor.methods({
       return '';
     }
     const prepend = process.env.PREPEND ? process.env.PREPEND : '';
-
-    const boilerplate = screen ? "'use strict';\n" : dedent`
-    ${prepend}
-    function printStatus(fn) {
-      switch(%GetOptimizationStatus(fn)) {
-        case 1: console.log("Function is optimized (OptimizationStatus {1})"); break;
-        case 2: console.log("Function is not optimized (OptimizationStatus {2})"); break;
-        case 3: console.log("Function is always optimized (OptimizationStatus {3})"); break;
-        case 4: console.log("Function is never optimized (OptimizationStatus {4})"); break;
-        case 6: console.log("Function is maybe deoptimized (OptimizationStatus {6})"); break;
-        case 7: console.log("Function is optimized by TurboFan (OptimizationStatus {7})"); break;
-        default: console.log("Unknown optimization status (OptimizationStatus {0})"); break;
-      }
-    }
-
-    `;
-
-    return dedent`
-    ${boilerplate}${fn.definition}
-
-    ${fn.call}
-    ${fn.call}
-
-    %OptimizeFunctionOnNextCall(${fn.name});
-
-    ${fn.call}
-
-    printStatus(${fn.name});`;
+    return instrument(fn.definition, fn.call, fn.name, prepend, screen);
   },
   'job:submit'(_publicId) {
     check(_publicId, Checks.Id);

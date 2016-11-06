@@ -1,5 +1,4 @@
-// (TODO: document native syntax)
-// kudos to https://gist.github.com/mathiasbynens/6334847 for this one
+import dedent from 'dedent-js';
 
 const optimizationStatuses = {
   '-1': "didn't properly finish",
@@ -12,6 +11,7 @@ const optimizationStatuses = {
   0: 'Unknown optimization status',
 };
 
+const killedVerdicts = [-1];
 const deoptimizedVerdicts = [2, 4, 6];
 const unsureVerdicts = [0, 6];
 const optimizedVerdicts = [1, 3, 7];
@@ -89,4 +89,43 @@ const parseRawOutput = (_line) => {
   return { line, verdict };
 };
 
-export { optimizationStatuses, deoptimizedVerdicts, unsureVerdicts, optimizedVerdicts, reasons, parseRawOutput };
+const instrument = (definition, call, name, prepend = '', screen = true) => {
+  const boilerplate = screen ? "'use strict';\n" : dedent`
+  ${prepend}
+  function printStatus(fn) {
+    switch(%GetOptimizationStatus(fn)) {
+      case 1: console.log("Function is optimized (OptimizationStatus {1})"); break;
+      case 2: console.log("Function is not optimized (OptimizationStatus {2})"); break;
+      case 3: console.log("Function is always optimized (OptimizationStatus {3})"); break;
+      case 4: console.log("Function is never optimized (OptimizationStatus {4})"); break;
+      case 6: console.log("Function is maybe deoptimized (OptimizationStatus {6})"); break;
+      case 7: console.log("Function is optimized by TurboFan (OptimizationStatus {7})"); break;
+      default: console.log("Unknown optimization status (OptimizationStatus {0})"); break;
+    }
+  }
+
+  `;
+
+  return dedent`
+  ${boilerplate}${definition}
+
+  ${call}
+  ${call}
+
+  %OptimizeFunctionOnNextCall(${name});
+
+  ${call}
+
+  printStatus(${name});`;
+};
+
+export {
+  optimizationStatuses,
+  deoptimizedVerdicts,
+  unsureVerdicts,
+  optimizedVerdicts,
+  killedVerdicts,
+  reasons,
+  parseRawOutput,
+  instrument,
+};

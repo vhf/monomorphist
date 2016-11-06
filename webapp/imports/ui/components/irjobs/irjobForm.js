@@ -18,6 +18,7 @@ const codeMirror = () => {
     lineNumbers: true,
     mode: 'javascript',
     tabSize: 2,
+    theme: 'xq-light',
     indentWithTabs: false,
     extraKeys: { Tab: false, 'Shift-Tab': false },
   });

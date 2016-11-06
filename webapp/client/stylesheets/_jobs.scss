@@ -1,0 +1,11 @@
+.job-show {
+  h1 {
+    font-size: 48px;
+    font-weight: 900;
+  }
+  .CodeMirror-code {
+    background-color: $code-bg-color;
+    border: 1px solid $primary-color;
+    padding: 18px 40px 18px 32px;
+  }
+}

@@ -1,11 +1,11 @@
-// $primary-color: #607d8b !default;
-$primary-color: #536e7b !default;
+@import 'variables';
 
 @import '{poetic:materialize-scss}/sass/materialize.scss';
 @import 'sourcesanspro';
 @import 'nav';
 @import 'home';
 @import 'queue';
+@import 'jobs';
 
 html,
 button,
@@ -160,57 +160,19 @@ table.compact {
   cursor: pointer;
 }
 
-.job-queue {
-  width: 176px;
-
-  .queue-item {
-    padding-left: 8px;
-    .btn {
-      width: 76px;
-      margin: 0 1px;
-      text-align: right;
-      i {
-        @extend .material-icons;
-        font-size: 16px !important;
-        vertical-align: sub;
-      }
-      &.job-link {
-        width: 157px;
-        text-align: center;
-      }
-      &.verdict--1 {
-        i:after {
-          content: 'warning';
-        }
-      }
-      &.verdict-2,
-      &.verdict-4,
-      &.verdict-6 {
-        i:after {
-          content: 'thumb_down';
-        }
-      }
-      &.verdict-0,
-      &.verdict-6 {
-        i:after {
-          content: 'thumbs_up_down';
-        }
-      }
-      &.verdict-1,
-      &.verdict-3,
-      &.verdict-7 {
-        i:after {
-          content: 'thumb_up';
-        }
-      }
-    }
-  }
-}
-
 .d8-modal-trigger {
   cursor: pointer;
   i {
     font-size: 16px !important;
     vertical-align: middle;
   }
+}
+
+@font-face {
+  font-family: SauceCodePowerline-Regular;
+  src: url('/fonts/Sauce Code Powerline Regular.otf') format('opentype');
+}
+
+code, kbd, pre, samp {
+  font-family: 'SauceCodePowerline-Regular', monospace, monospace;
 }
