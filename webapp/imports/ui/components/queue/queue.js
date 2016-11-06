@@ -35,20 +35,9 @@ Template.queue.helpers({
       .chain(listed)
       .union(unlisted)
       .sort((a, b) => (+b.createdAt) - (+a.createdAt))
-      .first(5)
+      .first(75)
       .value();
     return all;
-  },
-  job() {
-    const listed = Jobs.find({ listed: true }, { limit: 100, sort: { createdAt: -1 } }).fetch();
-    const unlisted = Jobs.find({ listed: false }, { limit: 100 - listed.length, sort: { createdAt: -1 } }).fetch();
-    const all = _
-      .chain(listed)
-      .union(unlisted)
-      .sort((a, b) => (+b.createdAt) - (+a.createdAt))
-      .first(1)
-      .value();
-    return all[0];
   },
   status(job, str) {
     if (job.status === str) {
@@ -98,13 +87,11 @@ Template.queue.helpers({
     return cumulatedStatuses;
   },
   sortAndAugment(nodesStatuses) {
-    console.log(nodesStatuses);
     const nodes = _.indexBy(Nodes.find().fetch(), '_id');
     const augmentedAndSorted = _
       .chain(nodesStatuses)
       .map(aNode => _.extend(aNode, nodes[aNode._id]))
       .map(_aNode => {
-        console.log(_aNode);
         const aNode = _aNode;
         if (aNode.nightly) {
           aNode.version = aNode.version.split('-')[0];
