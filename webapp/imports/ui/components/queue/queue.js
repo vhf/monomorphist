@@ -167,3 +167,8 @@ Template.queue.events({
     }
   },
 });
+
+Template.queue.onRendered(() => {
+  // $('.new-btn-wrapper').pushpin({ top: $('.new-btn-wrapper').offset().top });
+  // $('.job-queue-col').pushpin({ top: $('.job-queue-col').offset().top });
+});

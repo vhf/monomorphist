@@ -169,7 +169,8 @@ Job.processJobs(BuildQueue, 'refresh-nodes', { concurrency: 1, pollInterval: 100
 
     // finally we can tag images and push them to docker hub
     const { repo } = Meteor.settings.public.node;
-    toEnable.forEach(version => {
+    const tags = Meteor.call('docker:imageTags', repo);
+    toEnable.filter(version => tags.indexOf(version) === -1).forEach(version => {
       ({ err, stdout, stderr } = execSync(nodeRoot, `docker tag mononodes_node-${version}:latest ${repo}:${version}`));
       Logs.insert({
         type: 'refresh',

@@ -40,4 +40,18 @@ Template.layout.onRendered(() => {
       deleteAllCookies();
     }
   }
+  const adjust = 36;
+  $(window).scroll(() => {
+    const $btn = $('.new-btn-wrapper');
+    const $queue = $('.job-queue');
+    const scroll = $(window).scrollTop();
+    if ($btn.hasClass('adjust') && $queue.hasClass('adjust') && scroll > adjust) {
+      $btn.removeClass('adjust');
+      $queue.removeClass('adjust');
+    }
+    if (!$btn.hasClass('adjust') && !$queue.hasClass('adjust') && scroll < adjust) {
+      $btn.addClass('adjust');
+      $queue.addClass('adjust');
+    }
+  });
 });

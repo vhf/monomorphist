@@ -54,6 +54,8 @@ Job.processJobs(BuildQueue, 'refresh-v8s', { concurrency: 1, pollInterval: 1000 
 Job.processJobs(BuildQueue, 'build-v8', { concurrency: 1, pollInterval: 1000 * 10, v8BuildTimeout },
   (qObj, cb) => {
     const { _v8Id, tag } = qObj.data;
+    const setRebuildTo = tag === 'master';
+
     Logs.insert({
       type: 'refresh',
       queue: 'build-v8',
@@ -67,7 +69,7 @@ Job.processJobs(BuildQueue, 'build-v8', { concurrency: 1, pollInterval: 1000 * 1
         queue: 'build-v8',
         title: `v8 ${_v8Id} not found (${tag})`,
       });
-      V8.update({ _id: v8._id }, { $set: { rebuild: false } });
+      V8.update({ _id: v8._id }, { $set: { rebuild: setRebuildTo } });
       cb();
       qObj.fail();
       return;
@@ -88,13 +90,7 @@ Job.processJobs(BuildQueue, 'build-v8', { concurrency: 1, pollInterval: 1000 * 1
     let { err, stdout, stderr } = execSync(`${v8Root}/dockerfiles`, `docker build --no-cache -t dockervhf/d8:${tag} -f Dockerfile.${tag} .`);
 
     const tagNotFound = stdout.indexOf('did not match any file(s) known to git') !== -1;
-    let d8NotBuilt = stdout.indexOf('d8 not built!') !== -1;
-    if (d8NotBuilt) {
-      const index = stdout.indexOf('echo "d8 not built!');
-      if (index !== -1) {
-        d8NotBuilt = stdout.slice(index).indexOf('d8 not built!') !== -1;
-      }
-    }
+    const d8NotBuilt = stdout.indexOf("cannot stat 'd8'") !== -1;
     let failedMsg = d8NotBuilt ? ` failed: ${tag} : d8 not built` : '';
     failedMsg = tagNotFound ? ` failed: ${tag} : git tag not found` : failedMsg;
 
@@ -108,7 +104,7 @@ Job.processJobs(BuildQueue, 'build-v8', { concurrency: 1, pollInterval: 1000 * 1
     });
 
     if (tagNotFound || d8NotBuilt || (err && (err.killed || ('code' in err && err.code !== 0)))) {
-      V8.update({ _id: v8._id }, { $set: { rebuild: false } });
+      V8.update({ _id: v8._id }, { $set: { rebuild: setRebuildTo } });
       cb();
       qObj.fail();
       return;
@@ -125,13 +121,13 @@ Job.processJobs(BuildQueue, 'build-v8', { concurrency: 1, pollInterval: 1000 * 1
       miscJSON: JSON.stringify(err),
     });
     if (err && (err.killed || ('code' in err && err.code !== 0))) {
-      V8.update({ _id: v8._id }, { $set: { rebuild: false } });
+      V8.update({ _id: v8._id }, { $set: { rebuild: setRebuildTo } });
       cb();
       qObj.fail();
       return;
     }
 
-    V8.update({ _id: v8._id }, { $set: { rebuild: false } });
+    V8.update({ _id: v8._id }, { $set: { rebuild: setRebuildTo } });
     Logs.insert({
       type: 'refresh',
       queue: 'build-v8',
