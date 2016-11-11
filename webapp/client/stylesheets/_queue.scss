@@ -89,6 +89,7 @@
       cursor: pointer;
     }
     &.details {
+      display: none;
       width: 180px;
       margin-left: 0;
       padding-top: 0;
@@ -119,6 +120,9 @@
           margin: 4px 0 0 0;
         }
       }
+    }
+    &.details-show {
+      display: block;
     }
     &.details + .queue-item {
       border-top: 1px solid $primary-color;

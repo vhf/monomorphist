@@ -1,0 +1,96 @@
+.logs-collapsibles {
+  -webkit-transition: all 0.1s ease-in-out;
+     -moz-transition: all 0.1s ease-in-out;
+      -ms-transition: all 0.1s ease-in-out;
+       -o-transition: all 0.1s ease-in-out;
+          transition: all 0.1s ease-in-out;
+  margin-left: 20%;
+  margin-right: 20%;
+  font-family: 'Source Sans Pro', 'Roboto', sans-serif;
+  ul {
+    border: none;
+    box-shadow: none;
+    li {
+      margin-bottom: 16px;
+    }
+  }
+  .collapsible-header {
+    border: 1px solid #304047;
+    height: 32px;
+    font-size: 14px;
+    padding-right: 0;
+    .right {
+      font-weight: 600;
+      width: 56px;
+      text-align: center;
+    }
+    &.active {
+      border-bottom: 0;
+      .right {
+        background: #304047;
+        color: white;
+      }
+    }
+  }
+  .collapsible-body {
+    width: 168%;
+    margin-left: -34%;
+  }
+}
+
+.log-lines {
+  background: #304047;
+  color: #fff;
+  margin-top: 0;
+  margin-bottom: 0;
+  padding: 5px 15px 5px 15px;
+  width: 100%;
+  font-size: 14px;
+  line-height: 1.4rem;
+  font-family: 'SauceCodePowerline-Regular', monospace, monospace;
+
+  .hex {
+    @extend .orange-text, .text-lighten-2;
+  }
+  .internal-info-1 {
+    color: green;
+  }
+  .internal-info-2 {
+    color: blue;
+  }
+  .reason-label {
+    @extend .grey-text, .text-lighten-1;
+  }
+  .reason, .disabled {
+    background-color: #666 !important;
+    @extend .lime-text, .text-lighten-5;
+    padding: 0 2px;
+  }
+  .verdict {
+    color: white;
+    @extend .blue-grey;
+    padding: 0 3px;
+  }
+  .verdict.bad {
+    @extend .orange, .lighten-2;
+  }
+  .verdict.maybe {
+    font-style: italic;
+  }
+  .collapse-column {
+    display: inline-block;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    height: 14px;
+    line-height: 14px;
+    cursor: pointer;
+  }
+  .collapse-column.uncollapsed {
+    display: inline;
+  }
+  .collapse-column.collapsed {
+    width: 12px;
+    margin-left: 14px;
+  }
+}

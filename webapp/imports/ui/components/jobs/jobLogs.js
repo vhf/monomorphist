@@ -6,6 +6,7 @@ import { $ } from 'meteor/jquery';
 
 import Jobs from '/imports/api/jobs/collection';
 import Nodes from '/imports/api/nodes/collection';
+import { fixJobQueueHeight } from '/imports/ui/utils';
 
 import { deoptimizedVerdicts, unsureVerdicts, optimizedVerdicts } from '/imports/api/jobs/utils';
 
@@ -86,10 +87,16 @@ Template.jobLogs.events({
     $('.collapse-column').toggleClass('collapsed');
     $('.collapse-column').toggleClass('uncollapsed');
   },
+  'click .collapsible-header': () => Meteor.setTimeout(fixJobQueueHeight, 250),
 });
 
 Template.jobLogs.onRendered(() => {
-  $('.collapsible').collapsible({
-    accordion: false,
-  });
+  const wait = Meteor.setInterval(() => {
+    if ($('.collapsible').length) {
+      $('.collapsible').collapsible({
+        accordion: false,
+      });
+      Meteor.clearInterval(wait);
+    }
+  }, 87);
 });

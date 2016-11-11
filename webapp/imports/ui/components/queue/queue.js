@@ -12,18 +12,11 @@ import {
 } from '/imports/api/jobs/utils';
 
 Template.queue.onCreated(function onCreated() {
-  this.detailId = new ReactiveVar();
-  this.detail = new ReactiveVar();
   this.autorun(() => {
     this.subscribe('nodes');
     this.subscribe('jobs');
     this.subscribe('unlistedJobs');
     this.subscribe('queue');
-    const _id = this.detailId.get();
-    if (_id) {
-      this.subscribe('detail', _id);
-      this.detail.set(Jobs.findOne({ _id }));
-    }
   });
 });
 
@@ -153,22 +146,20 @@ Template.queue.events({
   },
   'click .queue-item': (event) => {
     event.preventDefault();
-    const _id = $(event.target).closest('li.queue-item').data('id');
-    if (_id) {
-      Template.instance().detailId.set(_id);
+    const detail = $(event.target).closest('li.queue-item').prev();
+    if (detail) {
+      $('.collection-item.queue-item.details.details-show').removeClass('details-show');
+      $(detail).addClass('details-show');
     }
   },
   'click .job-link': (event) => {
     event.preventDefault();
-    const _id = $(event.target).closest('li.queue-item').data('id');
-    const job = Template.instance().detail.get();
-    if (job && job._id === _id && job._publicId) {
-      FlowRouter.go(`/job/${job._publicId}`);
+    const _id = $(event.target).closest('li.queue-item').data('publicid');
+    if (_id) {
+      FlowRouter.go(`/job/${_id}`);
     }
   },
 });
 
 Template.queue.onRendered(() => {
-  // $('.new-btn-wrapper').pushpin({ top: $('.new-btn-wrapper').offset().top });
-  // $('.job-queue-col').pushpin({ top: $('.job-queue-col').offset().top });
 });

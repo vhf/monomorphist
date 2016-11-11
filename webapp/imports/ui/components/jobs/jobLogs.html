@@ -10,63 +10,66 @@
     </div>
     <div class="row">
       <div class="col s12">
-        <ul class="collapsible" data-collapsible="expandable">
-          <li>
-            <div class="collapsible-header">
-              <div class="chip">server</div>
-              {{#if (compareStatus job 'ready')}}
-                <div class="progress">
-                  <div class="indeterminate"></div>
-                </div>
-              {{else}}
-                {{#if (compareStatus job 'running')}}
+        <div class="logs-collapsibles">
+          <ul class="collapsible" data-collapsible="expandable">
+            <li>
+              <div class="collapsible-header">
+                <div class="chip">server</div>
+                {{#if (compareStatus job 'ready')}}
                   <div class="progress">
-                    <div class="indeterminate preloader-running"></div>
+                    <div class="indeterminate"></div>
                   </div>
-                {{/if}}
-              {{/if}}
-            </div>
-            <div class="collapsible-body">
-              <div>
-                <pre class="log-lines">{{#each (logs 'undefined')}}{{ isoTime time }} {{{ message }}}<br>{{/each}}</pre>
-              </div>
-            </div>
-          </li>
-
-          {{#each _id in jobNodes}}
-            {{#let nodeStatus=(status _id)}}
-              <li>
-                <div class="collapsible-header {{optimizationClass nodeStatus}}">
-                  <div class="chip">{{nodeVersion(_id)}}</div>
-                  {{#if nodeStatus}}
-                    <div class="right">
-                      {{nodeStatus.status}}
+                {{else}}
+                  {{#if (compareStatus job 'running')}}
+                    <div class="progress">
+                      <div class="indeterminate preloader-running"></div>
                     </div>
-                  {{ else }}
-                    {{#if (compareStatus job 'ready')}}
-                      <div class="progress">
-                        <div class="indeterminate"></div>
+                  {{/if}}
+                {{/if}}
+              </div>
+              <div class="collapsible-body">
+                <div>
+                  <pre class="log-lines">{{#each (logs 'undefined')}}{{ isoTime time }} {{{ message }}}<br>{{/each}}</pre>
+                </div>
+              </div>
+            </li>
+
+            {{#each _id in jobNodes}}
+              {{#let nodeStatus=(status _id)}}
+                <li>
+                  <div class="collapsible-header {{optimizationClass nodeStatus}}">
+                    <div class="chip">{{nodeVersion(_id)}}</div>
+                    {{#if nodeStatus}}
+                      {{nodeStatus.status}}
+                      <div class="right">
+                        LOGS
                       </div>
-                    {{else}}
-                      {{#if (compareStatus job 'running')}}
+                    {{ else }}
+                      {{#if (compareStatus job 'ready')}}
                         <div class="progress">
-                          <div class="indeterminate preloader-running"></div>
+                          <div class="indeterminate"></div>
                         </div>
+                      {{else}}
+                        {{#if (compareStatus job 'running')}}
+                          <div class="progress">
+                            <div class="indeterminate preloader-running"></div>
+                          </div>
+                        {{/if}}
                       {{/if}}
                     {{/if}}
-                  {{/if}}
-                </div>
-                <div class="collapsible-body" id="node-log-{{_id}}">
-                  <div>
-                    <pre class="log-lines">{{#each (logs _id)}}{{{ message }}}<br>{{/each}}</pre>
                   </div>
-                </div>
-              </li>
-            {{/let}}
-          {{else}}
-            Please select at least one node version.
-          {{/each}}
-        </ul>
+                  <div class="collapsible-body" id="node-log-{{_id}}">
+                    <div>
+                      <pre class="log-lines">{{#each (logs _id)}}{{{ message }}}<br>{{/each}}</pre>
+                    </div>
+                  </div>
+                </li>
+              {{/let}}
+            {{else}}
+              Please select at least one node version.
+            {{/each}}
+          </ul>
+        </div>
       </div>
     </div>
   {{/if}}

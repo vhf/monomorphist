@@ -3,6 +3,7 @@ import { FlowRouter } from 'meteor/kadira:flow-router';
 import { Cookie } from 'meteor/chuangbo:cookie';
 
 import Nodes from '/imports/api/nodes/collection';
+import { fixJobQueueHeight } from '/imports/ui/utils';
 
 function deleteAllCookies() {
   const cookies = document.cookie.split(';');
@@ -53,5 +54,7 @@ Template.layout.onRendered(() => {
       $btn.addClass('adjust');
       $queue.addClass('adjust');
     }
+
+    fixJobQueueHeight();
   });
 });
