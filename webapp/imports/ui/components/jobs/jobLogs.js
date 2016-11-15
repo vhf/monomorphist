@@ -91,12 +91,19 @@ Template.jobLogs.events({
 });
 
 Template.jobLogs.onRendered(() => {
+  let count = 0;
   const wait = Meteor.setInterval(() => {
     if ($('.collapsible').length) {
       $('.collapsible').collapsible({
         accordion: false,
       });
-      Meteor.clearInterval(wait);
+      const job = Template.instance().job.get();
+      if (job && job.nodes && job.nodes.length && job.nodes.length === $('.collapsible-header').length) {
+        count += 1;
+        if (count > 3) {
+          Meteor.clearInterval(wait);
+        }
+      }
     }
   }, 87);
 });

@@ -45,23 +45,23 @@
 }
 
 .job-queue {
+-webkit-transition: all 0.1s ease-in-out;
+   -moz-transition: all 0.1s ease-in-out;
+    -ms-transition: all 0.1s ease-in-out;
+     -o-transition: all 0.1s ease-in-out;
+        transition: all 0.1s ease-in-out;
   position: fixed;
   top: 55px;
-  max-height: calc(100vh - 80px);
-  &.adjust {
-    top: 105px;
-    max-height: calc(100vh - 130px);
-  }
-  -webkit-transition: all 0.1s ease-in-out;
-     -moz-transition: all 0.1s ease-in-out;
-      -ms-transition: all 0.1s ease-in-out;
-       -o-transition: all 0.1s ease-in-out;
-          transition: all 0.1s ease-in-out;
   overflow-x: none;
   overflow-y: scroll;
   width: 195px;
   border: 0;
   margin-bottom: 0px;
+  max-height: calc(100vh - 80px);
+  &.adjust {
+    top: 105px;
+    max-height: calc(100vh - 130px);
+  }
 
   &.pinned {
     margin-top: 51.5px;
@@ -85,8 +85,8 @@
       border-bottom: 1px solid $primary-color;
       margin-bottom: 0;
     }
-    .job-link {
-      cursor: pointer;
+    &.element-hidden {
+      display: none;
     }
     &.details {
       display: none;
@@ -108,6 +108,9 @@
         .col {
           padding: 0;
         }
+      }
+      .job-link {
+        cursor: pointer;
       }
       div:first-child:not(.col) {
         margin: 0 -5px;

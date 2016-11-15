@@ -111,7 +111,7 @@ const instrument = (definition, call, name, prepend = '', screen = true) => {
 
   ${call}
   ${call}
-
+  ;
   %OptimizeFunctionOnNextCall(${name});
 
   ${call}

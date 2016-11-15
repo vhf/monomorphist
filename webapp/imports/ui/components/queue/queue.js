@@ -146,10 +146,13 @@ Template.queue.events({
   },
   'click .queue-item': (event) => {
     event.preventDefault();
-    const detail = $(event.target).closest('li.queue-item').prev();
-    if (detail) {
+    const $elem = $(event.target).closest('li.queue-item');
+    const $detail = $elem.prev();
+    if ($detail) {
+      $('.collection-item.queue-item.element-hidden').removeClass('element-hidden');
       $('.collection-item.queue-item.details.details-show').removeClass('details-show');
-      $(detail).addClass('details-show');
+      $($detail).addClass('details-show');
+      $elem.addClass('element-hidden');
     }
   },
   'click .job-link': (event) => {
