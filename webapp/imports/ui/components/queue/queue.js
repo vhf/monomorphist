@@ -3,7 +3,10 @@ import { FlowRouter } from 'meteor/kadira:flow-router';
 import { _ } from 'meteor/underscore';
 
 import Jobs from '/imports/api/jobs/collection';
+import IRJobs from '/imports/api/irjobs/collection';
 import Nodes from '/imports/api/nodes/collection';
+import V8 from '/imports/api/v8/collection';
+
 import {
   deoptimizedVerdicts,
   unsureVerdicts,
@@ -15,14 +18,38 @@ Template.queue.onCreated(function onCreated() {
   this.autorun(() => {
     this.subscribe('nodes');
     this.subscribe('jobs');
+    this.subscribe('irjobs');
+    this.subscribe('v8');
     this.subscribe('queue');
   });
 });
 
 Template.queue.helpers({
   jobs() {
-    const listed = Jobs.find({ listed: true }, { limit: 100, sort: { createdAt: -1 } }).fetch();
-    return listed;
+    const nodeJobs = Jobs.find({ listed: true, status: { $not: 'editing' } },
+      { limit: 100, sort: { createdAt: -1 }, fields: { fn: 0 } }).fetch();
+    const irJobs = IRJobs.find({ listed: true, status: { $not: 'editing' } },
+      { limit: 100, sort: { createdAt: -1 }, fields: { code: 0 } }).fetch();
+    const v8Ids = _.pluck(irJobs, '_v8Id');
+    const v8s = _.indexBy(V8.find({ _id: { $in: v8Ids } }).fetch(), '_id');
+    const joined = _
+      .chain(irJobs)
+      .map(_job => {
+        const job = _job;
+        if (job._v8Id in v8s) {
+          const v8 = v8s[job._v8Id];
+          if (v8 && v8.tag) {
+            job.tag = v8.tag;
+          }
+        }
+        return _.extend(job, { type: 'irjob' });
+      })
+      .union(_.map(nodeJobs, (job) => _.extend(job, { type: 'nodejob' })))
+      .sort((a, b) => (+b.createdAt) - (+a.createdAt))
+      .first(75)
+      .value();
+    console.log(joined);
+    return joined;
   },
   status(job, str) {
     if (job.status === str) {
@@ -140,11 +167,18 @@ Template.queue.events({
       $toHide.removeClass('details').addClass('listed');
     }
   },
-  'click .details > .short-id': (event) => {
+  'click .details.type-nodejob > .short-id': (event) => {
     event.preventDefault();
     const _id = $(event.target).closest('li.queue-item').data('publicid');
     if (_id) {
       FlowRouter.go(`/job/${_id}`);
+    }
+  },
+  'click .details.type-irjob > .short-id': (event) => {
+    event.preventDefault();
+    const _id = $(event.target).closest('li.queue-item').data('publicid');
+    if (_id) {
+      FlowRouter.go(`/irhydra/?id=${_id}`);
     }
   },
 });

@@ -45,11 +45,11 @@
 }
 
 .job-queue {
--webkit-transition: all 0.1s ease-in-out;
-   -moz-transition: all 0.1s ease-in-out;
-    -ms-transition: all 0.1s ease-in-out;
-     -o-transition: all 0.1s ease-in-out;
-        transition: all 0.1s ease-in-out;
+  -webkit-transition: all 0.1s ease-in-out;
+     -moz-transition: all 0.1s ease-in-out;
+      -ms-transition: all 0.1s ease-in-out;
+       -o-transition: all 0.1s ease-in-out;
+          transition: all 0.1s ease-in-out;
   position: fixed;
   top: 55px;
   overflow-x: none;
@@ -80,6 +80,16 @@
     border-bottom: 1px solid #D4E1E7;
     transition: all .3s ease;
 
+    .d8-mention {
+      position: absolute;
+      left: 85px;
+      font-size: 12px;
+      color: #979797;
+      vertical-align: middle;
+    }
+    .d8 {
+      display: none;
+    }
     &:first-child {
       border-top: 1px solid $primary-color;
     }
@@ -98,6 +108,13 @@
       padding-top: 0;
       padding-left: 0;
       border: 1px solid $primary-color;
+      .d8-mention {
+        display: none;
+      }
+      .d8 {
+        padding: 5px 12px 0 12px;
+        display: block;
+      }
       .verdicts {
         display: none;
       }

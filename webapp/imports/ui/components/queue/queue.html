@@ -6,10 +6,19 @@
     <ul class="collection job-queue adjust">
       {{#if Template.subscriptionsReady}}
         {{#each jobs}}
-          <li class="collection-item queue-item {{#if listed}}listed{{/if}}" data-id="{{ _id }}" data-publicid="{{ _publicId }}">
+          <li class="collection-item queue-item type-{{type}} {{#if listed}}listed{{/if}}" data-id="{{ _id }}" data-publicid="{{ _publicId }}">
             {{#let counts=(verdicts nodesStatus)}}
-              <span class="short-id">{{ shortId this }}</span>
+              <span class="short-id">
+                {{ shortId this }}
+                {{#if tag}}
+                  <span class="d8-mention">v8</span>
+                {{/if}}
+              </span>
+              {{#if tag}}
+                <div class="d8">v8 tag: {{tag}}</div>
+              {{/if}}
               <span class="verdicts">
+                {{#if tag}}{{tag}}{{/if}}
                 {{#if (status this 'running')}}
                   {{ nodesStatus.length }} <i class="material-icons" aria-hidden="true">settings</i>
                 {{/if}}
@@ -28,12 +37,15 @@
                     <span class="count">{{ counts.unsure }}</span> <i class="material-icons" aria-hidden="true">help_outline</i>
                   </span>
                 {{/if}}
-                {{#if counts.killed }}
+                {{#if killed }}
                   <span class="color-killed">
-                    <span class="count">{{ counts.killed }}</span> <i class="material-icons" aria-hidden="true">block</i>
+                    <i class="material-icons" aria-hidden="true">block</i>
+                  </span>
+                {{else}}
+                  <span class="color-good">
+                    <i class="material-icons" aria-hidden="true">check</i>
                   </span>
                 {{/if}}
-                <!--{{#if (killed this)}}<i class="material-icons" aria-hidden="true">settings</i>{{/if}}-->
               </span>
             {{/let}}
             {{#each (sortAndAugment nodesStatus)}}

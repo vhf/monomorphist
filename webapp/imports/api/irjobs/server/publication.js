@@ -7,7 +7,7 @@ Meteor.publish('irjob', _publicId => {
   return IRJobs.find({ _publicId });
 });
 
-Meteor.publish('irjobs', () => IRJobs.find({ status: 'done', listed: true }));
+Meteor.publish('irjobs', () => IRJobs.find({ status: { $not: { $eq: 'editing' } }, listed: true }));
 Meteor.publish('unlistedIRJobs', () => IRJobs.find({ status: 'done', listed: false }, { fields: { _publicId: 0, fn: 0 } }));
 
 IRJobs.allow({
