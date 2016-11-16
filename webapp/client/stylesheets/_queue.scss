@@ -90,6 +90,11 @@
     .d8 {
       display: none;
     }
+    &.type-nodejob {
+      .d8-end-status {
+        display: none;
+      }
+    }
     &:first-child {
       border-top: 1px solid $primary-color;
     }

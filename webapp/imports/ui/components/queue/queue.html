@@ -41,15 +41,17 @@
                     <span class="count">{{ counts.unsure }}</span> <i class="material-icons" aria-hidden="true">help_outline</i>
                   </span>
                 {{/if}}
-                {{#if killed }}
-                  <span class="color-killed">
-                    <i class="material-icons" aria-hidden="true">block</i>
-                  </span>
-                {{else}}
-                  <span class="color-good">
-                    <i class="material-icons" aria-hidden="true">check</i>
-                  </span>
-                {{/if}}
+                <span class="d8-end-status">
+                  {{#if killed }}
+                    <span class="color-killed">
+                      <i class="material-icons" aria-hidden="true">block</i>
+                    </span>
+                  {{else}}
+                    <span class="color-good">
+                      <i class="material-icons" aria-hidden="true">check</i>
+                    </span>
+                  {{/if}}
+                </span>
               </span>
             {{/let}}
             {{#each (sortAndAugment nodesStatus)}}
