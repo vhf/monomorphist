@@ -6,39 +6,6 @@
     <ul class="collection job-queue adjust">
       {{#if Template.subscriptionsReady}}
         {{#each jobs}}
-          <li class="collection-item queue-item details" data-id="{{ this._id }}" data-publicid="{{ this._publicId }}">
-            <div class="job-link">
-              <p>
-                {{shortIdTitle this}}
-              </p>
-            </div>
-            {{#each (sortAndAugment nodesStatus)}}
-              <div class="row">
-                {{#each this}}
-                  {{#if good}}
-                    <div class="col s6 color-good">
-                      <i class="fa fa-check" aria-hidden="true"></i> {{ version }}
-                    </div>
-                  {{/if}}
-                  {{#if bad}}
-                    <div class="col s6 color-bad">
-                      <i class="fa fa-exclamation-circle" aria-hidden="true"></i> {{ version }}
-                    </div>
-                  {{/if}}
-                  {{#if unsure}}
-                    <div class="col s6 color-unsure">
-                      <i class="fa fa-question-circle" aria-hidden="true"></i> {{ version }}
-                    </div>
-                  {{/if}}
-                  {{#if killed}}
-                    <div class="col s6 color-killed">
-                      <i class="fa fa-ban" aria-hidden="true"></i> {{ version }}
-                    </div>
-                  {{/if}}
-                {{/each}}
-              </div>
-            {{/each}}
-          </li>
           <li class="collection-item queue-item {{#if listed}}listed{{/if}}" data-id="{{ _id }}" data-publicid="{{ _publicId }}">
             {{#let counts=(verdicts nodesStatus)}}
               <span class="short-id">{{ shortId this }}</span>
@@ -69,6 +36,32 @@
                 <!--{{#if (killed this)}}<i class="fa fa-cog" aria-hidden="true"></i>{{/if}}-->
               </span>
             {{/let}}
+            {{#each (sortAndAugment nodesStatus)}}
+              <div class="row job-details">
+                {{#each this}}
+                  {{#if good}}
+                    <div class="col s6 color-good">
+                      <i class="fa fa-check" aria-hidden="true"></i> {{ version }}
+                    </div>
+                  {{/if}}
+                  {{#if bad}}
+                    <div class="col s6 color-bad">
+                      <i class="fa fa-exclamation-circle" aria-hidden="true"></i> {{ version }}
+                    </div>
+                  {{/if}}
+                  {{#if unsure}}
+                    <div class="col s6 color-unsure">
+                      <i class="fa fa-question-circle" aria-hidden="true"></i> {{ version }}
+                    </div>
+                  {{/if}}
+                  {{#if killed}}
+                    <div class="col s6 color-killed">
+                      <i class="fa fa-ban" aria-hidden="true"></i> {{ version }}
+                    </div>
+                  {{/if}}
+                {{/each}}
+              </div>
+            {{/each}}
           </li>
         {{/each}}
       {{/if}}

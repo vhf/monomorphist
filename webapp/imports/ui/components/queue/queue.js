@@ -15,7 +15,6 @@ Template.queue.onCreated(function onCreated() {
   this.autorun(() => {
     this.subscribe('nodes');
     this.subscribe('jobs');
-    this.subscribe('unlistedJobs');
     this.subscribe('queue');
   });
 });
@@ -23,14 +22,7 @@ Template.queue.onCreated(function onCreated() {
 Template.queue.helpers({
   jobs() {
     const listed = Jobs.find({ listed: true }, { limit: 100, sort: { createdAt: -1 } }).fetch();
-    const unlisted = Jobs.find({ listed: false }, { limit: 100 - listed.length, sort: { createdAt: -1 } }).fetch();
-    const all = _
-      .chain(listed)
-      .union(unlisted)
-      .sort((a, b) => (+b.createdAt) - (+a.createdAt))
-      .first(75)
-      .value();
-    return all;
+    return listed;
   },
   status(job, str) {
     if (job.status === str) {
@@ -38,11 +30,6 @@ Template.queue.helpers({
     }
     return false;
   },
-  // currentJob(_id) {
-  //   const _publicId = FlowRouter.getParam('_publicId');
-  //   if (!_publicId) return false;
-  //   return _id === _publicId;
-  // },
   shortId(job) {
     const id = job._publicId;
     if (id) {
@@ -142,20 +129,18 @@ Template.queue.events({
     $('#node-info-modal').openModal();
   },
   'click #new-btn': () => {
-    FlowRouter.go('/#try-node');
+    FlowRouter.go('/new');
   },
   'click .queue-item': (event) => {
     event.preventDefault();
     const $elem = $(event.target).closest('li.queue-item');
-    const $detail = $elem.prev();
-    if ($detail) {
-      $('.collection-item.queue-item.element-hidden').removeClass('element-hidden');
-      $('.collection-item.queue-item.details.details-show').removeClass('details-show');
-      $($detail).addClass('details-show');
-      $elem.addClass('element-hidden');
+    const $toHide = $('li.queue-item.details');
+    if ($elem) {
+      $elem.toggleClass('listed').toggleClass('details');
+      $toHide.removeClass('details').addClass('listed');
     }
   },
-  'click .job-link': (event) => {
+  'click .details > .short-id': (event) => {
     event.preventDefault();
     const _id = $(event.target).closest('li.queue-item').data('publicid');
     if (_id) {

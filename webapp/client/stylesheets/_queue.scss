@@ -78,6 +78,8 @@
     border-right: 1px solid $primary-color;
     border-top: 1px solid #D4E1E7;
     border-bottom: 1px solid #D4E1E7;
+    transition: all .3s ease;
+
     &:first-child {
       border-top: 1px solid $primary-color;
     }
@@ -85,43 +87,48 @@
       border-bottom: 1px solid $primary-color;
       margin-bottom: 0;
     }
-    &.element-hidden {
-      display: none;
+    &.listed {
+      .job-details {
+        display: none;
+      }
     }
     &.details {
-      display: none;
       width: 180px;
       margin-left: 0;
       padding-top: 0;
+      padding-left: 0;
       border: 1px solid $primary-color;
-      .row {
-        border-bottom: 1px solid #D4E1E7;
-        margin: 6px 0 0 -5px;
-        padding: 0 4px;
-        width: 178px;
-        .fa {
-          margin-right: 4px;
-        }
-        &:last-child {
-          border: 0;
-        }
-        .col {
-          padding: 0;
-        }
+      .verdicts {
+        display: none;
       }
-      .job-link {
+      span.short-id {
+        &:before {
+          content: 'Job ';
+        }
         cursor: pointer;
-      }
-      div:first-child:not(.col) {
-        margin: 0 -5px;
         width: 178px;
         border-bottom: 1px solid #D4E1E7;
         height: 25px;
         font-weight: 900;
         text-align: center;
-        p {
-          margin: 4px 0 0 0;
-        }
+        margin: 4px -5px 0 0;
+        display: block;
+      }
+    }
+    .job-details {
+      border-bottom: 1px solid #D4E1E7;
+      margin: 4px -5px 0 0;
+      padding: 0 4px;
+      padding: 0 5px;
+      width: 178px;
+      .fa {
+        margin-right: 4px;
+      }
+      &:last-child {
+        border: 0;
+      }
+      .col {
+        padding: 0;
       }
     }
     &.details-show {

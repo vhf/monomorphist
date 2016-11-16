@@ -5,6 +5,7 @@
     "start": "meteor run"
   },
   "dependencies": {
+    "babel-runtime": "^6.18.0",
     "csv-parse": "^1.1.7",
     "dedent-js": "^1.0.1",
     "ejs": "^2.5.2",

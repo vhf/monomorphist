@@ -41,6 +41,7 @@ Template.layout.onRendered(() => {
       deleteAllCookies();
     }
   }
+  fixJobQueueHeight();
   const adjust = 36;
   $(window).scroll(() => {
     const $btn = $('.new-btn-wrapper');

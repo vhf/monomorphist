@@ -50,6 +50,18 @@ const execSync = (cwd, command) => {
   return future.wait(future);
 };
 
+
+const stat = (filepath) => {
+  try {
+    if (fs.statSync(filepath)) {
+      return true;
+    }
+  } catch (e) {
+    //
+  }
+  return false;
+};
+
 Job.processJobs(Queue, 'run-ir', { concurrency, pollInterval, workTimeout },
   (qObj, cb) => {
     const { _irjobId, _irjobPublicId, _v8Id } = qObj.data;
@@ -77,11 +89,24 @@ Job.processJobs(Queue, 'run-ir', { concurrency, pollInterval, workTimeout },
 
     if (err && (err.killed || ('code' in err && err.code !== 0))) {
       Logs.insert({ _irjobId, message: `${err}\n${stderr}` });
+      IRJobs.update({ _id: _irjobId }, { $set: { killed: true, status: 'done' } });
       qObj.fail(`killed ${{ err }} ${{ stderr }}`);
       cb();
     }
 
-    Logs.insert({ _irjobId, message: `\n${stdout}` });
+    Logs.insert({ _irjobId, message: `\n${stderr}` });
+
+    if (stat(`/d8-artifacts/${_irjobPublicId}/no_hydrogen_output`)) {
+      Logs.insert({ _irjobId, message: 'No hydrogen IR generated.' });
+      IRJobs.update({ _id: _irjobId }, { $set: { killed: true, status: 'done' } });
+      qObj.fail(`killed ${{ err }} ${{ stderr }}`);
+      cb();
+    }
+
+    if (stat(`/d8-artifacts/${_irjobPublicId}/no_asm_output`)) {
+      Logs.insert({ _irjobId, message: 'No asm generated.\nHydrogen result will still be usable in IRHydra.' });
+    }
+
     IRJobs.update({ _publicId: _irjobPublicId, status: 'running' }, { $set: { status: 'done' } });
     Logs.insert({ _irjobId, message: 'job done.' });
     qObj.done();
