@@ -68,6 +68,7 @@ Job.processJobs(Queue, 'run-ir', { concurrency, pollInterval, workTimeout },
     const v8 = V8.findOne({ _id: _v8Id });
 
     if (!v8) {
+      IRJobs.update({ _id: _irjobId }, { $set: { killed: true, status: 'done' } });
       qObj.fail(`v8 ${_v8Id} not found!`);
       cb();
     }
@@ -85,7 +86,7 @@ Job.processJobs(Queue, 'run-ir', { concurrency, pollInterval, workTimeout },
       `dockervhf/d8:${v8.tag}`,
     ];
 
-    const { stdout, stderr, err } = execSync('/', dockerCmd.join(' '));
+    const { stderr, err } = execSync('/', dockerCmd.join(' '));
 
     if (err && (err.killed || ('code' in err && err.code !== 0))) {
       Logs.insert({ _irjobId, message: `${err}\n${stderr}` });

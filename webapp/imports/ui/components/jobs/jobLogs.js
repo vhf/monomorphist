@@ -45,6 +45,7 @@ Template.jobLogs.helpers({
     return (job && job.status) ? job.status === status : false;
   },
   status(_nodeId) {
+    return false;
     const job = Template.instance().job.get();
     if (job && job.nodesStatus && job.nodesStatus.length) {
       const node = _.findWhere(job.nodesStatus, { _id: _nodeId });
@@ -108,25 +109,28 @@ Template.jobLogs.events({
 });
 
 Template.jobLogs.onRendered(function jobLogsRendered() {
-  const wait = Meteor.setInterval(() => {
-    if (this.subscriptionsReady()) {
-      fixJobQueueHeight();
-      Meteor.clearInterval(wait);
-    }
-  }, 87);
-  let count = 0;
-  const wait2 = Meteor.setInterval(() => {
-    if ($('.collapsible').length) {
-      const job = this.job.get();
-      if (job && job.nodes && job.nodes.length && (job.nodes.length + 1 === $('.logs-collapsibles .collapsible-header').length)) {
-        count += 1;
-        $('.collapsible').collapsible({
-          accordion: false,
-        });
-        if (count > 3) {
-          Meteor.clearInterval(wait2);
+  Tracker.autorun(() => {
+    FlowRouter.watchPathChange();
+    const wait = Meteor.setInterval(() => {
+      if (this.subscriptionsReady()) {
+        fixJobQueueHeight();
+        Meteor.clearInterval(wait);
+      }
+    }, 87);
+    let count = 0;
+    const wait2 = Meteor.setInterval(() => {
+      if ($('.collapsible').length) {
+        const job = this.job.get();
+        if (job && job.nodes && job.nodes.length && (job.nodes.length + 1 === $('.logs-collapsibles .collapsible-header').length)) {
+          count += 1;
+          $('.collapsible').collapsible({
+            accordion: false,
+          });
+          if (count > 3) {
+            Meteor.clearInterval(wait2);
+          }
         }
       }
-    }
-  }, 587);
+    }, 587);
+  });
 });

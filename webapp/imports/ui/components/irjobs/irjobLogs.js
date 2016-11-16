@@ -5,6 +5,7 @@ import { ReactiveMethod } from 'meteor/simple:reactive-method';
 import { $ } from 'meteor/jquery';
 
 import IRJobs from '/imports/api/irjobs/collection';
+import { fixJobQueueHeight } from '/imports/ui/utils';
 
 Template.irjobLogs.onCreated(function onCreated() {
   this.irjob = new ReactiveVar();
@@ -34,7 +35,28 @@ Template.irjobLogs.helpers({
   },
 });
 
-Template.irjobLogs.onRendered(() => {
-  $('.collapsible-header').addClass('active');
-  $('.collapsible').collapsible({ accordion: false });
+Template.irjobLogs.onRendered(function jobLogsRendered() {
+  Tracker.autorun(() => {
+    FlowRouter.watchPathChange();
+    const wait = Meteor.setInterval(() => {
+      if (this.subscriptionsReady()) {
+        fixJobQueueHeight();
+        Meteor.clearInterval(wait);
+      }
+    }, 87);
+    let count = 0;
+    const wait2 = Meteor.setInterval(() => {
+      if ($('.collapsible').length) {
+        if ($('.logs-collapsibles .collapsible-header').length === 1) {
+          count += 1;
+          $('.collapsible').collapsible({
+            accordion: false,
+          });
+          if (count > 3) {
+            Meteor.clearInterval(wait2);
+          }
+        }
+      }
+    }, 587);
+  });
 });

@@ -15,6 +15,25 @@
       &:not(.active) {
         // height: 32px;
       }
+      .job-wait {
+        padding: 0 1px;
+        height: 0;
+        .progress {
+          position: relative;
+          height: 30px;
+          display: block;
+          width: 100%;
+          top: 1px;
+          background-color: transparent;
+          overflow: hidden;
+          .indeterminate {
+            background-color: rgba(38, 166, 154, 0.6);
+          }
+          .preloader-running {
+            background-color: rgba(139, 195, 74, 0.6) !important;
+          }
+        }
+      }
 
       .collapsible-header {
         height: 32px;

@@ -48,7 +48,6 @@ Template.queue.helpers({
       .sort((a, b) => (+b.createdAt) - (+a.createdAt))
       .first(75)
       .value();
-    console.log(joined);
     return joined;
   },
   status(job, str) {
@@ -178,7 +177,7 @@ Template.queue.events({
     event.preventDefault();
     const _id = $(event.target).closest('li.queue-item').data('publicid');
     if (_id) {
-      FlowRouter.go(`/irhydra/?id=${_id}`);
+      FlowRouter.go(`/ir/${_id}`);
     }
   },
 });

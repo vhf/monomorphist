@@ -18,9 +18,13 @@
                 <div class="d8">v8 tag: {{tag}}</div>
               {{/if}}
               <span class="verdicts">
-                {{#if tag}}{{tag}}{{/if}}
                 {{#if (status this 'running')}}
-                  {{ nodesStatus.length }} <i class="material-icons" aria-hidden="true">settings</i>
+                  <span class="color-running">
+                    {{#if tag}}{{tag}}{{/if}}
+                    {{ nodesStatus.length }} <i class="material-icons" aria-hidden="true">settings</i>
+                  </span>
+                {{else}}
+                  {{#if tag}}{{tag}}{{/if}}
                 {{/if}}
                 {{#if counts.good }}
                   <span class="color-good">

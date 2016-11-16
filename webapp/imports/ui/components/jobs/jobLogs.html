@@ -10,8 +10,7 @@
         <div class="logs-collapsibles">
           <ul class="collapsible" data-collapsible="expandable">
             <li>
-              <div class="collapsible-header">
-                <div class="log-panel orchestrator"><i class="material-icons">dns</i> Orchestrator</div>
+              <div class="job-wait">
                 {{#if (compareStatus job 'ready')}}
                   <div class="progress">
                     <div class="indeterminate"></div>
@@ -24,6 +23,9 @@
                   {{/if}}
                 {{/if}}
               </div>
+              <div class="collapsible-header">
+                <div class="log-panel orchestrator"><i class="material-icons">dns</i> Orchestrator</div>
+              </div>
               <div class="collapsible-body">
                 <div>
                   <pre class="log-lines">{{#each (logs 'undefined')}}{{ isoTime time }} {{{ message }}}<br>{{/each}}</pre>
@@ -34,15 +36,8 @@
             {{#each _id in jobNodes}}
               {{#let nodeStatus=(status _id)}}
                 <li>
-                  <div class="collapsible-header node">
-                    {{#if nodeStatus}}
-                      <span class="node-status {{optimizationClass nodeStatus}}">
-                        <i class="material-icons">{{optimizationIcon nodeStatus killed}}</i>node {{nodeVersion(_id)}}
-                      </span>
-                      <div class="right">
-                        LOGS
-                      </div>
-                    {{ else }}
+                  <div class="job-wait">
+                    {{#unless nodeStatus}}
                       {{#if (compareStatus job 'ready')}}
                         <div class="progress">
                           <div class="indeterminate"></div>
@@ -54,6 +49,20 @@
                           </div>
                         {{/if}}
                       {{/if}}
+                    {{/unless}}
+                  </div>
+                  <div class="collapsible-header node">
+                    {{#if nodeStatus}}
+                      <span class="node-status {{optimizationClass nodeStatus}}">
+                        <i class="material-icons">{{optimizationIcon nodeStatus killed}}</i>node {{nodeVersion(_id)}}
+                      </span>
+                      <div class="right">
+                        LOGS
+                      </div>
+                    {{else}}
+                      <span class="node-status">
+                        <i class="material-icons color-running">settings</i>node {{nodeVersion(_id)}}
+                      </span>
                     {{/if}}
                   </div>
                   <div class="collapsible-body" id="node-log-{{_id}}">
