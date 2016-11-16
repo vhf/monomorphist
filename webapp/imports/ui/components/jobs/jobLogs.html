@@ -1,11 +1,8 @@
 <template name="jobLogs">
   {{#if Template.subscriptionsReady}}
     <div class="row">
-      <div class="col s6">
+      <div class="col s12">
         <h5>Logs</h5>
-      </div>
-      <div class="col s6 right-align">
-        <h6><a class="waves-effect waves-light btn" href="/job/new">new job</a></h6>
       </div>
     </div>
     <div class="row">
@@ -14,7 +11,7 @@
           <ul class="collapsible" data-collapsible="expandable">
             <li>
               <div class="collapsible-header">
-                <div class="chip">server</div>
+                <div class="log-panel orchestrator"><i class="material-icons">dns</i> Orchestrator</div>
                 {{#if (compareStatus job 'ready')}}
                   <div class="progress">
                     <div class="indeterminate"></div>
@@ -37,10 +34,11 @@
             {{#each _id in jobNodes}}
               {{#let nodeStatus=(status _id)}}
                 <li>
-                  <div class="collapsible-header {{optimizationClass nodeStatus}}">
-                    <div class="chip">{{nodeVersion(_id)}}</div>
+                  <div class="collapsible-header node">
                     {{#if nodeStatus}}
-                      {{nodeStatus.status}}
+                      <span class="node-status {{optimizationClass nodeStatus}}">
+                        <i class="material-icons">{{optimizationIcon nodeStatus killed}}</i>node {{nodeVersion(_id)}}
+                      </span>
                       <div class="right">
                         LOGS
                       </div>

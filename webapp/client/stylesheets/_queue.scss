@@ -32,7 +32,7 @@
   color: #fff;
   font-weight: 600;
   padding: 4px 10px !important;
-  .fa {
+  .material-icons {
     float: right;
     font-size: 22px;
   }
@@ -115,15 +115,15 @@
         display: block;
       }
     }
+    .material-icons {
+      margin-right: 4px;
+      font-size: 10px;
+    }
     .job-details {
       border-bottom: 1px solid #D4E1E7;
       margin: 4px -5px 0 0;
-      padding: 0 4px;
       padding: 0 5px;
       width: 178px;
-      .fa {
-        margin-right: 4px;
-      }
       &:last-child {
         border: 0;
       }
@@ -135,15 +135,19 @@
       display: block;
     }
     &.details + .queue-item {
+      transition: none;
       border-top: 1px solid $primary-color;
     }
     .verdicts {
-      float: right;
       @extend .right-align;
+      float: right;
       font-size: 10px;
       color: #979797;
-      .fa {
-        margin-right: 4px;
+      vertical-align: middle;
+      i {
+        vertical-align: top;
+        margin-top: 5px;
+        display: inline-block;
       }
     }
   }

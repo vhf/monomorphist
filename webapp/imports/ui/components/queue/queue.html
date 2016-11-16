@@ -11,29 +11,29 @@
               <span class="short-id">{{ shortId this }}</span>
               <span class="verdicts">
                 {{#if (status this 'running')}}
-                  {{ nodesStatus.length }} <i class="fa fa-cog" aria-hidden="true"></i>
+                  {{ nodesStatus.length }} <i class="material-icons" aria-hidden="true">settings</i>
                 {{/if}}
                 {{#if counts.good }}
                   <span class="color-good">
-                    {{ counts.good }} <i class="fa fa-check" aria-hidden="true"></i>
+                    <span class="count">{{ counts.good }}</span> <i class="material-icons" aria-hidden="true">check</i>
                   </span>
                 {{/if}}
                 {{#if counts.bad }}
                   <span class="color-bad">
-                    {{ counts.bad }} <i class="fa fa-exclamation-circle" aria-hidden="true"></i>
+                    <span class="count">{{ counts.bad }}</span> <i class="material-icons" aria-hidden="true">error</i>
                   </span>
                 {{/if}}
                 {{#if counts.unsure }}
                   <span class="color-unsure">
-                    {{ counts.unsure }} <i class="fa fa-question-circle" aria-hidden="true"></i>
+                    <span class="count">{{ counts.unsure }}</span> <i class="material-icons" aria-hidden="true">help_outline</i>
                   </span>
                 {{/if}}
                 {{#if counts.killed }}
                   <span class="color-killed">
-                    {{ counts.killed }} <i class="fa fa-ban" aria-hidden="true"></i>
+                    <span class="count">{{ counts.killed }}</span> <i class="material-icons" aria-hidden="true">block</i>
                   </span>
                 {{/if}}
-                <!--{{#if (killed this)}}<i class="fa fa-cog" aria-hidden="true"></i>{{/if}}-->
+                <!--{{#if (killed this)}}<i class="material-icons" aria-hidden="true">settings</i>{{/if}}-->
               </span>
             {{/let}}
             {{#each (sortAndAugment nodesStatus)}}
@@ -41,22 +41,22 @@
                 {{#each this}}
                   {{#if good}}
                     <div class="col s6 color-good">
-                      <i class="fa fa-check" aria-hidden="true"></i> {{ version }}
+                      <i class="material-icons" aria-hidden="true">check</i> {{ version }}
                     </div>
                   {{/if}}
                   {{#if bad}}
                     <div class="col s6 color-bad">
-                      <i class="fa fa-exclamation-circle" aria-hidden="true"></i> {{ version }}
+                      <i class="material-icons" aria-hidden="true">error</i> {{ version }}
                     </div>
                   {{/if}}
                   {{#if unsure}}
                     <div class="col s6 color-unsure">
-                      <i class="fa fa-question-circle" aria-hidden="true"></i> {{ version }}
+                      <i class="material-icons" aria-hidden="true">help_outline</i> {{ version }}
                     </div>
                   {{/if}}
                   {{#if killed}}
                     <div class="col s6 color-killed">
-                      <i class="fa fa-ban" aria-hidden="true"></i> {{ version }}
+                      <i class="material-icons" aria-hidden="true">block</i> {{ version }}
                     </div>
                   {{/if}}
                 {{/each}}

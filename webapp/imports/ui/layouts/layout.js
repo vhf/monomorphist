@@ -30,7 +30,7 @@ Template.layout.helpers({
   },
 });
 
-Template.layout.onRendered(() => {
+Template.layout.onRendered(function layoutRendered() {
   const breaker = Cookie.get('break');
   if (!breaker) {
     Cookie.set('break', '1', { expires: 120 });
@@ -41,7 +41,12 @@ Template.layout.onRendered(() => {
       deleteAllCookies();
     }
   }
-  fixJobQueueHeight();
+  const wait = Meteor.setInterval(() => {
+    if (this.subscriptionsReady()) {
+      fixJobQueueHeight();
+      Meteor.clearInterval(wait);
+    }
+  }, 87);
   const adjust = 36;
   $(window).scroll(() => {
     const $btn = $('.new-btn-wrapper');

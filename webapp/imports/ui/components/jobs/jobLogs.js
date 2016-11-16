@@ -58,13 +58,30 @@ Template.jobLogs.helpers({
   optimizationClass(status) {
     if (status && status.verdict) {
       if (deoptimizedVerdicts.indexOf(status.verdict) !== -1) {
-        return 'deep-orange darken-1';
+        return 'color-bad';
       }
       if (unsureVerdicts.indexOf(status.verdict) !== -1) {
-        return 'blue lighten-4';
+        return 'color-unsure';
       }
       if (optimizedVerdicts.indexOf(status.verdict) !== -1) {
-        return 'light-green';
+        return 'color-good';
+      }
+    }
+    return '';
+  },
+  optimizationIcon(status, killed) {
+    if (killed) {
+      return 'block';
+    }
+    if (status && status.verdict) {
+      if (deoptimizedVerdicts.indexOf(status.verdict) !== -1) {
+        return 'error';
+      }
+      if (unsureVerdicts.indexOf(status.verdict) !== -1) {
+        return 'help_outline';
+      }
+      if (optimizedVerdicts.indexOf(status.verdict) !== -1) {
+        return 'check';
       }
     }
     return '';
@@ -90,20 +107,26 @@ Template.jobLogs.events({
   'click .collapsible-header': () => Meteor.setTimeout(fixJobQueueHeight, 250),
 });
 
-Template.jobLogs.onRendered(() => {
-  let count = 0;
+Template.jobLogs.onRendered(function jobLogsRendered() {
   const wait = Meteor.setInterval(() => {
+    if (this.subscriptionsReady()) {
+      fixJobQueueHeight();
+      Meteor.clearInterval(wait);
+    }
+  }, 87);
+  let count = 0;
+  const wait2 = Meteor.setInterval(() => {
     if ($('.collapsible').length) {
-      $('.collapsible').collapsible({
-        accordion: false,
-      });
-      const job = Template.instance().job.get();
-      if (job && job.nodes && job.nodes.length && job.nodes.length === $('.collapsible-header').length) {
+      const job = this.job.get();
+      if (job && job.nodes && job.nodes.length && (job.nodes.length + 1 === $('.logs-collapsibles .collapsible-header').length)) {
         count += 1;
+        $('.collapsible').collapsible({
+          accordion: false,
+        });
         if (count > 3) {
-          Meteor.clearInterval(wait);
+          Meteor.clearInterval(wait2);
         }
       }
     }
-  }, 87);
+  }, 587);
 });

@@ -12,29 +12,50 @@
     box-shadow: none;
     li {
       margin-bottom: 16px;
-    }
-  }
-  .collapsible-header {
-    border: 1px solid #304047;
-    height: 32px;
-    font-size: 14px;
-    padding-right: 0;
-    .right {
-      font-weight: 600;
-      width: 56px;
-      text-align: center;
-    }
-    &.active {
-      border-bottom: 0;
-      .right {
-        background: #304047;
-        color: white;
+      &:not(.active) {
+        // height: 32px;
+      }
+
+      .collapsible-header {
+        height: 32px;
+        min-height: 32px;
+        line-height: 32px;
+        border: 1px solid #304047;
+        font-size: 14px;
+        padding-right: 0;
+        &.node {
+          line-height: 28px;
+        }
+
+        i {
+          font-size: 12px;
+          line-height: 32px;
+        }
+
+        .right {
+          font-weight: 600;
+          width: 56px;
+          text-align: center;
+          height: 100%;
+        }
+        &.active {
+          // border-bottom: 0;
+          .right {
+            background: #304047;
+            color: white;
+          }
+        }
+        .node-status {
+          font-size: 12px;
+        }
+      }
+      .collapsible-body {
+        width: 168%;
+        margin-left: -34%;
+        border-bottom: none;
+        margin-top: -1px;
       }
     }
-  }
-  .collapsible-body {
-    width: 168%;
-    margin-left: -34%;
   }
 }
 
@@ -50,29 +71,30 @@
   font-family: 'SauceCodePowerline-Regular', monospace, monospace;
 
   .hex {
-    @extend .orange-text, .text-lighten-2;
+    color: #3aab56;
   }
   .internal-info-1 {
-    color: green;
+    color: #cdb62c;
   }
   .internal-info-2 {
-    color: blue;
+    color: #3484F5;
   }
   .reason-label {
     @extend .grey-text, .text-lighten-1;
   }
   .reason, .disabled {
-    background-color: #666 !important;
     @extend .lime-text, .text-lighten-5;
+    background-color: #db4545 !important;
     padding: 0 2px;
   }
   .verdict {
-    color: white;
-    @extend .blue-grey;
+    color: black;
+    background-color: #cdb62c;
     padding: 0 3px;
   }
   .verdict.bad {
-    @extend .orange, .lighten-2;
+    @extend .lime-text, .text-lighten-5;
+    background-color: #db4545 !important;
   }
   .verdict.maybe {
     font-style: italic;
