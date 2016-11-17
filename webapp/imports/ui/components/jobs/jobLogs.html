@@ -65,9 +65,15 @@
                           <i class="material-icons">block</i>node {{nodeVersion(_id)}}
                         </span>
                       {{else}}
-                        <span class="node-status">
-                          <i class="material-icons color-running">settings</i>node {{nodeVersion(_id)}}
-                        </span>
+                        {{#if (compareStatus job 'running')}}
+                          <span class="node-status">
+                            <i class="material-icons color-running">settings</i>node {{nodeVersion(_id)}}
+                          </span>
+                        {{else}}
+                          <span class="node-status">
+                            <i class="material-icons color-running">check</i>node {{nodeVersion(_id)}}
+                          </span>
+                        {{/if}}
                       {{/if}}
                     {{/if}}
                   </div>
