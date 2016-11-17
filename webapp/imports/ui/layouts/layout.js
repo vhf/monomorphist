@@ -31,6 +31,15 @@ Template.layout.helpers({
 });
 
 Template.layout.onRendered(function layoutRendered() {
+  Tracker.autorun(() => {
+    FlowRouter.watchPathChange();
+    const wait = Meteor.setInterval(() => {
+      if (this.subscriptionsReady()) {
+        fixJobQueueHeight();
+        Meteor.clearInterval(wait);
+      }
+    }, 87);
+  });
   const breaker = Cookie.get('break');
   if (!breaker) {
     Cookie.set('break', '1', { expires: 120 });
@@ -41,12 +50,6 @@ Template.layout.onRendered(function layoutRendered() {
       deleteAllCookies();
     }
   }
-  const wait = Meteor.setInterval(() => {
-    if (this.subscriptionsReady()) {
-      fixJobQueueHeight();
-      Meteor.clearInterval(wait);
-    }
-  }, 87);
   const adjust = 36;
   $(window).scroll(() => {
     const $btn = $('.new-btn-wrapper');
