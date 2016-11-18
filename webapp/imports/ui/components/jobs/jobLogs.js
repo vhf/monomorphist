@@ -70,7 +70,6 @@ Template.jobLogs.helpers({
         return 'color-killed';
       }
     }
-    console.log(status);
     return '';
   },
   optimizationIcon(status, killed) {

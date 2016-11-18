@@ -1,7 +1,8 @@
 .SILENT:
 
 # how many instances we'd like
-instances = 3
+instances = 5
+started = 1
 
 help:
 	echo "make"
@@ -33,7 +34,7 @@ up-conf:
 up: up-ir up-mono up-conf
 
 start:
-	bash ./monoserver/seq-compose-up.sh $(instances)
+	bash ./monoserver/seq-compose-up.sh $(started)
 
 generate-env-files:
 	bash ./monoserver/generate-env-files.sh $(instances)
@@ -44,9 +45,6 @@ build-ir:
 	pub build
 
 build-mono: generate-env-files
-	bash ./monoserver/build-webapp-bundle.sh $(instances)
+	bash ./monoserver/build-webapp-bundle.sh
 
 build: build-ir build-mono
-
-# backup:
-# 	docker run --network traefik_traefik_enabled --rm --link monoserver_mongodb_1:mongo -v /opt/monomorphist/backup:/backup mongo:3.2 bash -c 'mongodump --out /backup --host mongo:27017'

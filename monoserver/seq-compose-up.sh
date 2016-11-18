@@ -31,4 +31,4 @@ for n in $(seq $N); do
 done
 
 # make sure it's all up and get rid of orphans
-ssh monomorphist "cd /opt/monomorphist/monoserver && docker-compose up -d --remove-orphans"
+# ssh monomorphist "cd /opt/monomorphist/monoserver && docker-compose up -d --remove-orphans"

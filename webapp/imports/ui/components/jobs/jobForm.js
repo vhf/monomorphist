@@ -16,7 +16,6 @@ const renderLivePreview = () => {
   const call = $('textarea[name="fn.call"]').val();
   const name = $('input[name="fn.name"]').val();
   const preview = $('.instrumented > .CodeMirror')[0].CodeMirror;
-  console.log(preview);
 
   Meteor.call('job:instrument', { definition, call, name }, (err, code) => {
     if (!err && code) {
@@ -153,9 +152,8 @@ Template.jobForm.onRendered(function rendered() {
     FlowRouter.watchPathChange();
     const wait = Meteor.setInterval(() => {
       if (this.subscriptionsReady()) {
-        const preview = codeMirror();
-        renderLivePreview(preview);
-        console.log('done');
+        codeMirror();
+        renderLivePreview();
         fixJobQueueHeight();
         Meteor.clearInterval(wait);
       }
