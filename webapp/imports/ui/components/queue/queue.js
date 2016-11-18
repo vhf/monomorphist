@@ -42,9 +42,9 @@ Template.queue.helpers({
             job.tag = v8.tag;
           }
         }
-        return _.extend(job, { type: 'irjob' });
+        return _.extend(job, { irjob: true });
       })
-      .union(_.map(nodeJobs, (job) => _.extend(job, { type: 'nodejob' })))
+      .union(_.map(nodeJobs, (job) => _.extend(job, { nodejob: true })))
       .sort((a, b) => (+b.createdAt) - (+a.createdAt))
       .first(75)
       .value();
@@ -144,6 +144,22 @@ Template.queue.helpers({
     }
     return false;
   },
+  getV8(tag) {
+    const v8 = V8.findOne({ tag });
+    if (v8.nodeVersion) {
+      const xs = v8.nodeVersion.split(', ');
+      if (xs.length > 1) {
+        v8.nodeVersion = [xs[0], xs[xs.length - 1]].join(' → ');
+      }
+    }
+    if (v8.chromeVersion) {
+      const xs = v8.chromeVersion.split(', ');
+      if (xs.length > 1) {
+        v8.chromeVersion = [xs[0], xs[xs.length - 1]].join(' → ');
+      }
+    }
+    return v8;
+  },
 });
 
 Template.queue.events({
@@ -182,5 +198,5 @@ Template.queue.events({
   },
 });
 
-Template.queue.onRendered(() => {
+Template.queue.onRendered(function rendered() {
 });

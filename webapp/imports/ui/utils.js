@@ -1,3 +1,5 @@
+import { FlowRouter } from 'meteor/kadira:flow-router';
+
 function fixJobQueueHeight() {
   let visibleFooterHeight = $(window).height() - ($('.page-footer').offset().top - $(window).scrollTop());
   if (visibleFooterHeight < 0) {

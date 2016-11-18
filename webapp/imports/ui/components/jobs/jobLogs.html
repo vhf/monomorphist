@@ -2,11 +2,6 @@
   {{#if Template.subscriptionsReady}}
     <div class="row">
       <div class="col s12">
-        <h5>Logs</h5>
-      </div>
-    </div>
-    <div class="row">
-      <div class="col s12">
         <div class="logs-collapsibles">
           <ul class="collapsible" data-collapsible="expandable">
             <li>
@@ -52,28 +47,22 @@
                     {{/unless}}
                   </div>
                   <div class="collapsible-header node">
-                    {{#if nodeStatus}}
-                      <span class="node-status {{optimizationClass nodeStatus}}">
-                        <i class="material-icons">{{optimizationIcon nodeStatus killed}}</i>node {{nodeVersion(_id)}}
+                    {{#if killed}}
+                      <span class="node-status color-killed">
+                        <i class="material-icons">block</i>node {{nodeVersion(_id)}}
                       </span>
-                      <div class="right">
-                        LOGS
-                      </div>
                     {{else}}
-                      {{#if killed}}
-                        <span class="node-status color-killed">
-                          <i class="material-icons">block</i>node {{nodeVersion(_id)}}
+                      {{#if (compareStatus job 'running')}}
+                        <span class="node-status">
+                          <i class="material-icons color-running">settings</i>node {{nodeVersion(_id)}}
                         </span>
                       {{else}}
-                        {{#if (compareStatus job 'running')}}
-                          <span class="node-status">
-                            <i class="material-icons color-running">settings</i>node {{nodeVersion(_id)}}
-                          </span>
-                        {{else}}
-                          <span class="node-status">
-                            <i class="material-icons color-running">check</i>node {{nodeVersion(_id)}}
-                          </span>
-                        {{/if}}
+                        <span class="node-status {{optimizationClass nodeStatus}}">
+                          <i class="material-icons">{{optimizationIcon nodeStatus killed}}</i>node {{nodeVersion(_id)}}
+                        </span>
+                        <div class="right">
+                          LOGS
+                        </div>
                       {{/if}}
                     {{/if}}
                   </div>

@@ -1,7 +1,9 @@
 import { Template } from 'meteor/templating';
 import { $ } from 'meteor/jquery';
+import { FlowRouter } from 'meteor/kadira:flow-router';
 
 import Logs from '/imports/api/logs/collection';
+import { fixJobQueueHeight } from '/imports/ui/utils';
 
 const parseDockerBuildLogs = lines => lines.reduce((prev = [], curr, i) => {
   if (i > 0) {
@@ -75,4 +77,16 @@ Template.adminActions.events({
   'click #clear': () => {
     Meteor.call('logs:clearBuilds');
   },
+});
+
+Template.adminActions.onRendered(function rendered() {
+  Tracker.autorun(() => {
+    FlowRouter.watchPathChange();
+    const wait = Meteor.setInterval(() => {
+      if (this.subscriptionsReady()) {
+        fixJobQueueHeight();
+        Meteor.clearInterval(wait);
+      }
+    }, 87);
+  });
 });

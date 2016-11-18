@@ -2,6 +2,7 @@ import { Template } from 'meteor/templating';
 import { FlowRouter } from 'meteor/kadira:flow-router';
 
 import Jobs from '/imports/api/jobs/collection';
+import { fixJobQueueHeight } from '/imports/ui/utils';
 
 import '/imports/ui/components/jobs';
 import '/imports/ui/components/footer.js';
@@ -24,7 +25,7 @@ Template.jobHome.helpers({
   },
 });
 
-Template.jobHome.onRendered(() => {
+Template.jobHome.onRendered(function rendered() {
   const _publicId = FlowRouter.getParam('_publicId');
   // when leaving the page, we delete the job if it's empty
   window.addEventListener('beforeunload', () => {
@@ -33,5 +34,14 @@ Template.jobHome.onRendered(() => {
       Jobs.remove({ _id: job._id });
     }
     return null; // avoids confirmation popup
+  });
+  Tracker.autorun(() => {
+    FlowRouter.watchPathChange();
+    const wait = Meteor.setInterval(() => {
+      if (this.subscriptionsReady()) {
+        fixJobQueueHeight();
+        Meteor.clearInterval(wait);
+      }
+    }, 87);
   });
 });

@@ -5,6 +5,18 @@ import { Cookie } from 'meteor/chuangbo:cookie';
 import Nodes from '/imports/api/nodes/collection';
 import { fixJobQueueHeight } from '/imports/ui/utils';
 
+Blaze.TemplateInstance.prototype.allParents = function parentTemplate() {
+  let view = this.view;
+  const parents = [];
+  while (view) {
+    if (view.name.substring(0, 9) === 'Template.') {
+      parents.push(view.templateInstance());
+    }
+    view = view.parentView;
+  }
+  return parents;
+};
+
 function deleteAllCookies() {
   const cookies = document.cookie.split(';');
 

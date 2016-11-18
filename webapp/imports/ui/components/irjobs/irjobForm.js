@@ -8,6 +8,7 @@ import { $ } from 'meteor/jquery';
 
 import IRJobs from '/imports/api/irjobs/collection';
 import V8 from '/imports/api/v8/collection';
+import { fixJobQueueHeight } from '/imports/ui/utils';
 
 const { concurrency, timeout } = Meteor.settings.public.v8;
 
@@ -109,6 +110,15 @@ Template.irjobForm.events({
   },
 });
 
-Template.irjobForm.onRendered(() => {
-  codeMirror();
+Template.irjobForm.onRendered(function rendered() {
+  Tracker.autorun(() => {
+    FlowRouter.watchPathChange();
+    const wait = Meteor.setInterval(() => {
+      if (this.subscriptionsReady()) {
+        codeMirror();
+        fixJobQueueHeight();
+        Meteor.clearInterval(wait);
+      }
+    }, 87);
+  });
 });

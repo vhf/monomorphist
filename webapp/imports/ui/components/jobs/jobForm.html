@@ -29,9 +29,9 @@
         </label>
       </div>
     {{else}}
-    <div class="col s12 center">
-      <p>please wait, we're hunting nodes</p>
-    </div>
+      <div class="col s12 center">
+        <p>please wait, we're hunting nodes</p>
+      </div>
     {{/each}}
   </div>
   <div class="row">
@@ -50,8 +50,8 @@
       {{/autoForm}}
     </div>
     <div class="col m6 hide-on-small-only">
-      <div class="card-panel blue-grey lighten-4 instrumented" style="display: none">
-        <pre id="instrumented"></pre>
+      <div class="instrumented" style="display: none">
+        <textarea id="preview"></textarea>
       </div>
     </div>
   </div>

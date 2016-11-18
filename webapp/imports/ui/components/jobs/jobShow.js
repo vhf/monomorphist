@@ -3,6 +3,7 @@ import { FlowRouter } from 'meteor/kadira:flow-router';
 
 import Jobs from '/imports/api/jobs/collection';
 import { instrument } from '/imports/api/jobs/utils';
+import { fixJobQueueHeight } from '/imports/ui/utils';
 
 Template.jobShow.onCreated(function onCreated() {
   this.autorun(() => {
@@ -27,11 +28,23 @@ Template.jobShow.helpers({
   },
   editorOptions() {
     return {
-      lineNumbers: false,
+      lineNumbers: true,
       readOnly: true,
       mode: 'javascript',
       tabSize: 2,
       theme: 'xq-light',
     };
   },
+});
+
+Template.jobShow.onRendered(function rendered() {
+  Tracker.autorun(() => {
+    FlowRouter.watchPathChange();
+    const wait = Meteor.setInterval(() => {
+      if (this.subscriptionsReady()) {
+        fixJobQueueHeight();
+        Meteor.clearInterval(wait);
+      }
+    }, 87);
+  });
 });

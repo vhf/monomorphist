@@ -7,6 +7,7 @@ import { $ } from 'meteor/jquery';
 
 import Jobs from '/imports/api/jobs/collection';
 import Nodes from '/imports/api/nodes/collection';
+import { fixJobQueueHeight } from '/imports/ui/utils';
 
 const { concurrency, timeout, maxContainersPerJob } = Meteor.settings.public.node;
 
@@ -14,11 +15,13 @@ const renderLivePreview = () => {
   const definition = $('textarea[name="fn.definition"]').val();
   const call = $('textarea[name="fn.call"]').val();
   const name = $('input[name="fn.name"]').val();
+  const preview = $('.instrumented > .CodeMirror')[0].CodeMirror;
+  console.log(preview);
 
   Meteor.call('job:instrument', { definition, call, name }, (err, code) => {
     if (!err && code) {
-      $('#instrumented').parent('div').show();
-      $('#instrumented').html(code);
+      $('#preview').parent('div').show();
+      preview.setValue(code);
     }
   });
   const modifier = AutoForm.getFormValues('jobForm').updateDoc;
@@ -32,6 +35,7 @@ const renderLivePreview = () => {
 const codeMirror = () => {
   const $definition = $("textarea[data-schema-key='fn.definition']");
   const $call = $("textarea[data-schema-key='fn.call']");
+  const $code = $('textarea#preview');
 
   const definitionEditor = CodeMirror.fromTextArea($definition.get(0), {
     lineNumbers: true,
@@ -51,6 +55,16 @@ const codeMirror = () => {
     extraKeys: { Tab: false, 'Shift-Tab': false },
   });
 
+  const preview = CodeMirror.fromTextArea($code.get(0), {
+    readOnly: true,
+    lineNumbers: true,
+    mode: 'javascript',
+    tabSize: 2,
+    theme: 'xq-light',
+    indentWithTabs: false,
+    extraKeys: { Tab: false, 'Shift-Tab': false },
+  });
+
   definitionEditor.on('inputRead', (cMirror) => {
     $definition.val(cMirror.getValue());
     renderLivePreview();
@@ -61,6 +75,8 @@ const codeMirror = () => {
     $call.val(val);
     renderLivePreview();
   });
+
+  return preview;
 };
 
 Template.jobForm.onCreated(function onCreated() {
@@ -132,7 +148,17 @@ Template.jobForm.events({
   },
 });
 
-Template.jobForm.onRendered(() => {
-  codeMirror();
-  renderLivePreview();
+Template.jobForm.onRendered(function rendered() {
+  Tracker.autorun(() => {
+    FlowRouter.watchPathChange();
+    const wait = Meteor.setInterval(() => {
+      if (this.subscriptionsReady()) {
+        const preview = codeMirror();
+        renderLivePreview(preview);
+        console.log('done');
+        fixJobQueueHeight();
+        Meteor.clearInterval(wait);
+      }
+    }, 87);
+  });
 });

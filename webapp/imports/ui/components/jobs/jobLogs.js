@@ -8,7 +8,7 @@ import Jobs from '/imports/api/jobs/collection';
 import Nodes from '/imports/api/nodes/collection';
 import { fixJobQueueHeight } from '/imports/ui/utils';
 
-import { deoptimizedVerdicts, unsureVerdicts, optimizedVerdicts } from '/imports/api/jobs/utils';
+import { deoptimizedVerdicts, unsureVerdicts, optimizedVerdicts, killedVerdicts } from '/imports/api/jobs/utils';
 
 Template.jobLogs.onCreated(function onCreated() {
   this.job = new ReactiveVar();
@@ -45,7 +45,6 @@ Template.jobLogs.helpers({
     return (job && job.status) ? job.status === status : false;
   },
   status(_nodeId) {
-    return false;
     const job = Template.instance().job.get();
     if (job && job.nodesStatus && job.nodesStatus.length) {
       const node = _.findWhere(job.nodesStatus, { _id: _nodeId });
@@ -67,7 +66,11 @@ Template.jobLogs.helpers({
       if (optimizedVerdicts.indexOf(status.verdict) !== -1) {
         return 'color-good';
       }
+      if (killedVerdicts.indexOf(status.verdict) !== -1) {
+        return 'color-killed';
+      }
     }
+    console.log(status);
     return '';
   },
   optimizationIcon(status, killed) {
@@ -83,6 +86,9 @@ Template.jobLogs.helpers({
       }
       if (optimizedVerdicts.indexOf(status.verdict) !== -1) {
         return 'check';
+      }
+      if (killedVerdicts.indexOf(status.verdict) !== -1) {
+        return 'block';
       }
     }
     return '';
@@ -110,13 +116,6 @@ Template.jobLogs.events({
 
 Template.jobLogs.onRendered(function jobLogsRendered() {
   Tracker.autorun(() => {
-    FlowRouter.watchPathChange();
-    const wait = Meteor.setInterval(() => {
-      if (this.subscriptionsReady()) {
-        fixJobQueueHeight();
-        Meteor.clearInterval(wait);
-      }
-    }, 87);
     let count = 0;
     const wait2 = Meteor.setInterval(() => {
       if ($('.collapsible').length) {
@@ -132,5 +131,17 @@ Template.jobLogs.onRendered(function jobLogsRendered() {
         }
       }
     }, 587);
+  });
+});
+
+Template.jobLogs.onRendered(function rendered() {
+  Tracker.autorun(() => {
+    FlowRouter.watchPathChange();
+    const wait = Meteor.setInterval(() => {
+      if (this.subscriptionsReady()) {
+        fixJobQueueHeight();
+        Meteor.clearInterval(wait);
+      }
+    }, 87);
   });
 });

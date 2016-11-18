@@ -5,6 +5,7 @@ import { ReactiveVar } from 'meteor/reactive-var';
 import { $ } from 'meteor/jquery';
 
 import IRJobs from '/imports/api/irjobs/collection';
+import { fixJobQueueHeight } from '/imports/ui/utils';
 
 const codeMirror = (code) => {
   const $code = $('textarea#code');
@@ -33,6 +34,9 @@ Template.irjobShow.onCreated(function onCreated() {
 });
 
 Template.irjobShow.helpers({
+  shortId() {
+    return FlowRouter.getParam('_publicId').slice(0, 8);
+  },
   job() {
     const job = Template.instance().job.get();
     return job;
@@ -40,11 +44,15 @@ Template.irjobShow.helpers({
 });
 
 Template.irjobShow.onRendered(function onRendered() {
-  const wait = Meteor.setInterval(() => {
-    const job = this.job.get();
-    if (job && job.code) {
-      codeMirror(job.code);
-      Meteor.clearInterval(wait);
-    }
-  }, 50);
+  Tracker.autorun(() => {
+    FlowRouter.watchPathChange();
+    const wait = Meteor.setInterval(() => {
+      if (this.subscriptionsReady()) {
+        fixJobQueueHeight();
+        const job = this.job.get();
+        codeMirror(job.code);
+        Meteor.clearInterval(wait);
+      }
+    }, 87);
+  });
 });

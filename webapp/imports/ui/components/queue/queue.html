@@ -6,17 +6,11 @@
     <ul class="collection job-queue adjust">
       {{#if Template.subscriptionsReady}}
         {{#each jobs}}
-          <li class="collection-item queue-item type-{{type}} {{#if listed}}listed{{/if}}" data-id="{{ _id }}" data-publicid="{{ _publicId }}">
+          <li class="collection-item queue-item {{#if irjob}}type-irjob{{/if}} {{#if nodejob}}type-nodejob{{/if}} {{#if listed}}listed{{/if}}" data-id="{{ _id }}" data-publicid="{{ _publicId }}">
             {{#let counts=(verdicts nodesStatus)}}
               <span class="short-id">
                 {{ shortId this }}
-                {{#if tag}}
-                  <span class="d8-mention">v8</span>
-                {{/if}}
               </span>
-              {{#if tag}}
-                <div class="d8">v8 tag: {{tag}}</div>
-              {{/if}}
               <span class="verdicts">
                 {{#if (status this 'running')}}
                   <span class="color-running">
@@ -24,62 +18,84 @@
                     {{ nodesStatus.length }} <i class="material-icons" aria-hidden="true">settings</i>
                   </span>
                 {{else}}
-                  {{#if tag}}{{tag}}{{/if}}
-                {{/if}}
-                {{#if counts.good }}
-                  <span class="color-good">
-                    <span class="count">{{ counts.good }}</span> <i class="material-icons" aria-hidden="true">check</i>
-                  </span>
-                {{/if}}
-                {{#if counts.bad }}
-                  <span class="color-bad">
-                    <span class="count">{{ counts.bad }}</span> <i class="material-icons" aria-hidden="true">error</i>
-                  </span>
-                {{/if}}
-                {{#if counts.unsure }}
-                  <span class="color-unsure">
-                    <span class="count">{{ counts.unsure }}</span> <i class="material-icons" aria-hidden="true">help_outline</i>
-                  </span>
-                {{/if}}
-                <span class="d8-end-status">
-                  {{#if killed }}
-                    <span class="color-killed">
-                      <i class="material-icons" aria-hidden="true">block</i>
-                    </span>
-                  {{else}}
-                    <span class="color-good">
-                      <i class="material-icons" aria-hidden="true">check</i>
+                  {{#if irjob}}
+                    <span class="d8-mention">v8</span>
+                    {{tag}}
+                    <span class="d8-end-status">
+                      {{#if killed }}
+                        <span class="color-killed">
+                          <i class="material-icons" aria-hidden="true">block</i>
+                        </span>
+                      {{else}}
+                        <span class="color-good">
+                          <i class="material-icons" aria-hidden="true">check</i>
+                        </span>
+                      {{/if}}
                     </span>
                   {{/if}}
-                </span>
+                {{/if}}
+                {{#if nodejob}}
+                  {{#if counts.good }}
+                    <span class="color-good">
+                      <span class="count">{{ counts.good }}</span> <i class="material-icons" aria-hidden="true">check</i>
+                    </span>
+                  {{/if}}
+                  {{#if counts.bad }}
+                    <span class="color-bad">
+                      <span class="count">{{ counts.bad }}</span> <i class="material-icons" aria-hidden="true">error</i>
+                    </span>
+                  {{/if}}
+                  {{#if counts.unsure }}
+                    <span class="color-unsure">
+                      <span class="count">{{ counts.unsure }}</span> <i class="material-icons" aria-hidden="true">help_outline</i>
+                    </span>
+                  {{/if}}
+                {{/if}}
               </span>
             {{/let}}
-            {{#each (sortAndAugment nodesStatus)}}
-              <div class="row job-details">
-                {{#each this}}
-                  {{#if good}}
-                    <div class="col s6 color-good">
-                      <i class="material-icons" aria-hidden="true">check</i> {{ version }}
-                    </div>
+            {{#if nodejob}}
+              {{#each (sortAndAugment nodesStatus)}}
+                <div class="row job-details">
+                  {{#each this}}
+                    {{#if good}}
+                      <div class="col s6 color-good">
+                        <i class="material-icons" aria-hidden="true">check</i> {{ version }}
+                      </div>
+                    {{/if}}
+                    {{#if bad}}
+                      <div class="col s6 color-bad">
+                        <i class="material-icons" aria-hidden="true">error</i> {{ version }}
+                      </div>
+                    {{/if}}
+                    {{#if unsure}}
+                      <div class="col s6 color-unsure">
+                        <i class="material-icons" aria-hidden="true">help_outline</i> {{ version }}
+                      </div>
+                    {{/if}}
+                    {{#if killed}}
+                      <div class="col s6 color-killed">
+                        <i class="material-icons" aria-hidden="true">block</i> {{ version }}
+                      </div>
+                    {{/if}}
+                  {{/each}}
+                </div>
+              {{/each}}
+            {{else}}
+              {{#let v8=(getV8 tag)}}
+                <div class="row job-details">
+                  <div class="col s4 d8">v8 tag</div>
+                  <div class="col s8">{{tag}}</div>
+                  {{#if v8.chromeVersion}}
+                    <div class="col s4 d8">chrome</div>
+                    <div class="col s8">{{v8.chromeVersion}}</div>
                   {{/if}}
-                  {{#if bad}}
-                    <div class="col s6 color-bad">
-                      <i class="material-icons" aria-hidden="true">error</i> {{ version }}
-                    </div>
+                  {{#if v8.nodeVersion}}
+                    <div class="col s4 d8">node</div>
+                    <div class="col s8">{{v8.nodeVersion}}</div>
                   {{/if}}
-                  {{#if unsure}}
-                    <div class="col s6 color-unsure">
-                      <i class="material-icons" aria-hidden="true">help_outline</i> {{ version }}
-                    </div>
-                  {{/if}}
-                  {{#if killed}}
-                    <div class="col s6 color-killed">
-                      <i class="material-icons" aria-hidden="true">block</i> {{ version }}
-                    </div>
-                  {{/if}}
-                {{/each}}
-              </div>
-            {{/each}}
+                </div>
+              {{/let}}
+            {{/if}}
           </li>
         {{/each}}
       {{/if}}
