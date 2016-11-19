@@ -50,6 +50,11 @@
                       <span class="count">{{ counts.unsure }}</span> <i class="material-icons" aria-hidden="true">help_outline</i>
                     </span>
                   {{/if}}
+                  {{#if counts.killed }}
+                    <span class="color-killed">
+                      <span class="count">{{ counts.killed }}</span> <i class="material-icons" aria-hidden="true">block</i>
+                    </span>
+                  {{/if}}
                 {{/if}}
               </span>
             {{/let}}
