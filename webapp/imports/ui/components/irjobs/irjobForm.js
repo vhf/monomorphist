@@ -15,29 +15,32 @@ const { concurrency, timeout } = Meteor.settings.public.v8;
 const codeMirror = () => {
   const $code = $("textarea[data-schema-key='code']");
 
-  const codeEditor = CodeMirror.fromTextArea($code.get(0), {
-    lineNumbers: true,
-    mode: 'javascript',
-    tabSize: 2,
-    theme: 'xq-light',
-    indentWithTabs: false,
-    extraKeys: { Tab: false, 'Shift-Tab': false },
-  });
+  if ($code.length) {
+    const codeEditor = CodeMirror.fromTextArea($code.get(0), {
+      lineNumbers: true,
+      mode: 'javascript',
+      tabSize: 2,
+      theme: 'xq-light',
+      indentWithTabs: false,
+      extraKeys: { Tab: false, 'Shift-Tab': false },
+    });
 
-  const _publicId = FlowRouter.getParam('_publicId');
+    const _publicId = FlowRouter.getParam('_publicId');
 
-  codeEditor.on('inputRead', (cMirror) => {
-    $code.val(cMirror.getValue());
-    const modifier = AutoForm.getFormValues('irjobForm').updateDoc;
-    const irjob = IRJobs.findOne({ _publicId });
-    if (irjob) {
-      IRJobs.update(irjob._id, modifier);
-    }
-  });
+    codeEditor.on('inputRead', (cMirror) => {
+      $code.val(cMirror.getValue());
+      const modifier = AutoForm.getFormValues('irjobForm').updateDoc;
+      const irjob = IRJobs.findOne({ _publicId });
+      if (irjob) {
+        IRJobs.update(irjob._id, modifier);
+      }
+    });
+    return true;
+  }
+  return false;
 };
 
 Template.irjobForm.onCreated(function onCreated() {
-  this.v8s = new ReactiveVar();
   this.job = new ReactiveVar();
   this.autorun(() => {
     const _publicId = FlowRouter.getParam('_publicId');
@@ -45,7 +48,6 @@ Template.irjobForm.onCreated(function onCreated() {
     this.subscribe('irlogs', _publicId);
     this.subscribe('v8');
     if (this.subscriptionsReady()) {
-      this.v8s.set(V8.find({}, { sort: { tag: 1 } }).fetch());
       this.job.set(IRJobs.findOne({ _publicId }));
     }
   });
@@ -57,18 +59,13 @@ Template.irjobForm.helpers({
     return job;
   },
   v8ColA() {
-    const v8s = Template.instance().v8s.get();
-    if (!v8s || !v8s.length) {
-      return [];
-    }
-    return v8s.slice(0, Math.ceil(v8s.length / 2));
-  },
-  v8ColB() {
-    const v8s = Template.instance().v8s.get();
-    if (!v8s || !v8s.length) {
-      return [];
-    }
-    return v8s.slice(Math.ceil(v8s.length / 2));
+    let v8s = V8.find({ enabled: true }, { sort: { tag: 1 } }).fetch();
+    v8s = _.chain(v8s).map(_v8 => {
+      const v8 = _v8;
+      v8.naturalTag = v8.tag.split('.').reduce((sum, part, idx) => sum + (Math.pow(1000, 4 - idx) * parseInt(part, 10)), 0);
+      return v8;
+    }).sortBy('naturalTag').value();
+    return v8s;
   },
   formInvalid(job) {
     if (job && ('_v8Id' in job) && job._v8Id && ('code' in job) && job.code) {
@@ -115,9 +112,12 @@ Template.irjobForm.onRendered(function rendered() {
     FlowRouter.watchPathChange();
     const wait = Meteor.setInterval(() => {
       if (this.subscriptionsReady()) {
-        codeMirror();
-        fixJobQueueHeight();
-        Meteor.clearInterval(wait);
+        if (!$("textarea[data-schema-key='code']").next('div').hasClass('CodeMirror')) {
+          if (codeMirror()) {
+            fixJobQueueHeight();
+            Meteor.clearInterval(wait);
+          }
+        }
       }
     }, 87);
   });

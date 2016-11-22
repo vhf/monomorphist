@@ -50,8 +50,10 @@ Template.irjobShow.onRendered(function onRendered() {
       if (this.subscriptionsReady()) {
         fixJobQueueHeight();
         const job = this.job.get();
-        codeMirror(job.code);
-        Meteor.clearInterval(wait);
+        if (job && job.code) {
+          codeMirror(job.code);
+          Meteor.clearInterval(wait);
+        }
       }
     }, 87);
   });

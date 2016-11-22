@@ -23,8 +23,28 @@
   margin-top: 25px;
 }
 
-#jobForm {
+#jobForm, #irjobForm {
   label {
     margin-top: 5px;
+  }
+}
+
+// irjobform list of v8 versions
+
+.columned {
+  display: flex;
+  flex-wrap: wrap;
+  padding: .25em;
+  margin: 1em 0;
+}
+
+.columned div {
+  flex: 1 0 140px;
+  max-width: 140px;
+  margin: .25em;
+
+  label {
+    padding-left: 28px !important;
+    line-height: 23px !important;
   }
 }

@@ -10,25 +10,19 @@
     </div>
   </div>
   <div class="row">
-    <div class="col s12 m6">
-      {{#each v8ColA}}
-        <span data-id="{{ _id }}" class="d8-modal-trigger"><i class="material-icons">live_help</i></span>
-        <input name="v8-tag" class="v8-radio" type="radio" id="{{ _id }}" />
-        <label for="{{ _id }}">
-          {{ tag }}
-        </label>
-        <br>
-      {{/each}}
-    </div>
-    <div class="col s12 m6">
-      {{#each v8ColB}}
-        <span data-id="{{ _id }}" class="d8-modal-trigger"><i class="material-icons">live_help</i></span>
-        <input name="v8-tag" class="v8-radio" type="radio" id="{{ _id }}" />
-        <label for="{{ _id }}">
-          {{ tag }}
-        </label>
-        <br>
-      {{/each}}
+    <div class="col s12">
+      <div class="columned">
+        {{#each v8ColA}}
+          <div>
+            <span data-id="{{ _id }}" class="d8-modal-trigger"><i class="material-icons">live_help</i></span>
+            <input name="v8-tag" class="v8-radio" type="radio" id="{{ _id }}" />
+            <label for="{{ _id }}">
+              {{ tag }}
+            </label>
+            <br>
+          </div>
+        {{/each}}
+      </div>
     </div>
   </div>
   <div class="row">
