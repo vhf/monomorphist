@@ -1,52 +1,43 @@
 <template name="homeIr">
-  <div class="container">
-    <div class="row">
-      <div class="col s12 m10">
-        <h1 id="title" class="title hide-on-small-only"><a href="/">monomorphist</a></h1>
-        <h5 class="subtitle home-section">a JavaScript performance companion</h5>
+  <h1 id="title" class="title hide-on-small-only"><a href="/">monomorphist</a></h1>
+  <h5 class="subtitle home-section">a JavaScript performance companion</h5>
 
-        <p>
-          This tool helps you analyze <a class="d8-modal-trigger">V8</a> internal representation and assembly online
-        </p>
+  <p>
+    This tool helps you analyze <a class="d8-modal-trigger">V8</a> internal representation and assembly online
+  </p>
 
-        <h5 class="inter-t home-section">1 Enter a JavaScript file</h5>
-        <h5 class="inter-t home-section">2 Decide which <a class="d8-modal-trigger">V8 versions</a> to use</h5>
-        <div class="home-pics" href="#code-2">
-          <img src="/slides/ir-code.png">
-        </div>
-
-        <h5 class="home-section">3 See the result directly imported in IRHydra<sup>2</sup></h5>
-
-        <h5 class="inter-t home-section">3a Browse intermediate representation / disassembly</h5>
-        <div class="home-pics" href="#log-2">
-          <img src="/slides/ir-ir.png">
-          <p>
-            <a class="white-text" href="https://mono.morph.ist/irhydra/?id=vKSwRLfKFKNaXTZQj">https://mono.morph.ist/irhydra/?id=vKSwRLfKFKNaXTZQj</a>
-          </p>
-        </div>
-
-        <h5 class="inter-t home-section">3b See graph view</h5>
-        <div class="home-pics" href="#log-2">
-          <img src="/slides/ir-graph.png">
-          <p>
-            <a class="white-text" href="https://mono.morph.ist/irhydra/?id=vKSwRLfKFKNaXTZQj">https://mono.morph.ist/irhydra/?id=vKSwRLfKFKNaXTZQj</a>
-          </p>
-          <p>
-            <a class="white-text" href="#try-irhydra">Try it!</a>
-          </p>
-        </div>
-
-        <p id="try-irhydra">
-          <a class="home-btn" href="/ir/new">
-            Analyze code<br>
-            <span class="small">(IRHydra<sup>2</sup> for V8)</span>
-          </a>
-          <a class="home-btn d8-modal-trigger">see all<br>V8 versions</a>
-        </p>
-      </div>
-      <div class="job-queue-col">
-        {{> queue}}
-      </div>
-    </div>
+  <h5 class="inter-t home-section">1 Enter a JavaScript file</h5>
+  <h5 class="inter-t home-section">2 Decide which <a class="d8-modal-trigger">V8 versions</a> to use</h5>
+  <div class="home-pics" href="#code-2">
+    <img src="/slides/ir-code.png">
   </div>
+
+  <h5 class="home-section">3 See the result directly imported in IRHydra<sup>2</sup></h5>
+
+  <h5 class="inter-t home-section">3a Browse intermediate representation / disassembly</h5>
+  <div class="home-pics" href="#log-2">
+    <img src="/slides/ir-ir.png">
+    <p>
+      <a class="white-text" href="https://mono.morph.ist/irhydra/?id=vKSwRLfKFKNaXTZQj">https://mono.morph.ist/irhydra/?id=vKSwRLfKFKNaXTZQj</a>
+    </p>
+  </div>
+
+  <h5 class="inter-t home-section">3b See graph view</h5>
+  <div class="home-pics" href="#log-2">
+    <img src="/slides/ir-graph.png">
+    <p>
+      <a class="white-text" href="https://mono.morph.ist/irhydra/?id=vKSwRLfKFKNaXTZQj">https://mono.morph.ist/irhydra/?id=vKSwRLfKFKNaXTZQj</a>
+    </p>
+    <p>
+      <a class="white-text" href="#try-irhydra">Try it!</a>
+    </p>
+  </div>
+
+  <p id="try-irhydra">
+    <a class="home-btn" href="/ir/new">
+      Analyze code<br>
+      <span class="small">(IRHydra<sup>2</sup> for V8)</span>
+    </a>
+    <a class="home-btn d8-modal-trigger">see all<br>V8 versions</a>
+  </p>
 </template>

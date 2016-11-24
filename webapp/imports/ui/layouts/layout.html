@@ -25,7 +25,16 @@
       </div>
     </div>
   {{else}}
-    {{> Template.dynamic template=main }}
+    <div class="container">
+      <div class="row">
+        <div class="col s12 m10">
+          {{> Template.dynamic template=main }}
+        </div>
+        <div class="job-queue-col">
+          {{> queue}}
+        </div>
+      </div>
+    </div>
   {{/if}}
   {{> footer }}
   {{> nodeInfoModal }}

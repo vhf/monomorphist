@@ -1,49 +1,40 @@
 <template name="homeBailout">
-  <div class="container">
-    <div class="row">
-      <div class="col s12 m10">
-        <h1 id="title" class="title hide-on-small-only"><a href="/">monomorphist</a></h1>
-        <h5 class="subtitle home-section">a JavaScript performance companion</h5>
+  <h1 id="title" class="title hide-on-small-only"><a href="/">monomorphist</a></h1>
+  <h5 class="subtitle home-section">a JavaScript performance companion</h5>
 
-        <p>
-          This tool helps you find out which parts of your JS won't get
-          optimized by V8 by checking a JavaScript function
-          simultaneously on <a class="node-modal-trigger">various Node
-          versions</a>.
-        </p>
+  <p>
+    This tool helps you find out which parts of your JS won't get
+    optimized by V8 by checking a JavaScript function
+    simultaneously on <a class="node-modal-trigger">various Node
+    versions</a>.
+  </p>
 
-        <h5 class="inter-t home-section">1 Enter a JavaScript function</h5>
-        <div class="home-pics" href="#code">
-          <img src="/slides/node-code.png">
-        </div>
-
-        <h5 class="inter-t home-section">2 Decide which <a class="node-modal-trigger">Node versions</a> to use</h5>
-        <div class="home-pics" href="#versions">
-          <img src="/slides/node-versions.png">
-        </div>
-
-        <h5 class="inter-t home-section">3 Get a diagnostic</h5>
-        <div class="home-pics" href="#log">
-          <img src="/slides/node-log.png">
-          <p>
-            <a class="white-text" href="https://mono.morph.ist/job/N6GGo3NWyW2YC35Av">https://mono.morph.ist/job/N6GGo3NWyW2YC35Av</a>
-          </p>
-          <p>
-            <a class="white-text" href="#try-node">Try it!</a>
-          </p>
-        </div>
-
-        <p id="try-node">
-          <a class="home-btn" href="/job/new">
-            check function<br>
-            <span class="small">(bailouts on node)</span>
-          </a>
-          <a class="home-btn node-modal-trigger">see all<br>node versions</a>
-        </p>
-      </div>
-      <div class="job-queue-col">
-        {{> queue}}
-      </div>
-    </div>
+  <h5 class="inter-t home-section">1 Enter a JavaScript function</h5>
+  <div class="home-pics" href="#code">
+    <img src="/slides/node-code.png">
   </div>
+
+  <h5 class="inter-t home-section">2 Decide which <a class="node-modal-trigger">Node versions</a> to use</h5>
+  <div class="home-pics" href="#versions">
+    <img src="/slides/node-versions.png">
+  </div>
+
+  <h5 class="inter-t home-section">3 Get a diagnostic</h5>
+  <div class="home-pics" href="#log">
+    <img src="/slides/node-log.png">
+    <p>
+      <a class="white-text" href="https://mono.morph.ist/job/N6GGo3NWyW2YC35Av">https://mono.morph.ist/job/N6GGo3NWyW2YC35Av</a>
+    </p>
+    <p>
+      <a class="white-text" href="#try-node">Try it!</a>
+    </p>
+  </div>
+
+  <p id="try-node">
+    <a class="home-btn" href="/job/new">
+      check function<br>
+      <span class="small">(bailouts on node)</span>
+    </a>
+    <a class="home-btn node-modal-trigger">see all<br>node versions</a>
+  </p>
 </template>
