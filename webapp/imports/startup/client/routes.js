@@ -9,6 +9,20 @@ FlowRouter.route('/', {
   },
 });
 
+FlowRouter.route('/bailout', {
+  name: 'home-bailout',
+  action() {
+    BlazeLayout.render('layout', { main: 'homeBailout' });
+  },
+});
+
+FlowRouter.route('/ir', {
+  name: 'home-ir',
+  action() {
+    BlazeLayout.render('layout', { main: 'homeIr' });
+  },
+});
+
 FlowRouter.route('/new', {
   name: 'create',
   action() {
@@ -39,13 +53,6 @@ FlowRouter.route('/job/:_publicId', {
 
 FlowRouter.route('/ir/new', {
   name: 'irjobCreate',
-  triggersEnter: [(context, redirect) => {
-    redirect(`/ir/${Random.id()}`);
-  }],
-});
-
-FlowRouter.route('/ir', {
-  name: 'irjobCreateRoot',
   triggersEnter: [(context, redirect) => {
     redirect(`/ir/${Random.id()}`);
   }],

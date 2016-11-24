@@ -2,6 +2,12 @@
   font-size: 1.2rem;
 }
 
+.title {
+  a {
+    color: black;
+  }
+}
+
 @media only screen and (max-width: 601px) {
   .title {
     margin: -11px -8px !important;
@@ -29,14 +35,22 @@
   }
 }
 
-.home-btn {
+.close-bottom {
+  margin-bottom: 0;
+}
+.close-top {
+  margin-top: 0;
+}
+
+a.home-btn {
   @extend .waves-effect;
   @extend .waves-light;
   @extend .btn-large;
-  height: 90px;
+  height: 70px;
   width: 210px;
-  line-height: 2rem;
+  line-height: 1.5rem;
   padding: 14px 0;
+  margin-top: 10px;
   .small {
     font-size: 0.8rem;
   }

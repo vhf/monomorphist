@@ -126,3 +126,15 @@ table.compact {
 code, kbd, pre, samp {
   font-family: 'SauceCodePowerline-Regular', monospace, monospace;
 }
+
+strong {
+  font-weight: 700;
+}
+
+ul.list {
+  padding: 0;
+  padding-left: 17px;
+  li {
+    list-style-type: square;
+  }
+}
