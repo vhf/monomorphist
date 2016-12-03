@@ -1,8 +1,8 @@
 .SILENT:
 
 # how many instances we'd like
-instances = 5
-started = 1
+instances = 2
+started = 2
 
 help:
 	echo "make"

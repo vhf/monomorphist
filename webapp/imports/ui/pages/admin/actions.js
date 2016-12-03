@@ -75,7 +75,13 @@ Template.adminActions.events({
     Meteor.call('v8:refresh');
   },
   'click #clear': () => {
-    Meteor.call('logs:clearBuilds');
+    Meteor.call('logs:hideBuildsLogs');
+  },
+  'click #delete': () => {
+    Meteor.call('logs:deleteBuildsLogs');
+  },
+  'click #validate': () => {
+    Meteor.call('v8:validateBuilds');
   },
 });
 

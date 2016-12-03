@@ -33,7 +33,7 @@
   {{#if (compareStatus irjob 'done')}}
     <div class="row">
       <div class="col s12">
-        {{#if killed}}
+        {{#if irjob.killed}}
           <p>
             Compiling your code failed, sorry about that! Check the logs above.
           </p>

@@ -4,7 +4,7 @@ import { Job } from 'meteor/vsivsi:job-collection';
 
 import Logs from '/imports/api/logs/collection';
 import V8 from '/imports/api/v8/collection';
-import { BuildQueue } from '/imports/api/queue/collection';
+import { BuildQueue, Queue } from '/imports/api/queue/collection';
 
 const _ = require('lodash');
 const parse = require('csv-parse/lib/sync');
@@ -110,6 +110,12 @@ const merger = (objValue, srcValue, key) => {
 };
 
 Meteor.methods({
+  'v8:validateBuilds'() {
+    if (!this.userId) return;
+    if (!isAllowed(this)) return;
+    const queuedJob = new Job(Queue, 'validate-v8s', {});
+    queuedJob.priority('normal').save();
+  },
   'v8:refresh'() {
     if (!isAllowed(this)) return;
     const queuedJob = new Job(BuildQueue, 'refresh-v8s', {});

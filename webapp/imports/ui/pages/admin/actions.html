@@ -8,18 +8,30 @@
       </div>
       <div class="row">
         <div class="col s4">
-          <button id="rebuild-nodes" class="btn waves-effect waves-light" type="submit">
+          <button id="rebuild-nodes" class="btn waves-effect waves-light">
             Node
           </button>
         </div>
         <div class="col s4">
-          <button id="rebuild-v8" class="btn waves-effect waves-light" type="submit">
+          <button id="rebuild-v8" class="btn waves-effect waves-light">
             V8
           </button>
         </div>
         <div class="col s4">
-          <button id="clear" class="btn waves-effect waves-light" type="submit">
-            clear
+          <button id="clear" class="btn waves-effect waves-light">
+            hide
+          </button>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col s4">
+          <button id="delete" class="btn waves-effect waves-light">
+            delete
+          </button>
+        </div>
+        <div class="col s4">
+          <button id="validate" class="btn waves-effect waves-light">
+            validate
           </button>
         </div>
       </div>
@@ -31,7 +43,7 @@
               <li>
                 <div class="collapsible-header">
                   <code>{{isoTime time}}</code> {{title}}
-                  <div class="right">{{queue}}</div>
+                  <div class="right fs10">{{queue}}</div>
                 </div>
                 <div class="collapsible-body">
                   <div class="blue-grey lighten-4">

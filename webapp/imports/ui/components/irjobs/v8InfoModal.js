@@ -10,7 +10,7 @@ Template.v8InfoModal.onCreated(function onCreated() {
 
 Template.v8InfoModal.helpers({
   v8s() {
-    const v8s = V8.find({}, { sort: { tag: 1 } }).fetch();
+    const v8s = V8.find({ enabled: true }, { sort: { tag: 1 } }).fetch();
     v8s.forEach(_v8 => {
       const v8 = _v8;
       if (v8.nodeVersion) {

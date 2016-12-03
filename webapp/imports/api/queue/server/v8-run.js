@@ -10,6 +10,7 @@ import Logs from '/imports/api/logs/collection';
 import { Queue } from '/imports/api/queue/collection';
 
 const childProcess = require('child_process');
+const fs = require('fs');
 
 const { concurrency, pollInterval, timeout } = Meteor.settings.public.v8;
 const workTimeout = timeout;
@@ -86,7 +87,7 @@ Job.processJobs(Queue, 'run-ir', { concurrency, pollInterval, workTimeout },
       `dockervhf/d8:${v8.tag}`,
     ];
 
-    const { stderr, err } = execSync('/', dockerCmd.join(' '));
+    const { stdout, stderr, err } = execSync('/', dockerCmd.join(' '));
 
     if (err && (err.killed || ('code' in err && err.code !== 0))) {
       Logs.insert({ _irjobId, message: `${err}\n${stderr}` });
@@ -95,13 +96,19 @@ Job.processJobs(Queue, 'run-ir', { concurrency, pollInterval, workTimeout },
       cb();
     }
 
-    Logs.insert({ _irjobId, message: `\n${stderr}` });
+    if (stdout.length) {
+      Logs.insert({ _irjobId, message: `\nstdout:\n${stdout}\n--------` });
+    }
+    if (stderr.length) {
+      Logs.insert({ _irjobId, message: `\nstderr:\n${stderr}\n--------` });
+    }
 
     if (stat(`/d8-artifacts/${_irjobPublicId}/no_hydrogen_output`)) {
       Logs.insert({ _irjobId, message: 'No hydrogen IR generated.' });
       IRJobs.update({ _id: _irjobId }, { $set: { killed: true, status: 'done' } });
       qObj.fail(`killed ${{ err }} ${{ stderr }}`);
       cb();
+      return;
     }
 
     if (stat(`/d8-artifacts/${_irjobPublicId}/no_asm_output`)) {
@@ -110,6 +117,65 @@ Job.processJobs(Queue, 'run-ir', { concurrency, pollInterval, workTimeout },
 
     IRJobs.update({ _publicId: _irjobPublicId, status: 'running' }, { $set: { status: 'done' } });
     Logs.insert({ _irjobId, message: 'job done.' });
+    qObj.done();
+    cb();
+  }
+);
+
+Job.processJobs(Queue, 'validate-v8s', { concurrency, pollInterval, workTimeout },
+  (qObj, cb) => {
+    const v8s = V8.find({ enabled: true }).fetch();
+
+    const goodTags = [];
+    const badTags = [];
+
+    for (let i = 0; i < v8s.length; i++) {
+      const v8 = v8s[i];
+      Logs.insert({ type: 'refresh', title: `validation job for ${v8.tag} started running...`, queue: v8.tag });
+
+      const dockerCmd = [
+        'docker run',
+        '--rm',
+        `--name=${Random.id()}`,
+        '-v /opt/monomorphist/d8-artifacts/validation:/io',
+        '-v /opt/monomorphist/monod8/start.sh:/start.sh',
+        '--entrypoint=/start.sh',
+        `dockervhf/d8:${v8.tag}`,
+      ];
+
+      const { stdout, stderr, err } = execSync('/', dockerCmd.join(' '));
+
+      if (stdout.length) {
+        Logs.insert({ type: 'refresh', title: 'stdout', message: `\nstdout:\n${stdout}\n--------`, queue: v8.tag });
+      }
+      if (stderr.length) {
+        Logs.insert({ type: 'refresh', title: 'stdout', message: `\nstderr:\n${stderr}\n--------`, queue: v8.tag });
+      }
+
+      if (err && (err.killed || ('code' in err && err.code !== 0))) {
+        Logs.insert({ type: 'refresh', title: 'Killed.', queue: v8.tag });
+        badTags.push(v8.tag);
+        continue;
+      }
+
+      if (stat('/d8-artifacts/validation/no_hydrogen_output')) {
+        Logs.insert({ type: 'refresh', title: 'No hydrogen IR generated.', queue: v8.tag });
+        badTags.push(v8.tag);
+        continue;
+      }
+
+      if (stat('/d8-artifacts/validation/no_asm_output')) {
+        Logs.insert({ type: 'refresh', title: 'No asm generated.', queue: v8.tag });
+      }
+      goodTags.push(v8.tag);
+      Logs.insert({ type: 'refresh', title: 'Success!', queue: v8.tag });
+    }
+    Logs.insert({ type: 'refresh', title: 'Good tags', queue: 'report', message: JSON.stringify(goodTags, null, '  ') });
+    Logs.insert({ type: 'refresh', title: 'Bad tags', queue: 'report', message: JSON.stringify(badTags, null, '  ') });
+    badTags.forEach(tag => {
+      V8.update({ tag }, { $set: { enabled: false } });
+      Logs.insert({ type: 'refresh', title: `Disabled ${tag}`, queue: 'report' });
+    });
     qObj.done();
     cb();
   }

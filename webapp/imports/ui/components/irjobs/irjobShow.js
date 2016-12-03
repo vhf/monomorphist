@@ -8,8 +8,8 @@ import IRJobs from '/imports/api/irjobs/collection';
 import { fixJobQueueHeight } from '/imports/ui/utils';
 
 const codeMirror = (code) => {
+  $('.CodeMirror').remove();
   const $code = $('textarea#code');
-
   const codeEditor = CodeMirror.fromTextArea($code.get(0), {
     readOnly: true,
     lineNumbers: true,

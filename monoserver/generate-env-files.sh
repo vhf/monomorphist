@@ -11,6 +11,7 @@ else
 fi
 echo "Generating $N environment files"
 
+sed=$(which sed)
 if [ "${OSTYPE//[0-9.]/}" == "darwin" ]
 then
   sed=$(which gsed)
@@ -24,6 +25,10 @@ TAG=$(git describe --tags --abbrev=0)
 
 # we load into this script all bash variables 'export'ed by meteor.env.secret
 [ -f ./meteor.env.secret ] && source ./meteor.env.secret
+
+for n in 10; do
+  rm -f meteor.env.$n
+done
 
 for n in $(seq $N); do
   FILE=meteor.env.$n
@@ -56,6 +61,6 @@ for n in $(seq $N); do
 done
 
 source meteor.env
-SERVER_NAME=$(echo $ROOT_URL | sed -r 's_^([^:/?#]+:)?(//([^/:?#]*))?.*_\3_g')
+SERVER_NAME=$(echo $ROOT_URL | $sed -r 's_^([^:/?#]+:)?(//([^/:?#]*))?.*_\3_g')
 
-cat tpl-nginx.conf | sed s/SERVER_NAME_PLACEHOLDER/$SERVER_NAME/ > nginx.conf
+cat tpl-nginx.conf | $sed s/SERVER_NAME_PLACEHOLDER/$SERVER_NAME/ > nginx.conf

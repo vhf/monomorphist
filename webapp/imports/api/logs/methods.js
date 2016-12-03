@@ -19,8 +19,12 @@ Meteor.methods({
     }
     return [];
   },
-  'logs:clearBuilds'() {
+  'logs:hideBuildsLogs'() {
     if (!this.userId) return;
     Logs.update({ type: 'refresh' }, { $set: { type: 'refresh-old' } }, { multi: true });
+  },
+  'logs:deleteBuildsLogs'() {
+    if (!this.userId) return;
+    Logs.remove({ type: 'refresh' });
   },
 });

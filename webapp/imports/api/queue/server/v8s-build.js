@@ -67,9 +67,9 @@ Job.processJobs(BuildQueue, 'build-v8', { concurrency: 1, pollInterval: 1000 * 1
       Logs.insert({
         type: 'refresh',
         queue: 'build-v8',
-        title: `v8 ${_v8Id} not found (${tag})`,
+        title: `v8 ${_v8Id} not found (${tag})`,
       });
-      V8.update({ _id: v8._id }, { $set: { rebuild: setRebuildTo } });
+      V8.update({ _id: v8._id }, { $set: { rebuild: setRebuildTo, enabled: false } });
       cb();
       qObj.fail();
       return;
@@ -104,7 +104,7 @@ Job.processJobs(BuildQueue, 'build-v8', { concurrency: 1, pollInterval: 1000 * 1
     });
 
     if (tagNotFound || d8NotBuilt || (err && (err.killed || ('code' in err && err.code !== 0)))) {
-      V8.update({ _id: v8._id }, { $set: { rebuild: setRebuildTo } });
+      V8.update({ _id: v8._id }, { $set: { rebuild: setRebuildTo, enabled: false } });
       cb();
       qObj.fail();
       return;
@@ -121,13 +121,13 @@ Job.processJobs(BuildQueue, 'build-v8', { concurrency: 1, pollInterval: 1000 * 1
       miscJSON: JSON.stringify(err),
     });
     if (err && (err.killed || ('code' in err && err.code !== 0))) {
-      V8.update({ _id: v8._id }, { $set: { rebuild: setRebuildTo } });
+      V8.update({ _id: v8._id }, { $set: { rebuild: setRebuildTo, enabled: false } });
       cb();
       qObj.fail();
       return;
     }
 
-    V8.update({ _id: v8._id }, { $set: { rebuild: setRebuildTo } });
+    V8.update({ _id: v8._id }, { $set: { rebuild: setRebuildTo, enabled: true } });
     Logs.insert({
       type: 'refresh',
       queue: 'build-v8',
