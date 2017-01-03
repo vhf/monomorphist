@@ -36,46 +36,52 @@ const codeMirror = () => {
   const $call = $("textarea[data-schema-key='fn.call']");
   const $code = $('textarea#preview');
 
-  const definitionEditor = CodeMirror.fromTextArea($definition.get(0), {
-    lineNumbers: true,
-    mode: 'javascript',
-    tabSize: 2,
-    theme: 'xq-light',
-    indentWithTabs: false,
-    extraKeys: { Tab: false, 'Shift-Tab': false },
-  });
+  if (!$("textarea[data-schema-key='fn.definition']").next('div').hasClass('CodeMirror')) {
+    const definitionEditor = CodeMirror.fromTextArea($definition.get(0), {
+      lineNumbers: true,
+      mode: 'javascript',
+      tabSize: 2,
+      theme: 'xq-light',
+      indentWithTabs: false,
+      extraKeys: { Tab: false, 'Shift-Tab': false },
+    });
 
-  const callEditor = CodeMirror.fromTextArea($call.get(0), {
-    lineNumbers: true,
-    mode: 'javascript',
-    tabSize: 2,
-    theme: 'xq-light',
-    indentWithTabs: false,
-    extraKeys: { Tab: false, 'Shift-Tab': false },
-  });
+    definitionEditor.on('inputRead', (cMirror) => {
+      $definition.val(cMirror.getValue());
+      renderLivePreview();
+    });
+  }
 
-  const preview = CodeMirror.fromTextArea($code.get(0), {
-    readOnly: true,
-    lineNumbers: true,
-    mode: 'javascript',
-    tabSize: 2,
-    theme: 'xq-light',
-    indentWithTabs: false,
-    extraKeys: { Tab: false, 'Shift-Tab': false },
-  });
+  if (!$("textarea[data-schema-key='fn.call']").next('div').hasClass('CodeMirror')) {
+    const callEditor = CodeMirror.fromTextArea($call.get(0), {
+      lineNumbers: true,
+      mode: 'javascript',
+      tabSize: 2,
+      theme: 'xq-light',
+      indentWithTabs: false,
+      extraKeys: { Tab: false, 'Shift-Tab': false },
+    });
 
-  definitionEditor.on('inputRead', (cMirror) => {
-    $definition.val(cMirror.getValue());
-    renderLivePreview();
-  });
+    callEditor.on('inputRead', (cMirror) => {
+      const val = cMirror.getValue();
+      $call.val(val);
+      renderLivePreview();
+    });
+  }
 
-  callEditor.on('inputRead', (cMirror) => {
-    const val = cMirror.getValue();
-    $call.val(val);
-    renderLivePreview();
-  });
+  if (!$('textarea#preview').next('div').hasClass('CodeMirror')) {
+    const preview = CodeMirror.fromTextArea($code.get(0), {
+      readOnly: true,
+      lineNumbers: true,
+      mode: 'javascript',
+      tabSize: 2,
+      theme: 'xq-light',
+      indentWithTabs: false,
+      extraKeys: { Tab: false, 'Shift-Tab': false },
+    });
+  }
 
-  return preview;
+  return false;
 };
 
 Template.jobForm.onCreated(function onCreated() {

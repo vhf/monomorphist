@@ -10,7 +10,12 @@ Template.v8InfoModal.onCreated(function onCreated() {
 
 Template.v8InfoModal.helpers({
   v8s() {
-    const v8s = V8.find({ enabled: true }, { sort: { tag: 1 } }).fetch();
+    let v8s = V8.find({ enabled: true }, { sort: { tag: 1 } }).fetch();
+    v8s = _.chain(v8s).map(_v8 => {
+      const v8 = _v8;
+      v8.naturalTag = v8.tag.split('.').reduce((sum, part, idx) => sum + (Math.pow(1000, 4 - idx) * parseInt(part, 10)), 0);
+      return v8;
+    }).sortBy('naturalTag').value();
     v8s.forEach(_v8 => {
       const v8 = _v8;
       if (v8.nodeVersion) {
