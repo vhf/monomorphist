@@ -14,6 +14,12 @@ Meteor.publish('detail', _id => {
 
 Meteor.publish('jobs', () => Jobs.find({ status: { $not: { $eq: 'editing' } }, listed: true }));
 Meteor.publish('unlistedJobs', () => Jobs.find({ status: { $not: { $eq: 'editing' } }, listed: false }, { fields: { _publicId: 0, fn: 0 } }));
+Meteor.publish('jobsAdmin', function irjobsAdmin() {
+  if (this.userId) {
+    return Jobs.find({ status: { $not: { $eq: 'editing' } } });
+  }
+  return false;
+});
 
 Jobs.allow({
   update: (userId, doc) => doc.status === 'editing',

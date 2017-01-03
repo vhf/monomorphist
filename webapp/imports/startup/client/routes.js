@@ -37,6 +37,13 @@ FlowRouter.route('/admin', {
   },
 });
 
+FlowRouter.route('/admin/list', {
+  name: 'adminList',
+  action() {
+    BlazeLayout.render('layout', { main: 'adminList' });
+  },
+});
+
 FlowRouter.route('/job/new', {
   name: 'jobCreate',
   triggersEnter: [(context, redirect) => {

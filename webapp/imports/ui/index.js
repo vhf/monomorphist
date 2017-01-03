@@ -16,6 +16,8 @@ import './components/queue';
 
 import './pages/admin/actions.html';
 import './pages/admin/actions';
+import './pages/admin/list.html';
+import './pages/admin/list';
 import './pages/home.html';
 import './pages/home';
 import './pages/home-bailout.html';

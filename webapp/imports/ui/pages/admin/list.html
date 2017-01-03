@@ -1,0 +1,49 @@
+<template name="adminList">
+  <div class="container">
+    {{#if currentUser}}
+      <div class="row">
+        <div class="col s12">
+          <h2>Node Jobs</h2>
+          <ul class="collapsible" data-collapsible="expandable">
+            {{#each jobs}}{{collapsible}}
+              <li>
+                <div class="collapsible-header">
+                  <a href="/job/{{_publicId}}" style="display: inline-block; width: 140px">{{_publicId}}</a>
+                  <code class="log-lines">{{fn.name}}</code>
+                </div>
+                <div class="collapsible-body">
+                  <div class="blue-grey lighten-4">
+                    <pre class="log-lines">{{fn.definition}}</pre>
+                    <hr>
+                    <pre class="log-lines">{{fn.call}}</pre>
+                  </div>
+                </div>
+              </li>
+            {{/each}}
+          </ul>
+          <h2>IR Jobs</h2>
+          <ul class="collapsible" data-collapsible="expandable">
+            {{#each irjobs}}{{collapsible}}
+              <li>
+                <div class="collapsible-header">
+                  <a href="/irjob/{{_publicId}}">{{_publicId}}</a>
+                </div>
+                <div class="collapsible-body">
+                  <div class="blue-grey lighten-4">
+                    <pre class="log-lines">{{code}}</pre>
+                  </div>
+                </div>
+              </li>
+            {{/each}}
+          </ul>
+        </div>
+      </div>
+    {{else}}
+      <div class="row">
+        <div class="col s12">
+          {{> loginButtons}}
+        </div>
+      </div>
+    {{/if}}
+  </div>
+</template>
