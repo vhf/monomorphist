@@ -18,7 +18,7 @@ Template.adminList.helpers({
     const jobs = Jobs.find().fetch();
     return jobs;
   },
-  irJobs() {
+  irjobs() {
     const jobs = IRJobs.find().fetch();
     return jobs;
   },
@@ -26,6 +26,9 @@ Template.adminList.helpers({
     $('.collapsible').collapsible({
       accordion: false,
     });
+  },
+  shortId(id) {
+    return `#${id.slice(0, 8)}`;
   },
 });
 

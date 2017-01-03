@@ -8,7 +8,12 @@
             {{#each jobs}}{{collapsible}}
               <li>
                 <div class="collapsible-header">
-                  <a href="/job/{{_publicId}}" style="display: inline-block; width: 140px">{{_publicId}}</a>
+                  <span style="display: inline-block; width: 50px; text-align: right; margin-right: 10px">
+                    {{#unless listed}}un{{/unless}}listed
+                  </span>
+                  <a href="/job/{{_publicId}}" style="display: inline-block; width: 94px; font-family: 'SauceCodePowerline-Regular', monospace, monospace;">
+                    {{shortId(_publicId)}}
+                  </a>
                   <code class="log-lines">{{fn.name}}</code>
                 </div>
                 <div class="collapsible-body">
@@ -26,7 +31,12 @@
             {{#each irjobs}}{{collapsible}}
               <li>
                 <div class="collapsible-header">
-                  <a href="/irjob/{{_publicId}}">{{_publicId}}</a>
+                  <span style="display: inline-block; width: 50px; text-align: right; margin-right: 10px">
+                    {{#unless listed}}un{{/unless}}listed
+                  </span>
+                  <a href="/ir/{{_publicId}}" style="display: inline-block; width: 94px; font-family: 'SauceCodePowerline-Regular', monospace, monospace;">
+                    {{shortId(_publicId)}}
+                  </a>
                 </div>
                 <div class="collapsible-body">
                   <div class="blue-grey lighten-4">
