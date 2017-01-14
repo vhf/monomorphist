@@ -1,21 +1,21 @@
 #!/bin/bash
 
 function spawn() {
-  echo "$(date) Spawning monomorphist-$1"
-  ssh monomorphist "cd /opt/monomorphist/monoserver && docker-compose up -d monomorphist-$1" 2>&1 | grep 'up-to-date' &> /dev/null
+  echo "$(date) Spawning monomorphist"
+  ssh monomorphist "cd /opt/monomorphist/monoserver && docker-compose up -d monomorphist" 2>&1 | grep 'up-to-date' &> /dev/null
   if [ $? == 0 ]; then
-    echo "monomorphist-$1 config unchanged, restarting..."
-    ssh monomorphist "docker stop monoserver_monomorphist-$1_1"
-    ssh monomorphist "docker rm monoserver_monomorphist-$1_1"
-    ssh monomorphist "cd /opt/monomorphist/monoserver && docker-compose up -d monomorphist-$1"
+    echo "monomorphist config unchanged, restarting..."
+    ssh monomorphist "docker stop monoserver_monomorphist_1"
+    ssh monomorphist "docker rm monoserver_monomorphist_1"
+    ssh monomorphist "cd /opt/monomorphist/monoserver && docker-compose up -d monomorphist"
   fi
   RET=1
   while [[ $RET != 0 ]]; do
     sleep 7
-    ssh monomorphist "docker ps" 2>&1 | grep "monomorphist-$1" | grep '(healthy)' &> /dev/null
+    ssh monomorphist "docker ps" 2>&1 | grep "monomorphist" | grep '(healthy)' &> /dev/null
     RET=$?
   done
-  echo "$(date) monomorphist-$1 is healthy - moving on"
+  echo "$(date) monomorphist is healthy - moving on"
 }
 
 if [ "$1" ]; then

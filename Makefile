@@ -1,14 +1,10 @@
 .SILENT:
-
-# how many instances we'd like
-instances = 2
-started = 2
-
+.PHONY: generate-env-files
 help:
 	echo "make"
 	echo "  build - build the meteor project, create compose ENV file(s)"
 	echo "  all - build, upload, start"
-	echo "  start - start $(instances) containers"
+	echo "  start - start containers"
 	echo "  logs - tail logs"
 
 all: build up start
@@ -34,10 +30,10 @@ up-conf:
 up: up-ir up-mono up-conf
 
 start:
-	bash ./monoserver/seq-compose-up.sh $(started)
+	bash ./monoserver/seq-compose-up.sh
 
 generate-env-files:
-	bash ./monoserver/generate-env-files.sh $(instances)
+	bash ./monoserver/generate-env-files.sh
 
 build-ir:
 	cd irhydra/irhydra && \

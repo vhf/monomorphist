@@ -1,13 +1,13 @@
 version: '2'
 services:
-  monomorphist-1:
+  monomorphist:
     build:
       context: ./meteor-docker-image
       dockerfile: Dockerfile
     expose:
       - 80
     env_file:
-      - meteor.env.1
+      - meteor.env.prod
     volumes:
       - /home/vhf/.docker/config.json:/root/.docker/config.json
       - ../mononodes/:/mononodes

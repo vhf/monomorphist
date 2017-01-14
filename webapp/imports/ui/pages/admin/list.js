@@ -28,7 +28,8 @@ Template.adminList.helpers({
     });
   },
   shortId(id) {
-    return `#${id.slice(0, 8)}`;
+    if (id) return `#${id.slice(0, 8)}`;
+    return '<none>';
   },
 });
 

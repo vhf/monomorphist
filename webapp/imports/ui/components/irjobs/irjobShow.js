@@ -10,16 +10,20 @@ import { fixJobQueueHeight } from '/imports/ui/utils';
 const codeMirror = (code) => {
   $('.CodeMirror').remove();
   const $code = $('textarea#code');
-  const codeEditor = CodeMirror.fromTextArea($code.get(0), {
-    readOnly: true,
-    lineNumbers: true,
-    mode: 'javascript',
-    tabSize: 2,
-    theme: 'xq-light',
-    indentWithTabs: false,
-    extraKeys: { Tab: false, 'Shift-Tab': false },
-  });
-  codeEditor.setValue(code);
+  if ($code.length) {
+    const codeEditor = CodeMirror.fromTextArea($code.get(0), {
+      readOnly: true,
+      lineNumbers: true,
+      mode: 'javascript',
+      tabSize: 2,
+      theme: 'xq-light',
+      indentWithTabs: false,
+      extraKeys: { Tab: false, 'Shift-Tab': false },
+    });
+    if (codeEditor) {
+      codeEditor.setValue(code);
+    }
+  }
 };
 
 Template.irjobShow.onCreated(function onCreated() {
