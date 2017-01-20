@@ -31,6 +31,9 @@ Template.adminList.helpers({
     if (id) return `#${id.slice(0, 8)}`;
     return '<none>';
   },
+  len(str) {
+    return str.length;
+  },
 });
 
 Template.adminList.events({});

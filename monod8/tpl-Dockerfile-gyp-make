@@ -28,9 +28,9 @@ RUN echo "force-unsafe-io" > /etc/dpkg/dpkg.cfg.d/02apt-speedup && \
     cd /usr/local/v8/out/x64.release && \
     cp d8 /usr/local/bin/d8 && \
     cd /tmp `# test the build` && \
-    d8 --trace_hydrogen --trace_phase=Z --trace_deopt \
-    --code_comments --hydrogen_track_positions --redirect_code_traces \
-    --redirect_code_traces_to=/tmp/out.asm --print_opt_code /tmp/test.js && \
+    d8 --trace-hydrogen --trace-phase=Z --trace-deopt \
+    --code-comments --hydrogen-track-positions --redirect-code-traces \
+    --redirect-code-traces-to=/tmp/out.asm --print-opt-code /tmp/test.js && \
     rm test.js hydrogen.cfg `# crash if any of these doesn't exist` && \
     rm out.asm || touch /no_asm_redirect && \
     cd / `# cleanup` && \

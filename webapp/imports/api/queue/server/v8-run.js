@@ -32,7 +32,10 @@ const queueFailsAsDoneJobs = (jc, type, timeOut) => {
     const stale = new Date(new Date() - (timeOut * 3));
     jc.find({ status: 'failed', type: type, updated: { $lt: stale } })
       .forEach(job => {
-        IRJobs.update({ _id: job.data._irjobId, killed: false, status: 'running' }, { $set: { killed: true, status: 'done' } });
+        IRJobs.update(
+          { _id: job.data._irjobId, killed: false, status: 'running' },
+          { $set: { killed: true, status: 'done' } }
+        );
       });
   };
   return Meteor.setInterval(markDeadAsDone, Math.floor(timeOut / 1.95));
@@ -71,7 +74,7 @@ Job.processJobs(Queue, 'run-ir', { concurrency, pollInterval, workTimeout },
     if (!v8) {
       IRJobs.update({ _id: _irjobId }, { $set: { killed: true, status: 'done' } });
       qObj.fail(`v8 ${_v8Id} not found!`);
-      cb();
+      return cb();
     }
 
     IRJobs.update({ _publicId: _irjobPublicId, status: 'ready' }, { $set: { status: 'running' } });
@@ -82,6 +85,7 @@ Job.processJobs(Queue, 'run-ir', { concurrency, pollInterval, workTimeout },
       '--rm',
       `--name=${Random.id()}`,
       `-v /opt/monomorphist/d8-artifacts/${_irjobPublicId}:/io`,
+      // `-v /d8-artifacts/${_irjobPublicId}:/io`,
       '-v /opt/monomorphist/monod8/start.sh:/start.sh',
       '--entrypoint=/start.sh',
       `dockervhf/d8:${v8.tag}`,
@@ -90,10 +94,10 @@ Job.processJobs(Queue, 'run-ir', { concurrency, pollInterval, workTimeout },
     const { stdout, stderr, err } = execSync('/', dockerCmd.join(' '));
 
     if (err && (err.killed || ('code' in err && err.code !== 0))) {
-      Logs.insert({ _irjobId, message: `${err}\n${stderr}` });
+      Logs.insert({ _irjobId, message: `${stdout}` });
       IRJobs.update({ _id: _irjobId }, { $set: { killed: true, status: 'done' } });
-      qObj.fail(`killed ${{ err }} ${{ stderr }}`);
-      cb();
+      qObj.fail(`killed\n${stdout}`);
+      return cb();
     }
 
     if (stdout.length) {
@@ -107,8 +111,7 @@ Job.processJobs(Queue, 'run-ir', { concurrency, pollInterval, workTimeout },
       Logs.insert({ _irjobId, message: 'No hydrogen IR generated.' });
       IRJobs.update({ _id: _irjobId }, { $set: { killed: true, status: 'done' } });
       qObj.fail(`killed ${{ err }} ${{ stderr }}`);
-      cb();
-      return;
+      return cb();
     }
 
     if (stat(`/d8-artifacts/${_irjobPublicId}/no_asm_output`)) {
@@ -118,7 +121,7 @@ Job.processJobs(Queue, 'run-ir', { concurrency, pollInterval, workTimeout },
     IRJobs.update({ _publicId: _irjobPublicId, status: 'running' }, { $set: { status: 'done' } });
     Logs.insert({ _irjobId, message: 'job done.' });
     qObj.done();
-    cb();
+    return cb();
   }
 );
 

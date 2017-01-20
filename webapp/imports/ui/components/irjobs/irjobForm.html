@@ -34,6 +34,15 @@
     <div class="col s12">
       {{#autoForm collection=IRJobs autosave=true doc=job id="irjobForm" type="update"}}
         {{> afQuickField name="code" label-style="margin-left: 34px;"}}
+        <div class="row">
+          <div class="col s12">
+            <p>
+              <strong>Please note:</strong>
+              If you code doesn't go through the optimizing compiler for any reason (it might be too short,
+              not called often enough, …), <code>d8</code> will not generate the output necessary for the analyze.
+            </p>
+          </div>
+        </div>
         {{> afQuickField name="listed" type="boolean-checkbox" template="listedCheckbox"}}
       {{/autoForm}}
     </div>

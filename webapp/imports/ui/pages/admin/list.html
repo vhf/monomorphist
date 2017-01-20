@@ -7,11 +7,11 @@
           <ul class="collapsible" data-collapsible="expandable">
             {{#each jobs}}{{collapsible}}
               <li>
-                <div class="collapsible-header">
-                  <span style="display: inline-block; width: 50px; text-align: right; margin-right: 10px">
-                    {{#unless listed}}un{{/unless}}listed
+                <div class="collapsible-header {{#if listed}}green lighten-2{{else}}red darken-1{{/if}}">
+                  <span class="admin-date-span">
+                    {{createdAt}}
                   </span>
-                  <a href="/job/{{_publicId}}" style="display: inline-block; width: 94px; font-family: 'SauceCodePowerline-Regular', monospace, monospace;">
+                  <a href="/job/{{_publicId}}" class="admin-id-a">
                     {{shortId(_publicId)}}
                   </a>
                   <code class="log-lines">{{fn.name}}</code>
@@ -30,13 +30,14 @@
           <ul class="collapsible" data-collapsible="expandable">
             {{#each irjobs}}{{collapsible}}
               <li>
-                <div class="collapsible-header">
-                  <span style="display: inline-block; width: 50px; text-align: right; margin-right: 10px">
-                    {{#unless listed}}un{{/unless}}listed
+                <div class="collapsible-header {{#if listed}}green lighten-2{{else}}red darken-1{{/if}}">
+                  <span class="admin-date-span">
+                    {{createdAt}}
                   </span>
-                  <a href="/ir/{{_publicId}}" style="display: inline-block; width: 94px; font-family: 'SauceCodePowerline-Regular', monospace, monospace;">
+                  <a href="/ir/{{_publicId}}" class="admin-id-a">
                     {{shortId(_publicId)}}
                   </a>
+                  <code class="log-lines">{{len(code)}}</code>
                 </div>
                 <div class="collapsible-body">
                   <div class="blue-grey lighten-4">

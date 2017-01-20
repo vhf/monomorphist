@@ -11,7 +11,7 @@ Meteor.publish('irjobs', () => IRJobs.find({ status: { $not: { $eq: 'editing' } 
 Meteor.publish('unlistedIRJobs', () => IRJobs.find({ status: 'done', listed: false }, { fields: { _publicId: 0, fn: 0 } }));
 Meteor.publish('irjobsAdmin', function irjobsAdmin() {
   if (this.userId) {
-    return IRJobs.find({ status: { $not: { $eq: 'editing' } } });
+    return IRJobs.find({ status: { $not: { $eq: 'editing' } } }, { sort: { createdAt: -1 }, limit: 100 });
   }
   return false;
 });

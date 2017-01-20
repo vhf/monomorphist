@@ -21,22 +21,21 @@ RUN echo "force-unsafe-io" > /etc/dpkg/dpkg.cfg.d/02apt-speedup && \
     cd /usr/local && \
     fetch v8 && \
     cd /usr/local/v8 && \<% if (tag) { %>
-    git checkout <%= tag %> && \<% } else { %>
+    git checkout <%= tag %> || exit 11 && \<% } else { %>
     git checkout master && git pull && \<% }%>
     gclient sync && \
     tools/dev/v8gen.py x64.release && \
     gn gen out.gn/x64.release \
-      --args='v8_use_external_startup_data=false v8_enable_disassembler=true v8_object_print=true is_debug=true target_cpu="x64"' \
-      --fail-on-unused-args && \
-    ninja -C out.gn/x64.release d8 && \
+    --args='v8_use_external_startup_data=false v8_enable_disassembler=true v8_object_print=true is_debug=true target_cpu="x64"' || exit 13 && \
+    ninja -C out.gn/x64.release d8 || exit 15 && \
     cd /usr/local/v8/out.gn/x64.release && \
     cp d8 /usr/local/bin/d8 && \
     cp lib*.so* /usr/local/lib/ && \
     rm /usr/local/lib/*.TOC && \
     cd /tmp `# test the build` && \
-    d8 --trace_hydrogen --trace_phase=Z --trace_deopt \
-    --code_comments --hydrogen_track_positions --redirect_code_traces \
-    --redirect_code_traces_to=/tmp/out.asm --print_opt_code /tmp/test.js && \
+    d8 --trace-hydrogen --trace-phase=Z --trace-deopt \
+    --code-comments --hydrogen-track-positions --redirect-code-traces \
+    --redirect-code-traces-to=/tmp/out.asm --print-opt-code /tmp/test.js && \
     rm test.js hydrogen.cfg `# crash if any of these doesn't exist` && \
     rm out.asm || touch /no_asm_redirect && \
     cd / `# cleanup` && \
