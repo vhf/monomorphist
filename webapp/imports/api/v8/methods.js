@@ -165,7 +165,7 @@ Meteor.methods({
     Logs.insert({
       type: 'refresh',
       queue: 'build-v8',
-      title: 'chomeTags',
+      title: 'chromeTags',
       message: chromeTags.map(o => JSON.stringify(o)).join('\n'),
     });
 
