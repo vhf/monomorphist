@@ -23,11 +23,7 @@ const root = (() => {
   return '/mononodes';
 })();
 
-const pinnedVersions = [
-  '0.10.46',
-  '4.4.0',
-  '6.6.0',
-];
+const pinnedVersions = [];
 
 Meteor.methods({
   'nodes:refresh'() {
@@ -45,6 +41,7 @@ Meteor.methods({
       { name: 'latest-v0.12.x', url: 'https://nodejs.org/dist/latest-v0.12.x/' },
       { name: 'latest-v4.x', url: 'https://nodejs.org/dist/latest-v4.x/' },
       { name: 'latest-v6.x', url: 'https://nodejs.org/dist/latest-v6.x/' },
+      { name: 'latest-v7.x', url: 'https://nodejs.org/dist/latest-v7.x/' },
       { name: 'dist', url: 'https://nodejs.org/dist/index.json' },
       { name: 'nightly', url: 'https://nodejs.org/download/nightly/index.json' },
     ];
